@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!-- syntaxdefinition for ESDL by Steve Dower -->
+
+<SyntaxDefinition name="ESDLVariables" extensions="">
+
+    <Environment>
+        <Custom name="TypeReference" bold="false" italic="false" color="#04ABAB" />
+        <Custom name="UnknownEntity" bold="false" italic="false" color="#AB0404" />
+    </Environment>
+
+    <Properties>
+        <Property name="LineComment" value="#"/>
+    </Properties>
+
+    <Digits name="Digits" bold="false" italic="false" color="DarkBlue"/>
+
+    <RuleSets>
+        <RuleSet ignorecase="false">
+            <Delimiters>^*()-+=\/[]{}"' ,:;	.</Delimiters>
+
+            <Span name = "LineComment" bold = "false" italic = "false" color = "Green" stopateol = "true">
+                <Begin>#</Begin>
+            </Span>
+            
+            <Span name="StringDouble" bold="false" italic="false" color="Blue" stopateol="true">
+                <Begin>"</Begin>
+                <End>"</End>
+            </Span>
+            <Span name="StringSingle" bold="false" italic="false" color="Blue" stopateol="true">
+                <Begin>&apos;</Begin>
+                <End>&apos;</End>
+            </Span>
+            <Span name="StringBlockDouble" bold="false" italic="false" color="Blue" stopateol="false">
+                <Begin>"""</Begin>
+                <End>"""</End>
+            </Span>
+            <Span name="StringBlockSingle" bold="false" italic="false" color="Blue" stopateol="false">
+                <Begin>&apos;&apos;&apos;</Begin>
+                <End>&apos;&apos;&apos;</End>
+            </Span>
+            
+            <MarkPrevious bold="true" italic="false" color="MidnightBlue">=</MarkPrevious>
+            <MarkPrevious bold="true" italic="false" color="MidnightBlue">:</MarkPrevious>
+
+            <KeyWords name="KnownValues" bold="true" italic="false" color="DarkCyan">
+                <Key word="True" />
+                <Key word="False" />
+                <Key word="None" />
+            </KeyWords>
+
+            <KeyWords name="Keywords" bold="true" italic="false" color="Blue">
+                <Key word="for" />
+                <Key word="in" />
+                <Key word="if" />
+                <Key word="else" />
+            </KeyWords>
+
+        </RuleSet>
+
+    </RuleSets>
+</SyntaxDefinition>
+

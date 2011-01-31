@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?><configuration name="GP Symbolic Regression"><system><definition>FROM real_tgp(terminals=1, deepest=4, transcendentals, \
+              lowest_constant=0.0, highest_constant=1.0 \
+              ) SELECT (size) population
+YIELD population
+
+BEGIN generation
+    FROM population \
+        SELECT (0.9*size) to_cross, (0.02*size) to_mutate, (size) to_reproduce \
+        USING fitness_proportional
+    
+    FROM to_cross SELECT offspring1 USING crossover_one(deepest_result, terminal_prob=0.1)
+    FROM to_mutate SELECT offspring2 USING mutate_random(deepest_result)
+    
+    FROM offspring1, offspring2, to_reproduce SELECT (size) population \
+         USING mutate_edit(per_indiv_rate=0.1)
+    
+    YIELD population
+END generation</definition><deepest_result>15</deepest_result><size>100</size></system><landscape><class>esec.landscape.tgp.SymbolicRegression</class><expr>'X**4 + X**3 + X**2 + X'</expr></landscape><monitor><limits evaluations="10000" /></monitor></configuration>
