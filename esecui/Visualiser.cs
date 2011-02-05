@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Collections.ObjectModel;
 using System.Drawing.Drawing2D;
+using System.Threading;
 
 namespace esecui
 {
@@ -317,7 +318,7 @@ namespace esecui
             if (float.IsInfinity(horizontalScale)) horizontalScale = 1.0f;
             if (float.IsInfinity(verticalScale)) verticalScale = 1.0f;
 
-            using(var axisBrush = new SolidBrush(Color.Black))
+            using (var axisBrush = new SolidBrush(Color.Black))
             {
                 float x = (float)-_HorizontalOffset * horizontalScale;
                 float y = (float)-_VerticalOffset * verticalScale;
@@ -347,6 +348,8 @@ namespace esecui
                     Draw(e.Graphics, pt.Shape, rect, square, pt.Color, thick);
                 }
             }
+
+            DrawZoomRectangle(e.Graphics);
         }
 
         private static void Draw(Graphics g, VisualiserPointShape shape,
@@ -413,6 +416,126 @@ namespace esecui
             default:
                 System.Diagnostics.Debug.Assert(false, "Invalid Shape");
                 break;
+            }
+        }
+
+        #endregion
+
+        #region Zoom and Translate
+
+        protected Point? ZoomStartLocation = null;
+        protected Point? ZoomEndLocation = null;
+        private bool CanUnzoom = false;
+        private double UnzoomHorizontalOffset, UnzoomVerticalOffset;
+        private double UnzoomHorizontalRange, UnzoomVerticalRange;
+        private bool UnzoomAutoRange;
+
+        protected Rectangle? GetZoomRect()
+        {
+            if (ZoomStartLocation.HasValue && ZoomEndLocation.HasValue)
+            {
+                int l = ZoomStartLocation.Value.X;
+                int t = ZoomStartLocation.Value.Y;
+                int r = ZoomEndLocation.Value.X;
+                int b = ZoomEndLocation.Value.Y;
+                if (r < l) l = Interlocked.Exchange(ref r, l);
+                if (b < t) t = Interlocked.Exchange(ref b, t);
+                return Rectangle.FromLTRB(l, t, r, b);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        protected void DrawZoomRectangle(Graphics g)
+        {
+            var rect = GetZoomRect();
+            if (rect.HasValue)
+            {
+                using (var fill = new SolidBrush(Color.FromArgb(64, SystemColors.Highlight)))
+                using (var outline = new Pen(SystemColors.Highlight, 3.0f))
+                {
+                    g.FillRectangle(fill, rect.Value);
+                    g.DrawRectangle(outline, rect.Value);
+                }
+            }
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            if (e.Button == MouseButtons.Right)
+            {
+                if (CanUnzoom)
+                {
+                    _HorizontalOffset = UnzoomHorizontalOffset;
+                    _HorizontalRange = UnzoomHorizontalRange;
+                    _VerticalOffset = UnzoomVerticalOffset;
+                    _VerticalRange = UnzoomVerticalRange;
+                    _AutoRange = UnzoomAutoRange;
+                    CanUnzoom = false;
+                    Invalidate();
+                }
+                else
+                {
+                    PerformAutoRange();
+                }
+            }
+            else if (e.Button == MouseButtons.Left)
+            {
+                Capture = true;
+                ZoomStartLocation = e.Location;
+                ZoomEndLocation = e.Location;
+
+                if (!CanUnzoom)
+                {
+                    CanUnzoom = true;
+                    UnzoomHorizontalOffset = _HorizontalOffset;
+                    UnzoomHorizontalRange = _HorizontalRange;
+                    UnzoomVerticalOffset = _VerticalOffset;
+                    UnzoomVerticalRange = _VerticalRange;
+                    UnzoomAutoRange = _AutoRange;
+                    _AutoRange = false;
+                }
+            }
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            if (ZoomStartLocation.HasValue && ZoomEndLocation.HasValue)
+            {
+                ZoomEndLocation = e.Location;
+                Invalidate();
+            }
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+
+            if (e.Button == MouseButtons.Left)
+            {
+                Capture = false;
+                var zoomTo = GetZoomRect();
+                if (zoomTo.HasValue)
+                {
+                    float horizontalScale = (float)(ClientSize.Width / _HorizontalRange);
+                    float verticalScale = (float)(ClientSize.Height / _VerticalRange);
+                    if (float.IsInfinity(horizontalScale)) horizontalScale = 1.0f;
+                    if (float.IsInfinity(verticalScale)) verticalScale = 1.0f;
+
+                    _HorizontalOffset += zoomTo.Value.Left / horizontalScale;
+                    _VerticalOffset += zoomTo.Value.Top / verticalScale;
+                    _HorizontalRange = zoomTo.Value.Width / horizontalScale;
+                    _VerticalRange = zoomTo.Value.Height / verticalScale;
+                }
+                ZoomStartLocation = null;
+                ZoomEndLocation = null;
+                Invalidate();
             }
         }
 
