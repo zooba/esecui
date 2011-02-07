@@ -342,11 +342,6 @@
             MethodDef or MethodRef.
             </summary>
         </member>
-        <member name="T:Microsoft.Scripting.Metadata.MemoryBlock">
-            <summary>
-            Represents a block in memory.
-            </summary>
-        </member>
         <member name="T:Microsoft.Scripting.Metadata.MetadataName">
             <summary>
             Zero terminated, UTF8 encoded sequence of bytes representing a name in metadata (a type name, a member name, etc).
@@ -362,6 +357,11 @@
         <member name="M:Microsoft.Scripting.Metadata.MemoryReader.ReadAscii(System.Int32)">
             <summary>
             Reads zero terminated sequence of bytes of given maximal length and converts it into an ASCII string.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Scripting.Metadata.MemoryBlock">
+            <summary>
+            Represents a block in memory.
             </summary>
         </member>
         <member name="M:Microsoft.Scripting.Metadata.MetadataToken.#ctor(System.Int32)">

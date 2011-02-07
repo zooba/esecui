@@ -4,13 +4,35 @@
         <name>IronPython.Modules</name>
     </assembly>
     <members>
-        <member name="M:IronPython.Modules.PythonSubprocess.DuplicateHandle(IronPython.Runtime.CodeContext,System.Numerics.BigInteger,IronPython.Modules.PythonSubprocessHandle,System.Numerics.BigInteger,System.Int32,System.Boolean,System.Object)">
+        <member name="M:IronPython.Modules.PythonWeakRef.weakproxy.GetObject">
             <summary>
-            Duplicates a subprocess handle which was created for piping.
-            
-            This is only called when we're duplicating the handle to make it inheritable to the child process.  In CPython
-            the parent handle is always reliably garbage collected.  Because we know this handle is not going to be 
-            used we close the handle being duplicated.
+            gets the object or throws a reference exception
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonWeakRef.weakproxy.__eq__(System.Object)">
+            <summary>
+            Special equality function because IStructuralEquatable.Equals is not allowed to throw.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonWeakRef.weakcallableproxy.GetObject">
+            <summary>
+            gets the object or throws a reference exception
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonWeakRef.weakcallableproxy.__eq__(System.Object)">
+            <summary>
+            Special equality function because IStructuralEquatable.Equals is not allowed to throw.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonWeakRef.ref.__hash__(IronPython.Runtime.CodeContext)">
+            <summary>
+            Special hash function because IStructuralEquatable.GetHashCode is not allowed to throw.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonWeakRef.ref.RefEquals(System.Object,System.Object,System.Collections.IEqualityComparer)">
+            <summary>
+            Special equals because none of the special cases in Ops.Equals
+            are applicable here, and the reference equality check breaks some tests.
             </summary>
         </member>
         <member name="T:IronPython.Modules.CTypes">
@@ -174,10 +196,10 @@
             Gets the ModuleBuilder used to generate our unsafe call stubs into.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.CTypes.StructType">
+        <member name="T:IronPython.Modules.CTypes.SimpleType">
             <summary>
-            Meta class for structures.  Validates _fields_ on creation, provides factory
-            methods for creating instances from addresses and translating to parameters.
+            The meta class for ctypes simple data types.  These include primitives like ints,
+            floats, etc... char/wchar pointers, and untyped pointers.
             </summary>
         </member>
         <member name="T:IronPython.Modules.CTypes.INativeType">
@@ -245,6 +267,23 @@
             only exists for testing purposes.
             </summary>
         </member>
+        <member name="M:IronPython.Modules.CTypes.SimpleType.from_param(System.Object)">
+            <summary>
+            Converts an object into a function call parameter.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.CTypes.SimpleType.ReadChar(IronPython.Modules.MemoryHolder,System.Int32)">
+            <summary>
+            Helper function for reading char/wchar's.  This is used for reading from
+            arrays and pointers to avoid creating lots of 1-char strings.
+            </summary>
+        </member>
+        <member name="T:IronPython.Modules.CTypes.StructType">
+            <summary>
+            Meta class for structures.  Validates _fields_ on creation, provides factory
+            methods for creating instances from addresses and translating to parameters.
+            </summary>
+        </member>
         <member name="M:IronPython.Modules.CTypes.StructType.from_param(System.Object)">
             <summary>
             Converts an object into a function call parameter.
@@ -264,143 +303,14 @@
             Base class for all ctypes interop types.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.CTypes.SimpleTypeKind">
+        <member name="T:IronPython.Modules.CTypes.UnionType">
             <summary>
-            The enum used for tracking the various ctypes primitive types.
+            The meta class for ctypes unions.
             </summary>
         </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Char">
-            <summary> 'c' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedByte">
-            <summary> 'b' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedByte">
-            <summary> 'B' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedShort">
-            <summary> 'h' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedShort">
-            <summary> 'H' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedInt">
-            <summary> 'i' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedInt">
-            <summary> 'I' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedLong">
-            <summary> 'l' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedLong">
-            <summary> 'L' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Single">
-            <summary> 'f' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Double">
-            <summary> 'd', 'g' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedLongLong">
-            <summary> 'q' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedLongLong">
-            <summary> 'Q' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Object">
-            <summary> 'O' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Pointer">
-            <summary> 'P' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.CharPointer">
-            <summary> 'z' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.WCharPointer">
-            <summary> 'Z' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.WChar">
-            <summary> 'u' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Boolean">
-            <summary> '?' </summary>
-        </member>
-        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.VariantBool">
-            <summary> 'v' </summary>
-        </member>
-        <member name="T:IronPython.Modules.CTypes._Structure">
-            <summary>
-            Base class for data structures.  Subclasses can define _fields_ which 
-            specifies the in memory layout of the values.  Instances can then
-            be created with the initial values provided as the array.  The values
-            can then be accessed from the instance by field name.  The value can also
-            be passed to a foreign C API and the type can be used in other structures.
-            
-            class MyStructure(Structure):
-                _fields_ = [('a', c_int), ('b', c_int)]
-                
-            MyStructure(1, 2).a
-            MyStructure()
-            
-            class MyOtherStructure(Structure):
-                _fields_ = [('c', MyStructure), ('b', c_int)]
-                
-            MyOtherStructure((1, 2), 3)
-            MyOtherStructure(MyStructure(1, 2), 3)
-            </summary>
-        </member>
-        <member name="T:IronPython.Modules.CTypes.PointerType">
-            <summary>
-            The meta class for ctypes pointers.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.CTypes.PointerType.from_param(IronPython.Modules.CTypes.Pointer)">
+        <member name="M:IronPython.Modules.CTypes.UnionType.from_param(System.Object)">
             <summary>
             Converts an object into a function call parameter.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.CTypes.PointerType.from_address(System.Object)">
-            <summary>
-            Access an instance at the specified address
-            </summary>
-        </member>
-        <member name="T:IronPython.Modules.CTypes.CFuncPtrType">
-            <summary>
-            The meta class for ctypes function pointer instances.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.CTypes.CFuncPtrType.from_param(System.Object)">
-            <summary>
-            Converts an object into a function call parameter.
-            </summary>
-        </member>
-        <member name="T:IronPython.Modules.CTypes.ArrayType">
-            <summary>
-            The meta class for ctypes array instances.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.CTypes.ArrayType.from_param(System.Object)">
-            <summary>
-            Converts an object into a function call parameter.
-            </summary>
-        </member>
-        <member name="T:IronPython.Modules.CTypes.Field">
-            <summary>
-            Fields are created when a Structure is defined and provide
-            introspection of the structure.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.CTypes.Field.ExtractBits(System.Object)">
-            <summary>
-            Called for fields which have been limited to a range of bits.  Given the
-            value for the full type this extracts the individual bits.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.CTypes.Field.SetBitsValue(IronPython.Modules.MemoryHolder,System.Int32,System.Object)">
-            <summary>
-            Called for fields which have been limited to a range of bits.  Sets the 
-            specified value into the bits for the field.
             </summary>
         </member>
         <member name="M:IronPython.Modules.CTypes._CFuncPtr.#ctor(IronPython.Runtime.PythonTuple)">
@@ -482,155 +392,143 @@
             (usually gotten by byref or pointer) and the function type has no type information.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.CTypes.UnionType">
+        <member name="T:IronPython.Modules.CTypes.PointerType">
             <summary>
-            The meta class for ctypes unions.
+            The meta class for ctypes pointers.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.CTypes.UnionType.from_param(System.Object)">
+        <member name="M:IronPython.Modules.CTypes.PointerType.from_param(IronPython.Modules.CTypes.Pointer)">
             <summary>
             Converts an object into a function call parameter.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.CTypes.SimpleType">
+        <member name="M:IronPython.Modules.CTypes.PointerType.from_address(System.Object)">
             <summary>
-            The meta class for ctypes simple data types.  These include primitives like ints,
-            floats, etc... char/wchar pointers, and untyped pointers.
+            Access an instance at the specified address
             </summary>
         </member>
-        <member name="M:IronPython.Modules.CTypes.SimpleType.from_param(System.Object)">
+        <member name="T:IronPython.Modules.CTypes._Structure">
             <summary>
-            Converts an object into a function call parameter.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.CTypes.SimpleType.ReadChar(IronPython.Modules.MemoryHolder,System.Int32)">
-            <summary>
-            Helper function for reading char/wchar's.  This is used for reading from
-            arrays and pointers to avoid creating lots of 1-char strings.
-            </summary>
-        </member>
-        <member name="T:IronPython.Modules.LocalOrArg">
-            <summary>
-            Wrapper class for emitting locals/variables during marshalling code gen.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonCopyReg.EnsureCallable(IronPython.Runtime.CodeContext,System.Object,System.String)">
-            <summary>
-            Throw TypeError with a specified message if object isn't callable.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonCopyReg.GetCode(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Convert object to ushort, throwing ValueError on overflow.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonCollections.deque.WalkDeque(IronPython.Modules.PythonCollections.deque.DequeWalker)">
-            <summary>
-            Walks the queue calling back to the specified delegate for
-            each populated index in the queue.
-            </summary>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.InflateCodesMode">
-            <summary>
-            Inflate codes mode
-            </summary>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.InfCodes">
-            <summary>
-            This class is used by the InfBlocks class
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.mode">
-            <summary>
-            current inflate_codes mode
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.count">
-            <summary>
-            length
-            </summary>        
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.tree">
-            <summary>
-            pointer into tree
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.tree_index">
-            <summary>
-            current index of the tree
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.need">
-            <summary>
+            Base class for data structures.  Subclasses can define _fields_ which 
+            specifies the in memory layout of the values.  Instances can then
+            be created with the initial values provided as the array.  The values
+            can then be accessed from the instance by field name.  The value can also
+            be passed to a foreign C API and the type can be used in other structures.
             
+            class MyStructure(Structure):
+                _fields_ = [('a', c_int), ('b', c_int)]
+                
+            MyStructure(1, 2).a
+            MyStructure()
+            
+            class MyOtherStructure(Structure):
+                _fields_ = [('c', MyStructure), ('b', c_int)]
+                
+            MyOtherStructure((1, 2), 3)
+            MyOtherStructure(MyStructure(1, 2), 3)
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.lbits">
+        <member name="T:IronPython.Modules.CTypes.SimpleTypeKind">
             <summary>
-            ltree bits decoded per branch
+            The enum used for tracking the various ctypes primitive types.
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.dbits">
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Char">
+            <summary> 'c' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedByte">
+            <summary> 'b' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedByte">
+            <summary> 'B' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedShort">
+            <summary> 'h' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedShort">
+            <summary> 'H' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedInt">
+            <summary> 'i' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedInt">
+            <summary> 'I' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedLong">
+            <summary> 'l' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedLong">
+            <summary> 'L' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Single">
+            <summary> 'f' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Double">
+            <summary> 'd', 'g' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.SignedLongLong">
+            <summary> 'q' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.UnsignedLongLong">
+            <summary> 'Q' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Object">
+            <summary> 'O' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Pointer">
+            <summary> 'P' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.CharPointer">
+            <summary> 'z' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.WCharPointer">
+            <summary> 'Z' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.WChar">
+            <summary> 'u' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.Boolean">
+            <summary> '?' </summary>
+        </member>
+        <member name="F:IronPython.Modules.CTypes.SimpleTypeKind.VariantBool">
+            <summary> 'v' </summary>
+        </member>
+        <member name="T:IronPython.Modules.CTypes.Field">
             <summary>
-            dtree bits decoded per branch
+            Fields are created when a Structure is defined and provide
+            introspection of the structure.
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.ltree">
+        <member name="M:IronPython.Modules.CTypes.Field.ExtractBits(System.Object)">
             <summary>
-            literal/length/eob tree
+            Called for fields which have been limited to a range of bits.  Given the
+            value for the full type this extracts the individual bits.
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.ltree_index">
+        <member name="M:IronPython.Modules.CTypes.Field.SetBitsValue(IronPython.Modules.MemoryHolder,System.Int32,System.Object)">
             <summary>
-            literal/length/eob tree index
+            Called for fields which have been limited to a range of bits.  Sets the 
+            specified value into the bits for the field.
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.dtree">
+        <member name="T:IronPython.Modules.CTypes.CFuncPtrType">
             <summary>
-            distance tree
+            The meta class for ctypes function pointer instances.
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.dtree_index">
+        <member name="M:IronPython.Modules.CTypes.CFuncPtrType.from_param(System.Object)">
             <summary>
-            distance tree index
+            Converts an object into a function call parameter.
             </summary>
         </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.#ctor(System.Int32,System.Int32,System.Int32[],System.Int32,System.Int32[],System.Int32,ComponentAce.Compression.Libs.ZLib.ZStream)">
+        <member name="T:IronPython.Modules.CTypes.ArrayType">
             <summary>
-            Constructor which takes literal, distance trees, corresponding bites decoded for branches, corresponding indexes and a ZStream object 
-            </summary>        
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.#ctor(System.Int32,System.Int32,System.Int32[],System.Int32[],ComponentAce.Compression.Libs.ZLib.ZStream)">
-            <summary>
-            Constructor which takes literal, distance trees, corresponding bites decoded for branches and a ZStream object 
-            </summary>   
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.proc(ComponentAce.Compression.Libs.ZLib.InfBlocks,ComponentAce.Compression.Libs.ZLib.ZStream,System.Int32)">
-            <summary>
-            Block processing method
-            </summary>
-            <param name="s">An instance of the InfBlocks class</param>
-            <param name="z">A ZStream object</param>
-            <param name="r">A result code</param>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.free(ComponentAce.Compression.Libs.ZLib.ZStream)">
-            <summary>
-            Frees allocated resources
+            The meta class for ctypes array instances.
             </summary>
         </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.inflate_fast(System.Int32,System.Int32,System.Int32[],System.Int32,System.Int32[],System.Int32,ComponentAce.Compression.Libs.ZLib.InfBlocks,ComponentAce.Compression.Libs.ZLib.ZStream)">
+        <member name="M:IronPython.Modules.CTypes.ArrayType.from_param(System.Object)">
             <summary>
-            Fast inflate procedure. Called with number of bytes left to WritePos in Window at least 258
-            (the maximum string length) and number of input bytes available
-            at least ten.  The ten bytes are six bytes for the longest length/
-            distance pair plus four bytes for overloading the bit buffer.
-            </summary>
-        </member>
-        <member name="T:IronPython.Modules.PythonTime.FoundDateComponents">
-            <summary>
-            Represents the date components that we found while parsing the date.  Used for zeroing out values
-            which have different defaults from CPython.  Currently we only know that we need to do this for
-            the year.
+            Converts an object into a function call parameter.
             </summary>
         </member>
         <member name="T:IronPython.Modules.NativeFunctions">
@@ -649,97 +547,67 @@
             could P/Invoke or call some otherwise native code to do this.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonCodecs.charmap_build(System.String)">
+        <member name="T:IronPython.Modules.FunctionTools.partial">
             <summary>
-            Creates an optimized encoding mapping that can be consumed by an optimized version of charmap_encode.
+            Returns a new callable object with the provided initial set of arguments
+            bound to it.  Calling the new function then appends to the additional
+            user provided arguments.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonCodecs.charmap_decode(System.String,System.String,System.String)">
+        <member name="M:IronPython.Modules.FunctionTools.partial.#ctor(IronPython.Runtime.CodeContext,System.Object,System.Object[])">
             <summary>
-            Decodes the input string using the provided string mapping.
+            Creates a new partial object with the provided positional arguments.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonCodecs.charmap_encode(System.String,System.String,IronPython.Modules.PythonCodecs.EncodingMap)">
+        <member name="M:IronPython.Modules.FunctionTools.partial.#ctor(IronPython.Runtime.CodeContext,System.Object,System.Collections.Generic.IDictionary{System.Object,System.Object},System.Object[])">
             <summary>
-            Encodes the input string with the specified optimized encoding map.
+            Creates a new partial object with the provided positional and keyword arguments.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.PythonCodecs.EncodingMap">
+        <member name="M:IronPython.Modules.FunctionTools.partial.Call(IronPython.Runtime.CodeContext,System.Object[])">
             <summary>
-            Optimied encoding mapping that can be consumed by charmap_encode.
+            Calls func with the previously provided arguments and more positional arguments.
             </summary>
         </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.Adler32">
+        <member name="M:IronPython.Modules.FunctionTools.partial.Call(IronPython.Runtime.CodeContext,System.Collections.Generic.IDictionary{System.Object,System.Object},System.Object[])">
             <summary>
-            This class represents adler32 checksum algorithm
+            Calls func with the previously provided arguments and more positional arguments and keyword arguments.
             </summary>
         </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.Adler32.GetAdler32Checksum(System.Int64,System.Byte[],System.Int32,System.Int32)">
+        <member name="M:IronPython.Modules.FunctionTools.partial.SetMemberAfter(IronPython.Runtime.CodeContext,System.String,System.Object)">
             <summary>
-            This static method returns adler32 checksum of the buffer data
+            Operator method to set arbitrary members on the partial object.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.PythonStruct.FormatType">
+        <member name="M:IronPython.Modules.FunctionTools.partial.GetBoundMember(IronPython.Runtime.CodeContext,System.String)">
             <summary>
-            Enum which specifies the format type for a compiled struct
+            Operator method to get additional arbitrary members defined on the partial object.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.PythonStruct.Format">
+        <member name="M:IronPython.Modules.FunctionTools.partial.DeleteMember(IronPython.Runtime.CodeContext,System.String)">
             <summary>
-            Struct used to store the format and the number of times it should be repeated.
+            Operator method to delete arbitrary members defined in the partial object.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonIOModule.GetBytes(System.Object,System.String)">
+        <member name="P:IronPython.Modules.FunctionTools.partial.func">
             <summary>
-            Convert string or bytes into bytes
+            Gets the function which will be called
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonIOModule.GetBytes(System.Object)">
+        <member name="P:IronPython.Modules.FunctionTools.partial.args">
             <summary>
-            Convert most bytearray-like objects into IList of byte
+            Gets the initially provided positional arguments.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonIOModule.TextIOWrapper.ReadChunk(IronPython.Runtime.CodeContext)">
+        <member name="P:IronPython.Modules.FunctionTools.partial.keywords">
             <summary>
-            Read and decode the next chunk from the buffered reader. Returns true if EOF was
-            not reached. Places decoded string in _decodedChars.
+            Gets the initially provided keyword arguments or None.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonIOModule.FileIO.StandardizeMode(System.String)">
+        <member name="P:IronPython.Modules.FunctionTools.partial.__dict__">
             <summary>
-            Remove all 'b's from mode string to simplify parsing
+            Gets or sets the dictionary used for storing extra attributes on the partial object.
             </summary>
-        </member>
-        <member name="T:IronPython.Modules.PythonIOModule.BytesIO">
-            <summary>
-            BytesIO([initializer]) -> object
-            
-            Create a buffered I/O implementation using an in-memory bytes
-            buffer, ready for reading and writing.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonIOModule.BytesIO.close(IronPython.Runtime.CodeContext)">
-            <summary>
-            close() -> None.  Disable all I/O operations.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonIOModule.BytesIO.getvalue">
-            <summary>
-            getvalue() -> bytes.
-            
-            Retrieve the entire contents of the BytesIO object.
-            </summary>
-        </member>
-        <member name="P:IronPython.Modules.PythonIOModule.BytesIO.closed">
-            <summary>
-            True if the file is closed.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonWinReg.HKEYType.GetKey">
-            <summary>
-            Returns the underlying .NET RegistryKey
-            </summary>
-            <returns></returns>
         </member>
         <member name="M:IronPython.Modules.PythonNT.access(IronPython.Runtime.CodeContext,System.String,System.Int32)">
             <summary>
@@ -819,83 +687,99 @@
             Convert a sequence of args to a string suitable for using to spawn a process.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.MemoryHolder">
+        <member name="T:IronPython.Modules.LocalOrArg">
             <summary>
-            A wrapper around allocated memory to ensure it gets released and isn't accessed
-            when it could be finalized.
+            Wrapper class for emitting locals/variables during marshalling code gen.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.MemoryHolder.#ctor(System.Int32)">
+        <member name="T:ComponentAce.Compression.Libs.ZLib.ZStreamException">
             <summary>
-            Creates a new MemoryHolder and allocates a buffer of the specified size.
+            Exceptions that occur in ZStream
             </summary>
         </member>
-        <member name="M:IronPython.Modules.MemoryHolder.#ctor(System.IntPtr,System.Int32)">
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZStreamException.#ctor">
             <summary>
-            Creates a new MemoryHolder at the specified address which is not tracked
-            by us and we will never free.
+            Default constructor.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.MemoryHolder.#ctor(System.IntPtr,System.Int32,IronPython.Modules.MemoryHolder)">
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZStreamException.#ctor(System.String)">
             <summary>
-            Creates a new MemoryHolder at the specified address which will keep alive the 
-            parent memory holder.
+            Constructor which takes one parameter - an error message
             </summary>
         </member>
-        <member name="M:IronPython.Modules.MemoryHolder.AddObject(System.Object,System.Object)">
+        <member name="T:IronPython.Modules.PythonRegex">
             <summary>
-            Used to track the lifetime of objects when one memory region depends upon
-            another memory region.  For example if you have an array of objects that
-            each have an element which has it's own lifetime the array needs to keep
-            the individual elements alive.
+            Python regular expression module.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonRegex.PreParseRegex(IronPython.Runtime.CodeContext,System.String)">
+            <summary>
+            Preparses a regular expression text returning a ParsedRegex class
+            that can be used for further regular expressions.
+            </summary>
+        </member>
+        <member name="T:IronPython.Modules.PythonRegex.RE_Pattern">
+            <summary>
+            Compiled reg-ex pattern
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonCollections.deque.WalkDeque(IronPython.Modules.PythonCollections.deque.DequeWalker)">
+            <summary>
+            Walks the queue calling back to the specified delegate for
+            each populated index in the queue.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonIOModule.GetBytes(System.Object,System.String)">
+            <summary>
+            Convert string or bytes into bytes
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonIOModule.GetBytes(System.Object)">
+            <summary>
+            Convert most bytearray-like objects into IList of byte
+            </summary>
+        </member>
+        <member name="T:IronPython.Modules.PythonIOModule.BytesIO">
+            <summary>
+            BytesIO([initializer]) -> object
             
-            The keys used here match CPython's keys as tested by CPython's test_ctypes. 
-            Typically they are a string which is the array index, "ffffffff" when
-            from_buffer is used, or when it's a simple type there's just a string
-            instead of the full dictionary - we store that under the key "str".
+            Create a buffered I/O implementation using an in-memory bytes
+            buffer, ready for reading and writing.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.MemoryHolder.CopyFrom(System.IntPtr,System.IntPtr)">
+        <member name="M:IronPython.Modules.PythonIOModule.BytesIO.close(IronPython.Runtime.CodeContext)">
             <summary>
-            Copies the data in data into this MemoryHolder.
+            close() -> None.  Disable all I/O operations.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.MemoryHolder.CopyTo(IronPython.Modules.MemoryHolder,System.Int32,System.Int32)">
+        <member name="M:IronPython.Modules.PythonIOModule.BytesIO.getvalue">
             <summary>
-            Copies memory from one location to another keeping the associated memory holders alive during the
-            operation.
+            getvalue() -> bytes.
+            
+            Retrieve the entire contents of the BytesIO object.
             </summary>
         </member>
-        <member name="P:IronPython.Modules.MemoryHolder.UnsafeAddress">
+        <member name="P:IronPython.Modules.PythonIOModule.BytesIO.closed">
             <summary>
-            Gets the address of the held memory.  The caller should ensure the MemoryHolder
-            is always alive as long as the address will continue to be accessed.
+            True if the file is closed.
             </summary>
         </member>
-        <member name="P:IronPython.Modules.MemoryHolder.Objects">
+        <member name="M:IronPython.Modules.PythonIOModule.TextIOWrapper.ReadChunk(IronPython.Runtime.CodeContext)">
             <summary>
-            Gets a list of objects which need to be kept alive for this MemoryHolder to be 
-            remain valid.
+            Read and decode the next chunk from the buffered reader. Returns true if EOF was
+            not reached. Places decoded string in _decodedChars.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonMath.erf(System.Double)">
+        <member name="M:IronPython.Modules.PythonIOModule.FileIO.StandardizeMode(System.String)">
             <summary>
-            Error function on real values
+            Remove all 'b's from mode string to simplify parsing
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonMath.erfc(System.Double)">
+        <member name="T:IronPython.Modules.PythonTime.FoundDateComponents">
             <summary>
-            Complementary error function on real values: erfc(x) =  1 - erf(x)
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonMath.gamma(System.Double)">
-            <summary>
-            Gamma function on real values
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonMath.lgamma(System.Double)">
-            <summary>
-            Natural log of absolute value of Gamma function
+            Represents the date components that we found while parsing the date.  Used for zeroing out values
+            which have different defaults from CPython.  Currently we only know that we need to do this for
+            the year.
             </summary>
         </member>
         <member name="T:ComponentAce.Compression.Libs.ZLib.InflateMode">
@@ -1069,314 +953,40 @@
              waiting for these length bytes.
              </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonSsl.ReadInt(System.Byte[],System.Int32@)">
+        <member name="M:IronPython.Modules.PythonLocale.LocaleInfo.CreateConventionsDict">
             <summary>
-            BER encoding of an integer value is the number of bytes
-            required to represent the integer followed by the bytes
+            Popupates the given directory w/ the locale information from the given
+            CultureInfo.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.PythonRegex">
+        <member name="M:IronPython.Modules.PythonCopyReg.EnsureCallable(IronPython.Runtime.CodeContext,System.Object,System.String)">
             <summary>
-            Python regular expression module.
+            Throw TypeError with a specified message if object isn't callable.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonRegex.PreParseRegex(IronPython.Runtime.CodeContext,System.String)">
+        <member name="M:IronPython.Modules.PythonCopyReg.GetCode(IronPython.Runtime.CodeContext,System.Object)">
             <summary>
-            Preparses a regular expression text returning a ParsedRegex class
-            that can be used for further regular expressions.
+            Convert object to ushort, throwing ValueError on overflow.
             </summary>
         </member>
-        <member name="T:IronPython.Modules.PythonRegex.RE_Pattern">
+        <member name="M:IronPython.Modules.PythonMath.erf(System.Double)">
             <summary>
-            Compiled reg-ex pattern
+            Error function on real values
             </summary>
         </member>
-        <member name="T:IronPython.Modules.PythonPickle.FileInput">
+        <member name="M:IronPython.Modules.PythonMath.erfc(System.Double)">
             <summary>
-            Interface for "file-like objects" that implement the protocol needed by load() and friends.
-            This enables the creation of thin wrappers that make fast .NET types and slow Python types look the same.
+            Complementary error function on real values: erfc(x) =  1 - erf(x)
             </summary>
         </member>
-        <member name="T:IronPython.Modules.PythonPickle.FileOutput">
+        <member name="M:IronPython.Modules.PythonMath.gamma(System.Double)">
             <summary>
-            Interface for "file-like objects" that implement the protocol needed by dump() and friends.
-            This enables the creation of thin wrappers that make fast .NET types and slow Python types look the same.
+            Gamma function on real values
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.SaveObject(IronPython.Modules.PythonPickle.PicklerObject,IronPython.Runtime.CodeContext,System.Object)">
+        <member name="M:IronPython.Modules.PythonMath.lgamma(System.Double)">
             <summary>
-            Call the appropriate reduce method for obj and pickle the object using
-            the resulting data. Use the first available of
-            copy_reg.dispatch_table[type(obj)], obj.__reduce_ex__, and obj.__reduce__.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.SaveReduce(IronPython.Runtime.CodeContext,System.Object,System.Object,System.Object,System.Object,System.Object,System.Object,System.Object)">
-            <summary>
-            Pickle the result of a reduce function.
-            
-            Only context, obj, func, and reduceCallable are required; all other arguments may be null.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteFloatAsString(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Write value in pickle decimalnl_short format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteFloat64(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Write value in pickle float8 format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteUInt8(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Write value in pickle uint1 format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteUInt16(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Write value in pickle uint2 format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteInt32(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Write value in pickle int4 format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteIntAsString(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Write value in pickle decimalnl_short format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteIntAsString(IronPython.Runtime.CodeContext,System.Int32)">
-            <summary>
-            Write value in pickle decimalnl_short format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteLongAsString(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Write value in pickle decimalnl_long format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteUnicodeStringRaw(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Write value in pickle unicodestringnl format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteUnicodeStringUtf8(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Write value in pickle unicodestring4 format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteStringPair(IronPython.Runtime.CodeContext,System.Object,System.Object)">
-            <summary>
-            Write value in pickle stringnl_noescape_pair format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.IsUInt8(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Return true if value is appropriate for formatting in pickle uint1 format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.IsUInt16(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Return true if value is appropriate for formatting in pickle uint2 format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.IsInt32(IronPython.Runtime.CodeContext,System.Object)">
-            <summary>
-            Return true if value is appropriate for formatting in pickle int4 format.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.BatchAppends(IronPython.Runtime.CodeContext,System.Collections.IEnumerator)">
-            <summary>
-            Emit a series of opcodes that will set append all items indexed by iter
-            to the object at the top of the stack. Use APPENDS if possible, but
-            append no more than BatchSize items at a time.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.BatchSetItems(IronPython.Runtime.CodeContext,IronPython.Runtime.PythonDictionary)">
-            <summary>
-            Emit a series of opcodes that will set all (key, value) pairs indexed by
-            iter in the object at the top of the stack. Use SETITEMS if possible,
-            but append no more than BatchSize items at a time.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.BatchSetItems(IronPython.Runtime.CodeContext,System.Collections.IEnumerator)">
-            <summary>
-            Emit a series of opcodes that will set all (key, value) pairs indexed by
-            iter in the object at the top of the stack. Use SETITEMS if possible,
-            but append no more than BatchSize items at a time.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.FindModuleForGlobal(IronPython.Runtime.CodeContext,System.Object,System.Object)">
-            <summary>
-            Find the module for obj and ensure that obj is reachable in that module by the given name.
-            
-            Throw PicklingError if any of the following are true:
-             - The module couldn't be determined.
-             - The module couldn't be loaded.
-             - The given name doesn't exist in the module.
-             - The given name is a different object than obj.
-            
-            Otherwise, return the name of the module.
-            
-            To determine which module obj lives in, obj.__module__ is used if available. The
-            module named by obj.__module__ is loaded if needed. If obj has no __module__
-            attribute, then each loaded module is searched. If a loaded module has an
-            attribute with the given name, and that attribute is the same object as obj,
-            then that module is used.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonPickle.UnpicklerObject.SetItems(IronPython.Runtime.PythonDictionary,System.Int32)">
-            <summary>
-            Interpret everything from markIndex to the top of the stack as a sequence
-            of key, value, key, value, etc. Set dict[key] = value for each. Pop
-            everything from markIndex up when done.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.StaticTree.MAX_BL_BITS">
-            <summary>
-             Bit length codes must not exceed MAX_BL_BITS bits
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonDateTime.date.CheckType(System.Object,System.Boolean)">
-            <summary>
-            Used to check the type to see if we can do a comparison.  Returns true if we can
-            or false if we should return NotImplemented.  May throw if the type's really wrong.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonDateTime.time.CompareTo(System.Object)">
-            <summary>
-            Helper function for doing the comparisons.  time has no __cmp__ method
-            </summary>
-        </member>
-        <member name="T:IronPython.Modules.xxsubtype">
-            <summary>
-            Samples on how to subtype built-in types from C#
-            </summary>
-        </member>
-        <member name="P:IronPython.Modules.xxsubtype.spamlist.state">
-            <summary>
-            an int variable for demonstration purposes
-            </summary>
-        </member>
-        <member name="P:IronPython.Modules.xxsubtype.spamdict.state">
-            <summary>
-            an int variable for demonstration purposes
-            </summary>
-        </member>
-        <member name="T:IronPython.Modules.PythonThread._local.ThreadLocalDictionaryStorage">
-            <summary>
-            Provides a dictionary storage implementation whose storage is local to
-            the thread.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.SignInsensitiveToInt32(System.Object)">
-            <summary>
-            Convert an object to a 32-bit integer. This adds two features to Converter.ToInt32:
-              1. Sign is ignored. For example, 0xffff0000 converts to 4294901760, where Convert.ToInt32
-                 would throw because 0xffff0000 is less than zero.
-              2. Overflow exceptions are thrown. Converter.ToInt32 throws TypeError if x is
-                 an integer, but is bigger than 32 bits. Instead, we throw OverflowException.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.SignInsensitiveToInt16(System.Object)">
-            <summary>
-            Convert an object to a 16-bit integer. This adds two features to Converter.ToInt16:
-              1. Sign is ignored. For example, 0xff00 converts to 65280, where Convert.ToInt16
-                 would throw because signed 0xff00 is -256.
-              2. Overflow exceptions are thrown. Converter.ToInt16 throws TypeError if x is
-                 an integer, but is bigger than 16 bits. Instead, we throw OverflowException.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.MakeException(IronPython.Runtime.CodeContext,System.Exception)">
-            <summary>
-            Return a standard socket exception (socket.error) whose message and error code come from a SocketException
-            This will eventually be enhanced to generate the correct error type (error, herror, gaierror) based on the error code.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.IPv6BytesToColonHex(System.Byte[])">
-            <summary>
-            Convert an IPv6 address byte array to a string in standard colon-hex notation.
-            The .NET IPAddress.ToString() method uses dotted-quad for the last 32 bits,
-            which differs from the normal Python implementation (but is allowed by the IETF);
-            this method returns the standard (no dotted-quad) colon-hex form.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.ConvertSpecialAddresses(System.String)">
-            <summary>
-            Handle conversion of "" to INADDR_ANY and "&lt;broadcast&gt;" to INADDR_BROADCAST.
-            Otherwise returns host unchanged.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.HostToAddress(IronPython.Runtime.CodeContext,System.String,System.Net.Sockets.AddressFamily)">
-            <summary>
-            Return the IP address associated with host, with optional address family checking.
-            host may be either a name or an IP address (in string form).
-            
-            If family is non-null, a gaierror will be thrown if the host's address family is
-            not the same as the specified family. gaierror is also raised if the hostname cannot be
-            converted to an IP address (e.g. through a name lookup failure).
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.HostToAddresses(IronPython.Runtime.CodeContext,System.String,System.Net.Sockets.AddressFamily)">
-            <summary>
-            Return the IP address associated with host, with optional address family checking.
-            host may be either a name or an IP address (in string form).
-            
-            If family is non-null, a gaierror will be thrown if the host's address family is
-            not the same as the specified family. gaierror is also raised if the hostname cannot be
-            converted to an IP address (e.g. through a name lookup failure).
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.RemoveLocalDomain(System.String)">
-            <summary>
-            Return fqdn, but with its domain removed if it's on the same domain as the local machine.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.TupleToEndPoint(IronPython.Runtime.CodeContext,IronPython.Runtime.PythonTuple,System.Net.Sockets.AddressFamily,System.String@)">
-            <summary>
-            Convert a (host, port) tuple [IPv4] (host, port, flowinfo, scopeid) tuple [IPv6]
-            to its corresponding IPEndPoint.
-            
-            Throws gaierror if host is not a valid address.
-            Throws ArgumentTypeException if any of the following are true:
-             - address does not have exactly two elements
-             - address[0] is not a string
-             - address[1] is not an int
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.EndPointToTuple(System.Net.IPEndPoint)">
-            <summary>
-            Convert an IPEndPoint to its corresponding (host, port) [IPv4] or (host, port, flowinfo, scopeid) [IPv6] tuple.
-            Throws SocketException if the address family is other than IPv4 or IPv6.
-            </summary>
-        </member>
-        <member name="F:IronPython.Modules.PythonSocket.socket._handleToSocket">
-            <summary>
-            handleToSocket allows us to translate from Python's idea of a socket resource (file
-            descriptor numbers) to .NET's idea of a socket resource (System.Net.Socket objects).
-            In particular, this allows the select module to convert file numbers (as returned by
-            fileno()) and convert them to Socket objects so that it can do something useful with them.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.socket.HandleToSocket(System.Int64)">
-            <summary>
-            Return the internal System.Net.Sockets.Socket socket object associated with the given
-            handle (as returned by GetHandle()), or null if no corresponding socket exists. This is
-            primarily intended to be used by other modules (such as select) that implement
-            networking primitives. User code should not normally need to call this function.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.socket.#ctor(IronPython.Runtime.CodeContext,System.Net.Sockets.Socket)">
-            <summary>
-            Create a Python socket object from an existing .NET socket object
-            (like one returned from Socket.Accept())
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonSocket.socket.Initialize(IronPython.Runtime.CodeContext,System.Net.Sockets.Socket)">
-            <summary>
-            Perform initialization common to all constructors
+            Natural log of absolute value of Gamma function
             </summary>
         </member>
         <member name="F:ComponentAce.Compression.Libs.ZLib.InfBlocks.mode">
@@ -1530,449 +1140,135 @@
             bit buffer 
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonSelect.ProcessSocketSequence(IronPython.Runtime.CodeContext,System.Object,IronPython.Runtime.List@,System.Collections.Generic.Dictionary{System.Net.Sockets.Socket,System.Object}@)">
+        <member name="T:IronPython.Modules.xxsubtype">
             <summary>
-            Process a sequence of objects that are compatible with ObjectToSocket(). Return two
-            things as out params: an in-order List of sockets that correspond to the original
-            objects in the passed-in sequence, and a mapping of these socket objects to their
-            original objects.
-            
-            The socketToOriginal mapping is generated because the CPython select module supports
-            passing to select either file descriptor numbers or an object with a fileno() method.
-            We try to be faithful to what was originally requested when we return.
+            Samples on how to subtype built-in types from C#
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonSelect.ObjectToSocket(IronPython.Runtime.CodeContext,System.Object)">
+        <member name="P:IronPython.Modules.xxsubtype.spamlist.state">
             <summary>
-            Return the System.Net.Sockets.Socket object that corresponds to the passed-in
-            object. obj can be a System.Net.Sockets.Socket, a PythonSocket.SocketObj, a
-            long integer (representing a socket handle), or a Python object with a fileno()
-            method (whose result is used to look up an existing PythonSocket.SocketObj,
-            which is in turn converted to a Socket.
+            an int variable for demonstration purposes
             </summary>
         </member>
-        <member name="T:IronPython.Modules.ModuleOps">
+        <member name="P:IronPython.Modules.xxsubtype.spamdict.state">
             <summary>
-            Provides helper functions which need to be called from generated code to implement various 
-            portions of modules.
+            an int variable for demonstration purposes
             </summary>
         </member>
-        <member name="T:IronPython.Modules.FunctionTools.partial">
+        <member name="M:IronPython.Modules.PythonCodecs.charmap_build(System.String)">
             <summary>
-            Returns a new callable object with the provided initial set of arguments
-            bound to it.  Calling the new function then appends to the additional
-            user provided arguments.
+            Creates an optimized encoding mapping that can be consumed by an optimized version of charmap_encode.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.FunctionTools.partial.#ctor(IronPython.Runtime.CodeContext,System.Object,System.Object[])">
+        <member name="M:IronPython.Modules.PythonCodecs.charmap_decode(System.String,System.String,System.String)">
             <summary>
-            Creates a new partial object with the provided positional arguments.
+            Decodes the input string using the provided string mapping.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.FunctionTools.partial.#ctor(IronPython.Runtime.CodeContext,System.Object,System.Collections.Generic.IDictionary{System.Object,System.Object},System.Object[])">
+        <member name="M:IronPython.Modules.PythonCodecs.charmap_encode(System.String,System.String,IronPython.Modules.PythonCodecs.EncodingMap)">
             <summary>
-            Creates a new partial object with the provided positional and keyword arguments.
+            Encodes the input string with the specified optimized encoding map.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.FunctionTools.partial.Call(IronPython.Runtime.CodeContext,System.Object[])">
+        <member name="T:IronPython.Modules.PythonCodecs.EncodingMap">
             <summary>
-            Calls func with the previously provided arguments and more positional arguments.
+            Optimied encoding mapping that can be consumed by charmap_encode.
             </summary>
         </member>
-        <member name="M:IronPython.Modules.FunctionTools.partial.Call(IronPython.Runtime.CodeContext,System.Collections.Generic.IDictionary{System.Object,System.Object},System.Object[])">
+        <member name="T:ComponentAce.Compression.Libs.ZLib.InflateCodesMode">
             <summary>
-            Calls func with the previously provided arguments and more positional arguments and keyword arguments.
+            Inflate codes mode
             </summary>
         </member>
-        <member name="M:IronPython.Modules.FunctionTools.partial.SetMemberAfter(IronPython.Runtime.CodeContext,System.String,System.Object)">
+        <member name="T:ComponentAce.Compression.Libs.ZLib.InfCodes">
             <summary>
-            Operator method to set arbitrary members on the partial object.
+            This class is used by the InfBlocks class
             </summary>
         </member>
-        <member name="M:IronPython.Modules.FunctionTools.partial.GetBoundMember(IronPython.Runtime.CodeContext,System.String)">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.mode">
             <summary>
-            Operator method to get additional arbitrary members defined on the partial object.
+            current inflate_codes mode
             </summary>
         </member>
-        <member name="M:IronPython.Modules.FunctionTools.partial.DeleteMember(IronPython.Runtime.CodeContext,System.String)">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.count">
             <summary>
-            Operator method to delete arbitrary members defined in the partial object.
-            </summary>
-        </member>
-        <member name="P:IronPython.Modules.FunctionTools.partial.func">
-            <summary>
-            Gets the function which will be called
-            </summary>
-        </member>
-        <member name="P:IronPython.Modules.FunctionTools.partial.args">
-            <summary>
-            Gets the initially provided positional arguments.
-            </summary>
-        </member>
-        <member name="P:IronPython.Modules.FunctionTools.partial.keywords">
-            <summary>
-            Gets the initially provided keyword arguments or None.
-            </summary>
-        </member>
-        <member name="P:IronPython.Modules.FunctionTools.partial.__dict__">
-            <summary>
-            Gets or sets the dictionary used for storing extra attributes on the partial object.
-            </summary>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.ZStreamException">
-            <summary>
-            Exceptions that occur in ZStream
-            </summary>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZStreamException.#ctor">
-            <summary>
-            Default constructor.
-            </summary>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZStreamException.#ctor(System.String)">
-            <summary>
-            Constructor which takes one parameter - an error message
-            </summary>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel">
-            <summary>
-            Some constants for specifying compression levels. Methods which takes a compression level as a parameter expects an integer value from 0 to 9. You can either specify an integer value or use constants for some most widely used compression levels.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel.Z_NO_COMPRESSION">
-            <summary>
-             No compression should be used at all.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel.Z_BEST_SPEED">
-            <summary>
-            Minimal compression, but greatest speed.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel.Z_BEST_COMPRESSION">
-            <summary>
-            Maximum compression, but slowest.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel.Z_DEFAULT_COMPRESSION">
-            <summary>
-            Select default compression level (good compression, good speed).
-            </summary>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.CompressionStrategy">
-            <summary>
-            Compression strategies. The strategy parameter is used to tune the compression algorithm. The strategy parameter only affects the compression ratio but not the correctness of the compressed output even if it is not set appropriately.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.CompressionStrategy.Z_FILTERED">
-            <summary>
-            This strategy is designed for filtered data. Data which consists of mostly small values, with random distribution should use Z_FILTERED. With this strategy, less string matching is performed.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.CompressionStrategy.Z_HUFFMAN_ONLY">
-            <summary>
-            Z_HUFFMAN_ONLY forces Huffman encoding only (no string match)
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.CompressionStrategy.Z_DEFAULT_STRATEGY">
-            <summary>
-            The default strategy is the most commonly used. With this strategy, string matching and huffman compression are balanced.
-            </summary>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.FlushStrategy">
-            <summary>
-            Flush strategies
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_NO_FLUSH">
-            <summary>
-              Do not internalFlush data, but just write data as normal to the output buffer. This is the normal way in which data is written to the output buffer.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_PARTIAL_FLUSH">
-            <summary>
-            Obsolete. You should use Z_SYNC_FLUSH instead.
+            length
             </summary>        
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.tree">
             <summary>
-            All pending output is flushed to the output buffer and the output is aligned on a byte boundary, so that the decompressor can get all input data available so far.
+            pointer into tree
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FULL_FLUSH">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.tree_index">
             <summary>
-            All output is flushed as with Z_SYNC_FLUSH, and the compression state is reset so that decompression can restart from this point if previous compressed data has been damaged or if random access is desired. Using Z_FULL_FLUSH too often can seriously degrade the compression. ZLib_InflateSync will locate points in the compression string where a full has been performed.
+            current index of the tree
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.need">
             <summary>
-            Notifies the module that the input has now been exhausted. Pending input is processed, pending output is flushed and calls return with Z_STREAM_END if there was enough output space.
+            
             </summary>
         </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.ZLibResultCode">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.lbits">
             <summary>
-            Results of operations in ZLib library
+            ltree bits decoded per branch
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.dbits">
             <summary>
-             No failure was encountered, the operation completed without problem.
+            dtree bits decoded per branch
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.ltree">
             <summary>
-            No failure was encountered, and the input has been exhausted.
+            literal/length/eob tree
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_NEED_DICT">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.ltree_index">
             <summary>
-            A preset dictionary is required for decompression of the data.
+            literal/length/eob tree index
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_ERRNO">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.dtree">
             <summary>
-            An internal error occurred
+            distance tree
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR">
+        <member name="F:ComponentAce.Compression.Libs.ZLib.InfCodes.dtree_index">
             <summary>
-            The stream structure was inconsistent
+            distance tree index
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR">
+        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.#ctor(System.Int32,System.Int32,System.Int32[],System.Int32,System.Int32[],System.Int32,ComponentAce.Compression.Libs.ZLib.ZStream)">
             <summary>
-            Input data has been corrupted (for decompression).
+            Constructor which takes literal, distance trees, corresponding bites decoded for branches, corresponding indexes and a ZStream object 
+            </summary>        
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.#ctor(System.Int32,System.Int32,System.Int32[],System.Int32[],ComponentAce.Compression.Libs.ZLib.ZStream)">
+            <summary>
+            Constructor which takes literal, distance trees, corresponding bites decoded for branches and a ZStream object 
+            </summary>   
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.proc(ComponentAce.Compression.Libs.ZLib.InfBlocks,ComponentAce.Compression.Libs.ZLib.ZStream,System.Int32)">
+            <summary>
+            Block processing method
+            </summary>
+            <param name="s">An instance of the InfBlocks class</param>
+            <param name="z">A ZStream object</param>
+            <param name="r">A result code</param>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.free(ComponentAce.Compression.Libs.ZLib.ZStream)">
+            <summary>
+            Frees allocated resources
             </summary>
         </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR">
+        <member name="M:ComponentAce.Compression.Libs.ZLib.InfCodes.inflate_fast(System.Int32,System.Int32,System.Int32[],System.Int32,System.Int32[],System.Int32,ComponentAce.Compression.Libs.ZLib.InfBlocks,ComponentAce.Compression.Libs.ZLib.ZStream)">
             <summary>
-            Memory allocation failed.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR">
-            <summary>
-            There was not enough space in the output buffer.
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_VERSION_ERROR">
-            <summary>
-            The version supplied does not match that supported by the ZLib module.
-            </summary>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.DeflateState">
-            <summary>
-            States of deflate operation
-            </summary>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.BlockType">
-            <summary>
-            Data block types, i.e. binary or ascii text
-            </summary>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.ZLibUtil">
-            <summary>
-            Helper class
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.MAX_WBITS">
-            <summary>
-            Max Window size
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.PRESET_DICT">
-            <summary>
-            preset dictionary flag in zlib header
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.zLibBufSize">
-            <summary>
-            The size of the buffer
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Z_DEFLATED">
-            <summary>
-            Deflate compression method index
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.DIST_CODE_LEN">
-            <summary>
-            see definition of array dist_code below
-            </summary>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Identity(System.Int64)">
-            <summary>
-            This method returns the literal value received
-            </summary>
-            <param name="literal">The literal to return</param>
-            <returns>The received value</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Identity(System.UInt64)">
-            <summary>
-            This method returns the literal value received
-            </summary>
-            <param name="literal">The literal to return</param>
-            <returns>The received value</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Identity(System.Single)">
-            <summary>
-            This method returns the literal value received
-            </summary>
-            <param name="literal">The literal to return</param>
-            <returns>The received value</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Identity(System.Double)">
-            <summary>
-            This method returns the literal value received
-            </summary>
-            <param name="literal">The literal to return</param>
-            <returns>The received value</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.URShift(System.Int32,System.Int32)">
-            <summary>
-            Performs an unsigned bitwise right shift with the specified number
-            </summary>
-            <param name="number">Number to operate on</param>
-            <param name="bits">Ammount of bits to shift</param>
-            <returns>The resulting number from the shift operation</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.URShift(System.Int32,System.Int64)">
-            <summary>
-            Performs an unsigned bitwise right shift with the specified number
-            </summary>
-            <param name="number">Number to operate on</param>
-            <param name="bits">Ammount of bits to shift</param>
-            <returns>The resulting number from the shift operation</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.URShift(System.Int64,System.Int32)">
-            <summary>
-            Performs an unsigned bitwise right shift with the specified number
-            </summary>
-            <param name="number">Number to operate on</param>
-            <param name="bits">Ammount of bits to shift</param>
-            <returns>The resulting number from the shift operation</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.URShift(System.Int64,System.Int64)">
-            <summary>
-            Performs an unsigned bitwise right shift with the specified number
-            </summary>
-            <param name="number">Number to operate on</param>
-            <param name="bits">Ammount of bits to shift</param>
-            <returns>The resulting number from the shift operation</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.ReadInput(System.IO.Stream,System.Byte[],System.Int32,System.Int32)">
-            <summary>Reads a number of characters from the current source Stream and writes the data to the target array at the specified index.</summary>
-            <param name="sourceStream">The source Stream to ReadPos from.</param>
-            <param name="target">Contains the array of characters ReadPos from the source Stream.</param>
-            <param name="start">The starting index of the target array.</param>
-            <param name="count">The maximum number of characters to ReadPos from the source Stream.</param>
-            <returns>The number of characters ReadPos. The number will be less than or equal to count depending on the data available in the source Stream. Returns -1 if the End of the stream is reached.</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.ReadInput(System.IO.TextReader,System.Byte[],System.Int32,System.Int32)">
-            <summary>Reads a number of characters from the current source TextReader and writes the data to the target array at the specified index.</summary>
-            <param name="sourceTextReader">The source TextReader to ReadPos from</param>
-            <param name="target">Contains the array of characteres ReadPos from the source TextReader.</param>
-            <param name="start">The starting index of the target array.</param>
-            <param name="count">The maximum number of characters to ReadPos from the source TextReader.</param>
-            <returns>The number of characters ReadPos. The number will be less than or equal to count depending on the data available in the source TextReader. Returns -1 if the End of the stream is reached.</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.ToByteArray(System.String)">
-            <summary>
-            Converts a string to an array of bytes
-            </summary>
-            <param name="sourceString">The string to be converted</param>
-            <returns>The new array of bytes</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.ToCharArray(System.Byte[])">
-            <summary>
-            Converts an array of bytes to an array of chars
-            </summary>
-            <param name="byteArray">The array of bytes to convert</param>
-            <returns>The new array of chars</returns>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.CopyLargeArrayToSmall.CopyData">
-            <summary>
-            Copies large array which was passed as srcBuf to the Initialize method into the destination array which were passes as destBuff
-            </summary>
-            <returns>The number of bytes copied</returns>
-        </member>
-        <member name="T:ComponentAce.Compression.Libs.ZLib.Tree">
-            <summary>
-            This class represents a tree and is used in the Deflate class
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.Tree.dyn_tree">
-            <summary>
-            The dynamic tree
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.Tree.max_code">
-            <summary>
-            Largest code with non zero frequency
-            </summary>
-        </member>
-        <member name="F:ComponentAce.Compression.Libs.ZLib.Tree.stat_desc">
-            <summary>
-            the corresponding static tree
-            </summary>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.d_code(System.Int32)">
-            <summary>
-            Mapping from a distance to a distance code. dist is the distance - 1 and
-            must not have side effects. _dist_code[256] and _dist_code[257] are never
-            used.
-            </summary>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.gen_bitlen(ComponentAce.Compression.Libs.ZLib.Deflate)">
-            <summary>
-             Compute the optimal bit lengths for a tree and update the total bit length
-             for the current block.
-             IN assertion: the fields freq and dad are set, heap[heap_max] and
-                above are the tree nodes sorted by increasing frequency.
-             OUT assertions: the field count is set to the optimal bit length, the
-                 array bl_count contains the frequencies for each bit length.
-                 The length opt_len is updated; static_len is also updated if stree is
-                 not null.
-            </summary>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.build_tree(ComponentAce.Compression.Libs.ZLib.Deflate)">
-            <summary>
-             Construct one Huffman tree and assigns the code bit strings and lengths.
-             Update the total bit length for the current block.
-             IN assertion: the field freq is set for all tree elements.
-             OUT assertions: the fields count and code are set to the optimal bit length
-                 and corresponding code. The length opt_len is updated; static_len is
-                 also updated if stree is not null. The field max_code is set.
-            </summary>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.gen_codes(System.Int16[],System.Int32,System.Int16[])">
-            <summary>
-             Generate the codes for a given tree and bit counts (which need not be
-             optimal).
-             IN assertion: the array bl_count contains the bit length statistics for
-             the given tree and the field count is set for all tree elements.
-             OUT assertion: the field code is set for all tree elements of non
-                 zero code length.
-            </summary>
-        </member>
-        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.bi_reverse(System.Int32,System.Int32)">
-            <summary>
-             Reverse the first count bits of a code, using straightforward code (a faster
-             method would use a table)
-            </summary>
-        </member>
-        <member name="P:ComponentAce.Compression.Libs.ZLib.Tree.DynTree">
-            <summary>
-            The dynamic tree
-            </summary>
-        </member>
-        <member name="P:ComponentAce.Compression.Libs.ZLib.Tree.MaxCode">
-            <summary>
-            Largest code with non zero frequency
-            </summary>
-        </member>
-        <member name="P:ComponentAce.Compression.Libs.ZLib.Tree.StatDesc">
-            <summary>
-            the corresponding static tree
+            Fast inflate procedure. Called with number of bytes left to WritePos in Window at least 258
+            (the maximum string length) and number of input bytes available
+            at least ten.  The ten bytes are six bytes for the longest length/
+            distance pair plus four bytes for overloading the bit buffer.
             </summary>
         </member>
         <member name="T:ComponentAce.Compression.Libs.ZLib.Deflate">
@@ -2087,7 +1383,7 @@
         </member>
         <member name="F:ComponentAce.Compression.Libs.ZLib.Deflate.data_type">
             <summary>
-            // UNKNOWN, BINARY or ASCII
+            UNKNOWN, BINARY or ASCII
             </summary>
         </member>
         <member name="F:ComponentAce.Compression.Libs.ZLib.Deflate.method">
@@ -2649,41 +1945,10 @@
             Constructor which initializes class inner fields
             </summary>
         </member>
-        <member name="M:IronPython.Modules.PythonWeakRef.weakproxy.GetObject">
+        <member name="T:IronPython.Modules.ModuleOps">
             <summary>
-            gets the object or throws a reference exception
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonWeakRef.weakproxy.__eq__(System.Object)">
-            <summary>
-            Special equality function because IStructuralEquatable.Equals is not allowed to throw.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonWeakRef.weakcallableproxy.GetObject">
-            <summary>
-            gets the object or throws a reference exception
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonWeakRef.weakcallableproxy.__eq__(System.Object)">
-            <summary>
-            Special equality function because IStructuralEquatable.Equals is not allowed to throw.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonWeakRef.ref.__hash__(IronPython.Runtime.CodeContext)">
-            <summary>
-            Special hash function because IStructuralEquatable.GetHashCode is not allowed to throw.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonWeakRef.ref.RefEquals(System.Object,System.Object,System.Collections.IEqualityComparer)">
-            <summary>
-            Special equals because none of the special cases in Ops.Equals
-            are applicable here, and the reference equality check breaks some tests.
-            </summary>
-        </member>
-        <member name="M:IronPython.Modules.PythonLocale.LocaleInfo.CreateConventionsDict">
-            <summary>
-            Popupates the given directory w/ the locale information from the given
-            CultureInfo.
+            Provides helper functions which need to be called from generated code to implement various 
+            portions of modules.
             </summary>
         </member>
         <member name="T:ComponentAce.Compression.Libs.ZLib.ZStream">
@@ -2763,57 +2028,115 @@
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit">
             <summary>
-            Initializes the internal stream state for decompression. The fields <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/>, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> must be initialized before by the caller. If <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> is not <c>null</c> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> is large enough (the exact value depends on the compression method), <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit"/> determines the compression method from the ZLib header and allocates all data structures accordingly; otherwise the allocation will be deferred to the first call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. 
+            Initializes the internal stream state for decompression. The fields <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/>, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> must be 
+            initialized before by the caller. If <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> is not <c>null</c> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> is large 
+            enough (the exact value depends on the compression method), <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit"/> determines the compression 
+            method from the ZLib header and allocates all data structures accordingly; otherwise the allocation will be deferred 
+            to the first call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. 
             </summary>
             <returns>
-            inflateInit returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory,  <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_VERSION_ERROR"/> if the ZLib library version is incompatible with the version assumed by the caller. <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> is set to <c>null</c> if there is no error message. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit"/> does not perform any decompression apart from reading the ZLib header if present: this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. (So <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> may be modified, but <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> are unchanged.)
+            inflateInit returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory,  
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_VERSION_ERROR"/> if the ZLib library version is incompatible with the version assumed by the caller. 
+            <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> is set to <c>null</c> if there is no error message. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit"/> does not perform any decompression 
+            apart from reading the ZLib header if present: this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. (So <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> 
+            may be modified, but <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> are unchanged.)
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit(System.Int32)">
             <summary>
-            This is another version of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit"/> with an extra parameter. The fields <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/>, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> must be initialized before by the caller. If <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> is not <c>null</c> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> is large enough (the exact value depends on the compression method), <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit(System.Int32)"/> determines the compression method from the ZLib header and allocates all data structures accordingly; otherwise the allocation will be deferred to the first call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. 
+            This is another version of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit"/> with an extra parameter. The fields <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/>, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> must be 
+            initialized before by the caller. If <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> is not <c>null</c> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> is large enough 
+            (the exact value depends on the compression method), <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit(System.Int32)"/> determines the compression method from 
+            the ZLib header and allocates all data structures accordingly; otherwise the allocation will be deferred to the first 
+            call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. 
             </summary>
-            <param name="windowBits">The <c>windowBits</c> parameter is the base two logarithm of the maximum window size (the size of the history buffer). It should be in the range <c>8..15</c> for this version of the library. The default value is 15 if <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit(System.Int32)"/> is used instead. If a compressed stream with a larger window size is given as input, <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> will return with the error code <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> instead of trying to allocate a larger window.</param>
+            <param name="windowBits">The <c>windowBits</c> parameter is the base two logarithm of the maximum window size (the size of the history buffer). 
+            It should be in the range <c>8..15</c> for this version of the library. The default value is 15 if <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit(System.Int32)"/> is used instead.
+            If a compressed stream with a larger window size is given as input, <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> will return with the error code 
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> instead of trying to allocate a larger window.</param>
             <returns>
-            inflateInit returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if a parameter is invalid (such as a negative memLevel). <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> is set to null if there is no error message. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit(System.Int32)"/> does not perform any decompression apart from reading the ZLib header if present: this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. (So <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> may be modified, but <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> are unchanged.)
+            inflateInit returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory,
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if a parameter is invalid (such as a negative memLevel). <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> is set to null 
+            if there is no error message. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateInit(System.Int32)"/> does not perform any decompression apart from reading the ZLib header 
+            if present: this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. (So <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> may be modified, 
+            but <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> are unchanged.)
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)">
             <summary>
-            <para>This method decompresses as much data as possible, and stops when the input buffer (<see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/>) becomes empty or the output buffer (<see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/>) becomes full. It may some introduce some output latency (reading input without producing any output) except when forced to flush. </para>
+            <para>This method decompresses as much data as possible, and stops when the input buffer (<see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/>) becomes empty or 
+            the output buffer (<see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/>) becomes full. It may some introduce some output latency (reading input without producing any output) 
+            except when forced to flush. </para>
             <para>The detailed semantics are as follows. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> performs one or both of the following actions: </para>
             <para>
             <list type="bullet">
-            <item>Decompress more input starting at <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and update <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> accordingly. If not all input can be processed (because there is not enough room in the output buffer), <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> is updated and processing will resume at this point for the next call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. </item>
-            <item>Provide more output starting at <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and update <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> accordingly. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> provides as much output as possible, until there is no more input data or no more space in the output buffer (see below about the <paramref name="flush"/> parameter).</item>
+            <item>Decompress more input starting at <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and update <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> 
+            accordingly. If not all input can be processed (because there is not enough room in the output buffer), <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> is updated and 
+            processing will resume at this point for the next call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. </item>
+            <item>Provide more output starting at <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and update <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> 
+            accordingly. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> provides as much output as possible, until there is no more input data or no more space in 
+            the output buffer (see below about the <paramref name="flush"/> parameter).</item>
             </list>
             </para>
             </summary>
             <param name="flush"><see cref="T:ComponentAce.Compression.Libs.ZLib.FlushStrategy">Flush strategy</see> to use.</param>
             <remarks>
-            <para>Before the call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>, the application should ensure that at least one of the actions is possible, by providing more input and/or consuming more output, and updating the next_* and avail_* values accordingly. The application can consume the uncompressed output when it wants, for example when the output buffer is full (<c>avail_out == 0</c>), or after each call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. If <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> and with zero <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>, it must be called again after making room in the <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out">output buffer</see> because there might be more output pending. </para>
-            <para>If the parameter <paramref name="flush"/> is set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH"/>, <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> flushes as much output as possible to the output buffer. The flushing behavior of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> is not specified for values of the <paramref name="flush"/> parameter other than <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH"/> and <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/>, but the current implementation actually flushes as much output as possible anyway. </para>
-            <para><see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> should normally be called until it returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> or an error. However if all decompression is to be performed in a single step (a single call of inflate), the parameter <paramref name="flush"/> should be set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/>. In this case all pending input is processed and all pending output is flushed ; <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> must be large enough to hold all the uncompressed data. (The size of the uncompressed data may have been saved by the compressor for this purpose.) The next operation on this stream must be <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateEnd"/> to deallocate the decompression state. The use of <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/> is never required, but can be used to inform <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> that a faster routine may be used for the single <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> call. </para>
-            <para>If a preset dictionary is needed at this point (see <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSetDictionary(System.Byte[],System.Int32)"/>), <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> sets strm-adler to the adler32 checksum of the dictionary chosen by the compressor and returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_NEED_DICT"/> ; otherwise it sets strm-&gt;adler to the adler32 checksum of all output produced so far (that is, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.total_out"/> bytes) and returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/>, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> or an error code as described below. At the end of the stream, <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>) checks that its computed adler32 checksum is equal to that saved by the compressor and returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> only if the checksum is correct.</para>
+            <para>Before the call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>, the application should ensure that at least one of the actions is possible, by providing 
+            more input and/or consuming more output, and updating the next_* and avail_* values accordingly. The application can consume the uncompressed 
+            output when it wants, for example when the output buffer is full (<c>avail_out == 0</c>), or after each call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. 
+            If <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> and with zero <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>, it must be called again 
+            after making room in the <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out">output buffer</see> because there might be more output pending. </para>
+            <para>If the parameter <paramref name="flush"/> is set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH"/>, <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> flushes 
+            as much output as possible to the output buffer. The flushing behavior of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> is not specified for values of 
+            the <paramref name="flush"/> parameter other than <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH"/> and <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/>, 
+            but the current implementation actually flushes as much output as possible anyway. </para>
+            <para><see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> should normally be called until it returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> or an error. 
+            However if all decompression is to be performed in a single step (a single call of inflate), the parameter <paramref name="flush"/> 
+            should be set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/>. In this case all pending input is processed and all pending output is flushed; 
+            <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> must be large enough to hold all the uncompressed data. (The size of the uncompressed data may have been 
+            saved by the compressor for this purpose.) The next operation on this stream must be <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateEnd"/> to deallocate the decompression 
+            state. The use of <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/> is never required, but can be used to inform <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> that a faster 
+            routine may be used for the single <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> call. </para>
+            <para>If a preset dictionary is needed at this point (see <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSetDictionary(System.Byte[],System.Int32)"/>), <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> sets strm-adler 
+            to the adler32 checksum of the dictionary chosen by the compressor and returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_NEED_DICT"/>; otherwise it 
+            sets strm-&gt;adler to the adler32 checksum of all output produced so far (that is, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.total_out"/> bytes) and returns
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/>, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> or an error code as described below. At the end of the stream, 
+            <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>) checks that its computed adler32 checksum is equal to that saved by the compressor and returns
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> only if the checksum is correct.</para>
             </remarks>
             <returns>
-            <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if some progress has been made (more input processed or more output produced), <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> if the end of the compressed data has been reached and all uncompressed output has been produced, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_NEED_DICT"/> if a preset dictionary is needed at this point, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> if the input data was corrupted (input stream not conforming to the ZLib format or incorrect adler32 checksum), <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the stream structure was inconsistent (for example if <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> or <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> was <c>null</c>), <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR"/> if no progress is possible or if there was not enough room in the output buffer when <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/> is used. In the <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> case, the application may then call <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSync"/> to look for a good compression block.
+            <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if some progress has been made (more input processed or more output produced), 
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> if the end of the compressed data has been reached and all uncompressed output has been produced, 
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_NEED_DICT"/> if a preset dictionary is needed at this point, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> if 
+            the input data was corrupted (input stream not conforming to the ZLib format or incorrect adler32 checksum), 
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the stream structure was inconsistent (for example if <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> or 
+            <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> was <c>null</c>), <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory, 
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR"/> if no progress is possible or if there was not enough room in the output buffer 
+            when <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/> is used. In the <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> case, the application 
+            may then call <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSync"/> to look for a good compression block.
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateEnd">
             <summary>
-            All dynamically allocated data structures for this stream are freed. This function discards any unprocessed input and does not flush any pending output.
+            All dynamically allocated data structures for this stream are freed. This function discards any unprocessed input and does not flush any 
+            pending output.
             </summary>
             <returns>
-            inflateEnd returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the stream state was inconsistent. In the error case, msg may be set but then points to a static string (which must not be deallocated).
+            inflateEnd returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> 
+            if the stream state was inconsistent. In the error case, msg may be set but then points to a static string (which must not be deallocated).
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSync">
             <summary>
-            Skips invalid compressed data until a full flush point (see the description of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)">deflate with Z_FULL_FLUSH</see>) can be found, or until all available input is skipped. No output is provided.
+            Skips invalid compressed data until a full flush point (see the description of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)">deflate with Z_FULL_FLUSH</see>) can be found, 
+            or until all available input is skipped. No output is provided.
             </summary>
             <returns>
-            <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSync"/> returns <seec ref="ZLibResultCode.Z_OK"/> if a full flush point has been found, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR"/> if no more input was provided, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> if no flush point has been found, or <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the stream structure was inconsistent. In the success case, the application may save the current current value of <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.total_in"/> which indicates where valid compressed data was found. In the error case, the application may repeatedly call <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSync"/>, providing more input each time, until success or end of the input data.
+            <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSync"/> returns <seec ref="ZLibResultCode.Z_OK"/> if a full flush point has been found, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR"/>
+            if no more input was provided, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> if no flush point has been found, or 
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the stream structure was inconsistent. In the success case, the application may save the current 
+            current value of <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.total_in"/> which indicates where valid compressed data was found. In the error case, the application may repeatedly 
+            call <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSync"/>, providing more input each time, until success or end of the input data.
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSetDictionary(System.Byte[],System.Int32)">
@@ -2832,7 +2155,9 @@
             </summary>
             <param name="level">An integer value from 0 to 9 indicating the desired compression level.</param>
             <returns>
-            deflateInit returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if level is not a valid compression level. <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> is set to <c>null</c> if there is no error message. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/> does not perform any compression: this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>.
+            deflateInit returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory, 
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if level is not a valid compression level. <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> is set to <c>null</c> if there is 
+            no error message. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/> does not perform any compression: this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>.
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32,System.Int32)">
@@ -2840,81 +2165,154 @@
             Initializes the internal stream state for compression. 
             </summary>
             <param name="level">An integer value from 0 to 9 indicating the desired compression level.</param>
-            <param name="bits"> The windowBits parameter is the base two logarithm of the window size (the size of the history buffer). It should be in the range 8..15 for this version of the library. Larger values of this parameter result in better compression at the expense of memory usage. The default value is 15 if deflateInit is used instead.</param>
+            <param name="bits"> The windowBits parameter is the base two logarithm of the window size (the size of the history buffer). It should be in the 
+            range 8..15 for this version of the library. Larger values of this parameter result in better compression at the expense of memory usage. 
+            The default value is 15 if deflateInit is used instead.</param>
             <returns>
-            deflateInit returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if level is not a valid compression level. <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> is set to <c>null</c> if there is no error message. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32,System.Int32)"/> does not perform any compression: this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>.
+            deflateInit returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR"/> if there was not enough memory,
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if level is not a valid compression level. <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> is set to <c>null</c> if there 
+            is no error message. <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32,System.Int32)"/> does not perform any compression: this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>.
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)">
             <summary>
-            <para>Deflate compresses as much data as possible, and stops when the <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in">input buffer</see> becomes empty or the <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out">output buffer</see> becomes full. It may introduce some output latency (reading input without producing any output) except when forced to flush.</para>
+            <para>Deflate compresses as much data as possible, and stops when the <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in">input buffer</see> becomes empty or the 
+            <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out">output buffer</see> becomes full. It may introduce some output latency (reading input without producing any output) 
+            except when forced to flush.</para>
             <para>The detailed semantics are as follows. deflate performs one or both of the following actions:
             <list type="bullet">
-            <item>Compress more input starting at <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and update <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> accordingly. If not all input can be processed (because there is not enough room in the output buffer), <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> are updated and processing will resume at this point for the next call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. </item>
-            <item>Provide more output starting at <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and update <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> accordingly. This action is forced if the parameter flush is non zero. Forcing flush frequently degrades the compression ratio, so this parameter should be set only when necessary (in interactive applications). Some output may be provided even if flush is not set.</item>
+            <item>Compress more input starting at <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and update <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> accordingly. 
+            If not all input can be processed (because there is not enough room in the output buffer), <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> 
+            are updated and processing will resume at this point for the next call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. </item>
+            <item>Provide more output starting at <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and update <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> and <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> accordingly. 
+            This action is forced if the parameter flush is non zero. Forcing flush frequently degrades the compression ratio, so this parameter should 
+            be set only when necessary (in interactive applications). Some output may be provided even if flush is not set.</item>
             </list>
             </para>
             </summary>
             <param name="flush">The <see cref="T:ComponentAce.Compression.Libs.ZLib.FlushStrategy">flush strategy</see> to use.</param>
             <remarks>
-            <para>Before the call of <seec ref="deflate"/>, the application should ensure that at least one of the actions is possible, by providing more input and/or consuming more output, and updating <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> or <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> accordingly ; <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> should never be zero before the call. The application can consume the compressed output when it wants, for example when the output buffer is full (<c>avail_out == 0</c>), or after each call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. If <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> and with zero <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>, it must be called again after making room in the output buffer because there might be more output pending. </para>
-            <para>If the parameter <paramref name="flush"/> is set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH"/>, all pending output is flushed to the <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out">output buffer</see> and the output is aligned on a byte boundary, so that the decompressor can get all input data available so far. (In particular <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> is zero after the call if enough output space has been provided before the call.) Flushing may degrade compression for some compression algorithms and so it should be used only when necessary. </para>
-            <para>If flush is set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FULL_FLUSH"/>, all output is flushed as with <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH"/>, and the compression state is reset so that decompression can restart from this point if previous compressed data has been damaged or if random access is desired. Using <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FULL_FLUSH"/> too often can seriously degrade the compression.</para>
+            <para>
+            Before the call of <seec ref="deflate"/>, the application should ensure that at least one of the actions is possible, by providing 
+            more input and/or consuming more output, and updating <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> or <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> accordingly ; <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> 
+            should never be zero before the call. The application can consume the compressed output when it wants, for example when the output buffer is full
+            (<c>avail_out == 0</c>), or after each call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. If <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> 
+            and with zero <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>, it must be called again after making room in the output buffer because there might be more output pending. 
+            </para>
+            <para>
+            If the parameter <paramref name="flush"/> is set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH"/>, all pending output is flushed to the 
+            <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out">output buffer</see> and the output is aligned on a byte boundary, so that the decompressor can get all input 
+            data available so far. (In particular <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> is zero after the call if enough output space has been provided before the call.) 
+            Flushing may degrade compression for some compression algorithms and so it should be used only when necessary. 
+            </para>
+            <para>
+            If flush is set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FULL_FLUSH"/>, all output is flushed as with <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH"/>, 
+            and the compression state is reset so that decompression can restart from this point if previous compressed data has been damaged or if 
+            random access is desired. Using <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FULL_FLUSH"/> too often can seriously degrade the compression.
+            </para>
             </remarks>
             <returns>
-            <para>If deflate returns with <c><see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> == 0</c>, this function must be called again with the same value of the flush parameter and more output space (updated <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>), until the flush is complete (<see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns with non-zero <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>). </para>
-            <para>If the parameter <paramref name="flush"/> is set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/>, pending input is processed, pending output is flushed and deflate returns with <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> if there was enough output space ; if deflate returns with <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/>, this function must be called again with <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/> and more output space (updated <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>) but no more input data, until it returns with <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> or an error. After deflate has returned <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/>, the only possible operation on the stream is<see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateEnd"/>. </para>
-            <para><see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/> can be used immediately after <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/> if all the compression is to be done in a single step. In this case, avail_out must be at least 0.1% larger than avail_in plus 12 bytes. If deflate does not return Z_STREAM_END, then it must be called again as described above. </para>
-            <para><see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> sets strm-&gt; adler to the adler32 checksum of all input read so far (that is, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.total_in"/> bytes). </para>
-            <para><see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> may update data_type if it can make a good guess about the input data type (<see cref="T:ComponentAce.Compression.Libs.ZLib.BlockType">Z_ASCII or Z_BINARY</see>). In doubt, the data is considered binary. This field is only for information purposes and does not affect the compression algorithm in any manner. </para>
-            <para><see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if some progress has been made (more input processed or more output produced), <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> if all input has been consumed and all output has been produced (only when flush is set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/>), <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the stream state was inconsistent (for example if <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> or <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> was <c>null</c>), <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR"/> if no progress is possible (for example <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> or <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> was zero).</para>
+            <para>
+            If deflate returns with <c><see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> == 0</c>, this function must be called again with the same value of the flush
+            parameter and more output space (updated <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>), until the flush is complete (<see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns with
+            non-zero <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>). 
+            </para>
+            <para>
+            If the parameter <paramref name="flush"/> is set to <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/>, pending input is processed, pending 
+            output is flushed and deflate returns with <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> if there was enough output space ; 
+            if deflate returns with <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/>, this function must be called again with <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/> 
+            and more output space (updated <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/>) but no more input data, until it returns with <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> 
+            or an error. After deflate has returned <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/>, the only possible operation on the stream is
+            <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateEnd"/>. </para>
+            <para>
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/> can be used immediately after <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/> if all the compression is to be 
+            done in a single step. In this case, avail_out must be at least 0.1% larger than avail_in plus 12 bytes. If deflate does not return 
+            Z_STREAM_END, then it must be called again as described above. 
+            </para>
+            <para>
+            <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> sets strm-&gt; adler to the adler32 checksum of all input read so far (that is, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.total_in"/> bytes). 
+            </para>
+            <para>
+            <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> may update data_type if it can make a good guess about the input data type (<see cref="T:ComponentAce.Compression.Libs.ZLib.BlockType">Z_ASCII or Z_BINARY</see>).
+            In doubt, the data is considered binary. This field is only for information purposes and does not affect the compression algorithm in any manner. 
+            </para>
+            <para>
+            <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if some progress has been made (more input processed or more output produced), 
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END"/> if all input has been consumed and all output has been produced (only when flush is set to
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH"/>), <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the stream state was inconsistent (for example if 
+            <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> or <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> was <c>null</c>), <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR"/> if no progress is possible
+            (for example <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_in"/> or <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> was zero).
+            </para>
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateEnd">
             <summary>
-            All dynamically allocated data structures for this stream are freed. This function discards any unprocessed input and does not flush any pending output.
+            All dynamically allocated data structures for this stream are freed. This function discards any unprocessed input and does not flush any pending 
+            output.
             </summary>
             <returns>
-            deflateEnd returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the stream state was inconsistent, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> if the stream was freed prematurely (some input or output was discarded). In the error case, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> may be set but then points to a static string (which must not be deallocated).
+            deflateEnd returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the stream state was inconsistent, 
+            <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR"/> if the stream was freed prematurely (some input or output was discarded). In the error case, 
+            <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.msg"/> may be set but then points to a static string (which must not be deallocated).
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateParams(System.Int32,ComponentAce.Compression.Libs.ZLib.CompressionStrategy)">
             <summary>
-            Dynamically update the compression level and compression strategy. The interpretation of level is as in <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/>. This can be used to switch between compression and straight copy of the input data, or to switch to a different kind of input data requiring a different strategy. If the compression level is changed, the input available so far is compressed with the old level (and may be flushed); the new level will take effect only at the next call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>
+            Dynamically update the compression level and compression strategy. The interpretation of level is as in <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/>. 
+            This can be used to switch between compression and straight copy of the input data, or to switch to a different kind of input data 
+            requiring a different strategy. If the compression level is changed, the input available so far is compressed with the old level 
+            (and may be flushed); the new level will take effect only at the next call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>
             </summary>
             <param name="level">An integer value indicating the desired compression level.</param>
             <param name="strategy">A <see cref="T:ComponentAce.Compression.Libs.ZLib.FlushStrategy">flush strategy</see> to use.</param>
             <remarks>
-            Before the call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateParams(System.Int32,ComponentAce.Compression.Libs.ZLib.CompressionStrategy)"/>, the stream state must be set as for a call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>, since the currently available input may have to be compressed and flushed. In particular, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> must be non-zero.
+            Before the call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateParams(System.Int32,ComponentAce.Compression.Libs.ZLib.CompressionStrategy)"/>, the stream state must be set as for a call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>, since the 
+            currently available input may have to be compressed and flushed. In particular, <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> must be non-zero.
             </remarks>
             <returns>
-            deflateParams returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the source stream state was inconsistent or if a parameter was invalid, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR"/> if <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> was zero.
+            deflateParams returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if the source stream 
+            state was inconsistent or if a parameter was invalid, <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR"/> if <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.avail_out"/> was zero.
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateSetDictionary(System.Byte[],System.Int32)">
             <summary>
-            Initializes the compression dictionary from the given byte sequence without producing any compressed output. This function must be called immediately after <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/>, before any call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. The compressor and decompressor must use exactly the same dictionary (see <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSetDictionary(System.Byte[],System.Int32)"/>).
+            Initializes the compression dictionary from the given byte sequence without producing any compressed output. This function must be called 
+            immediately after <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/>, before any call of <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. The compressor and decompressor must use 
+            exactly the same dictionary (see <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.inflateSetDictionary(System.Byte[],System.Int32)"/>).
             </summary>
             <param name="dictionary">A byte array - a dictionary.</param>
             <param name="dictLength">The length of the dictionary byte array</param>
             <remarks>
-            <para>The dictionary should consist of strings (byte sequences) that are likely to be encountered later in the data to be compressed, with the most commonly used strings preferably put towards the end of the dictionary. Using a dictionary is most useful when the data to be compressed is short and can be predicted with good accuracy; the data can then be compressed better than with the default empty dictionary.</para>
-            <para>Depending on the size of the compression data structures selected by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/>, a part of the dictionary may in effect be discarded, for example if the dictionary is larger than the window size in <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. Thus the strings most likely to be useful should be put at the end of the dictionary, not at the front.</para>
-            <para>Upon return of this function, adler is set to the Adler32 value of the dictionary; the decompresser may later use this value to determine which dictionary has been used by the compressor. (The Adler32 value applies to the whole dictionary even if only a subset of the dictionary is actually used by the compressor.)</para>
+            <para>
+            The dictionary should consist of strings (byte sequences) that are likely to be encountered later in the data to be compressed, 
+            with the most commonly used strings preferably put towards the end of the dictionary. Using a dictionary is most useful when the data 
+            to be compressed is short and can be predicted with good accuracy; the data can then be compressed better than with the default empty dictionary.
+            </para>
+            <para>Depending on the size of the compression data structures selected by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateInit(System.Int32)"/>, a part of the dictionary may 
+            in effect be discarded, for example if the dictionary is larger than the window size in <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>. Thus the strings most likely 
+            to be useful should be put at the end of the dictionary, not at the front.</para>
+            <para>Upon return of this function, adler is set to the Adler32 value of the dictionary; the decompresser may later use this value to determine 
+            which dictionary has been used by the compressor. (The Adler32 value applies to the whole dictionary even if only a subset of the dictionary 
+            is actually used by the compressor.)</para>
             </remarks>
             <returns>
-            deflateSetDictionary returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, or <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if a parameter is invalid (such as <c>null</c> dictionary) or the stream state is inconsistent (for example if <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> has already been called for this stream or if the compression method is bsort). <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateSetDictionary(System.Byte[],System.Int32)"/> does not perform any compression: this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>.
+            deflateSetDictionary returns <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK"/> if success, or <see cref="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR"/> if a parameter 
+            is invalid (such as <c>null</c> dictionary) or the stream state is inconsistent (for example if <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> has already been 
+            called for this stream or if the compression method is bsort). <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflateSetDictionary(System.Byte[],System.Int32)"/> does not perform any compression: 
+            this will be done by <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/>.
             </returns>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.flush_pending">
             <summary>
-            Flush as much pending output as possible. All <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> output goes through this function so some applications may wish to modify it to avoid allocating a large <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> buffer and copying into it.
+            Flush as much pending output as possible. All <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> output goes through this function so some applications may wish to 
+            modify it to avoid allocating a large <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_out"/> buffer and copying into it.
             </summary>
             <seealso cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.read_buf(System.Byte[],System.Int32,System.Int32)"/>
         </member>
         <member name="M:ComponentAce.Compression.Libs.ZLib.ZStream.read_buf(System.Byte[],System.Int32,System.Int32)">
             <summary>
-            Read a new buffer from the current input stream, update the adler32 and total number of bytes read.  All <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> input goes through this function so some applications may wish to modify it to avoid allocating a large <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> buffer and copying from it.
+            Read a new buffer from the current input stream, update the adler32 and total number of bytes read.  All <see cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.deflate(ComponentAce.Compression.Libs.ZLib.FlushStrategy)"/> input goes 
+            through this function so some applications may wish to modify it to avoid allocating a large <see cref="P:ComponentAce.Compression.Libs.ZLib.ZStream.next_in"/> buffer and copying from it.
             </summary>
             <seealso cref="M:ComponentAce.Compression.Libs.ZLib.ZStream.flush_pending"/>
         </member>
@@ -2988,11 +2386,6 @@
             Inflate object to perform data decompression
             </summary>
         </member>
-        <member name="T:IronPython.Modules.PythonIterTools.IterBase">
-            <summary>
-            Base class used for iterator wrappers.
-            </summary>
-        </member>
         <member name="T:ComponentAce.Compression.Libs.ZLib.InfTreeUtil">
             <summary>
             Contains utility information for the InfTree class
@@ -3019,6 +2412,746 @@
         <member name="M:ComponentAce.Compression.Libs.ZLib.InfTree.inflate_trees_fixed(System.Int32[],System.Int32[],System.Int32[][],System.Int32[][],ComponentAce.Compression.Libs.ZLib.ZStream)">
             <summary>
             Build fixed trees
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSsl.ReadInt(System.Byte[],System.Int32@)">
+            <summary>
+            BER encoding of an integer value is the number of bytes
+            required to represent the integer followed by the bytes
+            </summary>
+        </member>
+        <member name="T:IronPython.Modules.PythonStruct.FormatType">
+            <summary>
+            Enum which specifies the format type for a compiled struct
+            </summary>
+        </member>
+        <member name="T:IronPython.Modules.PythonStruct.Format">
+            <summary>
+            Struct used to store the format and the number of times it should be repeated.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonWinReg.HKEYType.GetKey">
+            <summary>
+            Returns the underlying .NET RegistryKey
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:IronPython.Modules.PythonThread._local.ThreadLocalDictionaryStorage">
+            <summary>
+            Provides a dictionary storage implementation whose storage is local to
+            the thread.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.SignInsensitiveToInt32(System.Object)">
+            <summary>
+            Convert an object to a 32-bit integer. This adds two features to Converter.ToInt32:
+              1. Sign is ignored. For example, 0xffff0000 converts to 4294901760, where Convert.ToInt32
+                 would throw because 0xffff0000 is less than zero.
+              2. Overflow exceptions are thrown. Converter.ToInt32 throws TypeError if x is
+                 an integer, but is bigger than 32 bits. Instead, we throw OverflowException.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.SignInsensitiveToInt16(System.Object)">
+            <summary>
+            Convert an object to a 16-bit integer. This adds two features to Converter.ToInt16:
+              1. Sign is ignored. For example, 0xff00 converts to 65280, where Convert.ToInt16
+                 would throw because signed 0xff00 is -256.
+              2. Overflow exceptions are thrown. Converter.ToInt16 throws TypeError if x is
+                 an integer, but is bigger than 16 bits. Instead, we throw OverflowException.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.MakeException(IronPython.Runtime.CodeContext,System.Exception)">
+            <summary>
+            Return a standard socket exception (socket.error) whose message and error code come from a SocketException
+            This will eventually be enhanced to generate the correct error type (error, herror, gaierror) based on the error code.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.IPv6BytesToColonHex(System.Byte[])">
+            <summary>
+            Convert an IPv6 address byte array to a string in standard colon-hex notation.
+            The .NET IPAddress.ToString() method uses dotted-quad for the last 32 bits,
+            which differs from the normal Python implementation (but is allowed by the IETF);
+            this method returns the standard (no dotted-quad) colon-hex form.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.ConvertSpecialAddresses(System.String)">
+            <summary>
+            Handle conversion of "" to INADDR_ANY and "&lt;broadcast&gt;" to INADDR_BROADCAST.
+            Otherwise returns host unchanged.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.HostToAddress(IronPython.Runtime.CodeContext,System.String,System.Net.Sockets.AddressFamily)">
+            <summary>
+            Return the IP address associated with host, with optional address family checking.
+            host may be either a name or an IP address (in string form).
+            
+            If family is non-null, a gaierror will be thrown if the host's address family is
+            not the same as the specified family. gaierror is also raised if the hostname cannot be
+            converted to an IP address (e.g. through a name lookup failure).
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.HostToAddresses(IronPython.Runtime.CodeContext,System.String,System.Net.Sockets.AddressFamily)">
+            <summary>
+            Return the IP address associated with host, with optional address family checking.
+            host may be either a name or an IP address (in string form).
+            
+            If family is non-null, a gaierror will be thrown if the host's address family is
+            not the same as the specified family. gaierror is also raised if the hostname cannot be
+            converted to an IP address (e.g. through a name lookup failure).
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.RemoveLocalDomain(System.String)">
+            <summary>
+            Return fqdn, but with its domain removed if it's on the same domain as the local machine.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.TupleToEndPoint(IronPython.Runtime.CodeContext,IronPython.Runtime.PythonTuple,System.Net.Sockets.AddressFamily,System.String@)">
+            <summary>
+            Convert a (host, port) tuple [IPv4] (host, port, flowinfo, scopeid) tuple [IPv6]
+            to its corresponding IPEndPoint.
+            
+            Throws gaierror if host is not a valid address.
+            Throws ArgumentTypeException if any of the following are true:
+             - address does not have exactly two elements
+             - address[0] is not a string
+             - address[1] is not an int
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.EndPointToTuple(System.Net.IPEndPoint)">
+            <summary>
+            Convert an IPEndPoint to its corresponding (host, port) [IPv4] or (host, port, flowinfo, scopeid) [IPv6] tuple.
+            Throws SocketException if the address family is other than IPv4 or IPv6.
+            </summary>
+        </member>
+        <member name="F:IronPython.Modules.PythonSocket.socket._handleToSocket">
+            <summary>
+            handleToSocket allows us to translate from Python's idea of a socket resource (file
+            descriptor numbers) to .NET's idea of a socket resource (System.Net.Socket objects).
+            In particular, this allows the select module to convert file numbers (as returned by
+            fileno()) and convert them to Socket objects so that it can do something useful with them.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.socket.HandleToSocket(System.Int64)">
+            <summary>
+            Return the internal System.Net.Sockets.Socket socket object associated with the given
+            handle (as returned by GetHandle()), or null if no corresponding socket exists. This is
+            primarily intended to be used by other modules (such as select) that implement
+            networking primitives. User code should not normally need to call this function.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.socket.#ctor(IronPython.Runtime.CodeContext,System.Net.Sockets.Socket)">
+            <summary>
+            Create a Python socket object from an existing .NET socket object
+            (like one returned from Socket.Accept())
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSocket.socket.Initialize(IronPython.Runtime.CodeContext,System.Net.Sockets.Socket)">
+            <summary>
+            Perform initialization common to all constructors
+            </summary>
+        </member>
+        <member name="T:IronPython.Modules.PythonIterTools.IterBase">
+            <summary>
+            Base class used for iterator wrappers.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.StaticTree.MAX_BL_BITS">
+            <summary>
+             Bit length codes must not exceed MAX_BL_BITS bits
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSubprocess.DuplicateHandle(IronPython.Runtime.CodeContext,System.Numerics.BigInteger,IronPython.Modules.PythonSubprocessHandle,System.Numerics.BigInteger,System.Int32,System.Boolean,System.Object)">
+            <summary>
+            Duplicates a subprocess handle which was created for piping.
+            
+            This is only called when we're duplicating the handle to make it inheritable to the child process.  In CPython
+            the parent handle is always reliably garbage collected.  Because we know this handle is not going to be 
+            used we close the handle being duplicated.
+            </summary>
+        </member>
+        <member name="T:IronPython.Modules.MemoryHolder">
+            <summary>
+            A wrapper around allocated memory to ensure it gets released and isn't accessed
+            when it could be finalized.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.MemoryHolder.#ctor(System.Int32)">
+            <summary>
+            Creates a new MemoryHolder and allocates a buffer of the specified size.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.MemoryHolder.#ctor(System.IntPtr,System.Int32)">
+            <summary>
+            Creates a new MemoryHolder at the specified address which is not tracked
+            by us and we will never free.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.MemoryHolder.#ctor(System.IntPtr,System.Int32,IronPython.Modules.MemoryHolder)">
+            <summary>
+            Creates a new MemoryHolder at the specified address which will keep alive the 
+            parent memory holder.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.MemoryHolder.AddObject(System.Object,System.Object)">
+            <summary>
+            Used to track the lifetime of objects when one memory region depends upon
+            another memory region.  For example if you have an array of objects that
+            each have an element which has it's own lifetime the array needs to keep
+            the individual elements alive.
+            
+            The keys used here match CPython's keys as tested by CPython's test_ctypes. 
+            Typically they are a string which is the array index, "ffffffff" when
+            from_buffer is used, or when it's a simple type there's just a string
+            instead of the full dictionary - we store that under the key "str".
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.MemoryHolder.CopyFrom(System.IntPtr,System.IntPtr)">
+            <summary>
+            Copies the data in data into this MemoryHolder.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.MemoryHolder.CopyTo(IronPython.Modules.MemoryHolder,System.Int32,System.Int32)">
+            <summary>
+            Copies memory from one location to another keeping the associated memory holders alive during the
+            operation.
+            </summary>
+        </member>
+        <member name="P:IronPython.Modules.MemoryHolder.UnsafeAddress">
+            <summary>
+            Gets the address of the held memory.  The caller should ensure the MemoryHolder
+            is always alive as long as the address will continue to be accessed.
+            </summary>
+        </member>
+        <member name="P:IronPython.Modules.MemoryHolder.Objects">
+            <summary>
+            Gets a list of objects which need to be kept alive for this MemoryHolder to be 
+            remain valid.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSelect.ProcessSocketSequence(IronPython.Runtime.CodeContext,System.Object,IronPython.Runtime.List@,System.Collections.Generic.Dictionary{System.Net.Sockets.Socket,System.Object}@)">
+            <summary>
+            Process a sequence of objects that are compatible with ObjectToSocket(). Return two
+            things as out params: an in-order List of sockets that correspond to the original
+            objects in the passed-in sequence, and a mapping of these socket objects to their
+            original objects.
+            
+            The socketToOriginal mapping is generated because the CPython select module supports
+            passing to select either file descriptor numbers or an object with a fileno() method.
+            We try to be faithful to what was originally requested when we return.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonSelect.ObjectToSocket(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Return the System.Net.Sockets.Socket object that corresponds to the passed-in
+            object. obj can be a System.Net.Sockets.Socket, a PythonSocket.SocketObj, a
+            long integer (representing a socket handle), or a Python object with a fileno()
+            method (whose result is used to look up an existing PythonSocket.SocketObj,
+            which is in turn converted to a Socket.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonDateTime.date.CheckType(System.Object,System.Boolean)">
+            <summary>
+            Used to check the type to see if we can do a comparison.  Returns true if we can
+            or false if we should return NotImplemented.  May throw if the type's really wrong.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonDateTime.time.CompareTo(System.Object)">
+            <summary>
+            Helper function for doing the comparisons.  time has no __cmp__ method
+            </summary>
+        </member>
+        <member name="T:IronPython.Modules.PythonPickle.FileInput">
+            <summary>
+            Interface for "file-like objects" that implement the protocol needed by load() and friends.
+            This enables the creation of thin wrappers that make fast .NET types and slow Python types look the same.
+            </summary>
+        </member>
+        <member name="T:IronPython.Modules.PythonPickle.FileOutput">
+            <summary>
+            Interface for "file-like objects" that implement the protocol needed by dump() and friends.
+            This enables the creation of thin wrappers that make fast .NET types and slow Python types look the same.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.SaveObject(IronPython.Modules.PythonPickle.PicklerObject,IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Call the appropriate reduce method for obj and pickle the object using
+            the resulting data. Use the first available of
+            copy_reg.dispatch_table[type(obj)], obj.__reduce_ex__, and obj.__reduce__.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.SaveReduce(IronPython.Runtime.CodeContext,System.Object,System.Object,System.Object,System.Object,System.Object,System.Object,System.Object)">
+            <summary>
+            Pickle the result of a reduce function.
+            
+            Only context, obj, func, and reduceCallable are required; all other arguments may be null.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteFloatAsString(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Write value in pickle decimalnl_short format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteFloat64(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Write value in pickle float8 format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteUInt8(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Write value in pickle uint1 format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteUInt16(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Write value in pickle uint2 format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteInt32(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Write value in pickle int4 format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteIntAsString(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Write value in pickle decimalnl_short format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteIntAsString(IronPython.Runtime.CodeContext,System.Int32)">
+            <summary>
+            Write value in pickle decimalnl_short format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteLongAsString(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Write value in pickle decimalnl_long format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteUnicodeStringRaw(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Write value in pickle unicodestringnl format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteUnicodeStringUtf8(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Write value in pickle unicodestring4 format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.WriteStringPair(IronPython.Runtime.CodeContext,System.Object,System.Object)">
+            <summary>
+            Write value in pickle stringnl_noescape_pair format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.IsUInt8(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Return true if value is appropriate for formatting in pickle uint1 format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.IsUInt16(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Return true if value is appropriate for formatting in pickle uint2 format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.IsInt32(IronPython.Runtime.CodeContext,System.Object)">
+            <summary>
+            Return true if value is appropriate for formatting in pickle int4 format.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.BatchAppends(IronPython.Runtime.CodeContext,System.Collections.IEnumerator)">
+            <summary>
+            Emit a series of opcodes that will set append all items indexed by iter
+            to the object at the top of the stack. Use APPENDS if possible, but
+            append no more than BatchSize items at a time.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.BatchSetItems(IronPython.Runtime.CodeContext,IronPython.Runtime.PythonDictionary)">
+            <summary>
+            Emit a series of opcodes that will set all (key, value) pairs indexed by
+            iter in the object at the top of the stack. Use SETITEMS if possible,
+            but append no more than BatchSize items at a time.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.BatchSetItems(IronPython.Runtime.CodeContext,System.Collections.IEnumerator)">
+            <summary>
+            Emit a series of opcodes that will set all (key, value) pairs indexed by
+            iter in the object at the top of the stack. Use SETITEMS if possible,
+            but append no more than BatchSize items at a time.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.PicklerObject.FindModuleForGlobal(IronPython.Runtime.CodeContext,System.Object,System.Object)">
+            <summary>
+            Find the module for obj and ensure that obj is reachable in that module by the given name.
+            
+            Throw PicklingError if any of the following are true:
+             - The module couldn't be determined.
+             - The module couldn't be loaded.
+             - The given name doesn't exist in the module.
+             - The given name is a different object than obj.
+            
+            Otherwise, return the name of the module.
+            
+            To determine which module obj lives in, obj.__module__ is used if available. The
+            module named by obj.__module__ is loaded if needed. If obj has no __module__
+            attribute, then each loaded module is searched. If a loaded module has an
+            attribute with the given name, and that attribute is the same object as obj,
+            then that module is used.
+            </summary>
+        </member>
+        <member name="M:IronPython.Modules.PythonPickle.UnpicklerObject.SetItems(IronPython.Runtime.PythonDictionary,System.Int32)">
+            <summary>
+            Interpret everything from markIndex to the top of the stack as a sequence
+            of key, value, key, value, etc. Set dict[key] = value for each. Pop
+            everything from markIndex up when done.
+            </summary>
+        </member>
+        <member name="T:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel">
+            <summary>
+            Some constants for specifying compression levels. Methods which takes a compression level as a parameter expects an integer value from 0 to 9. You can either specify an integer value or use constants for some most widely used compression levels.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel.Z_NO_COMPRESSION">
+            <summary>
+             No compression should be used at all.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel.Z_BEST_SPEED">
+            <summary>
+            Minimal compression, but greatest speed.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel.Z_BEST_COMPRESSION">
+            <summary>
+            Maximum compression, but slowest.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibCompressionLevel.Z_DEFAULT_COMPRESSION">
+            <summary>
+            Select default compression level (good compression, good speed).
+            </summary>
+        </member>
+        <member name="T:ComponentAce.Compression.Libs.ZLib.CompressionStrategy">
+            <summary>
+            Compression strategies. The strategy parameter is used to tune the compression algorithm. The strategy parameter only affects the compression ratio but not the correctness of the compressed output even if it is not set appropriately.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.CompressionStrategy.Z_FILTERED">
+            <summary>
+            This strategy is designed for filtered data. Data which consists of mostly small values, with random distribution should use Z_FILTERED. With this strategy, less string matching is performed.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.CompressionStrategy.Z_HUFFMAN_ONLY">
+            <summary>
+            Z_HUFFMAN_ONLY forces Huffman encoding only (no string match)
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.CompressionStrategy.Z_DEFAULT_STRATEGY">
+            <summary>
+            The default strategy is the most commonly used. With this strategy, string matching and huffman compression are balanced.
+            </summary>
+        </member>
+        <member name="T:ComponentAce.Compression.Libs.ZLib.FlushStrategy">
+            <summary>
+            Flush strategies
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_NO_FLUSH">
+            <summary>
+              Do not internalFlush data, but just write data as normal to the output buffer. This is the normal way in which data is written to the output buffer.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_PARTIAL_FLUSH">
+            <summary>
+            Obsolete. You should use Z_SYNC_FLUSH instead.
+            </summary>        
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_SYNC_FLUSH">
+            <summary>
+            All pending output is flushed to the output buffer and the output is aligned on a byte boundary, so that the decompressor can get all input data available so far.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FULL_FLUSH">
+            <summary>
+            All output is flushed as with Z_SYNC_FLUSH, and the compression state is reset so that decompression can restart from this point if previous compressed data has been damaged or if random access is desired. Using Z_FULL_FLUSH too often can seriously degrade the compression. ZLib_InflateSync will locate points in the compression string where a full has been performed.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.FlushStrategy.Z_FINISH">
+            <summary>
+            Notifies the module that the input has now been exhausted. Pending input is processed, pending output is flushed and calls return with Z_STREAM_END if there was enough output space.
+            </summary>
+        </member>
+        <member name="T:ComponentAce.Compression.Libs.ZLib.ZLibResultCode">
+            <summary>
+            Results of operations in ZLib library
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_OK">
+            <summary>
+             No failure was encountered, the operation completed without problem.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_END">
+            <summary>
+            No failure was encountered, and the input has been exhausted.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_NEED_DICT">
+            <summary>
+            A preset dictionary is required for decompression of the data.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_ERRNO">
+            <summary>
+            An internal error occurred
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_STREAM_ERROR">
+            <summary>
+            The stream structure was inconsistent
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_DATA_ERROR">
+            <summary>
+            Input data has been corrupted (for decompression).
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_MEM_ERROR">
+            <summary>
+            Memory allocation failed.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_BUF_ERROR">
+            <summary>
+            There was not enough space in the output buffer.
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibResultCode.Z_VERSION_ERROR">
+            <summary>
+            The version supplied does not match that supported by the ZLib module.
+            </summary>
+        </member>
+        <member name="T:ComponentAce.Compression.Libs.ZLib.DeflateState">
+            <summary>
+            States of deflate operation
+            </summary>
+        </member>
+        <member name="T:ComponentAce.Compression.Libs.ZLib.BlockType">
+            <summary>
+            Data block types, i.e. binary or ascii text
+            </summary>
+        </member>
+        <member name="T:ComponentAce.Compression.Libs.ZLib.ZLibUtil">
+            <summary>
+            Helper class
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.MAX_WBITS">
+            <summary>
+            Max Window size
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.PRESET_DICT">
+            <summary>
+            preset dictionary flag in zlib header
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.zLibBufSize">
+            <summary>
+            The size of the buffer
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Z_DEFLATED">
+            <summary>
+            Deflate compression method index
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.ZLibUtil.DIST_CODE_LEN">
+            <summary>
+            see definition of array dist_code below
+            </summary>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Identity(System.Int64)">
+            <summary>
+            This method returns the literal value received
+            </summary>
+            <param name="literal">The literal to return</param>
+            <returns>The received value</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Identity(System.UInt64)">
+            <summary>
+            This method returns the literal value received
+            </summary>
+            <param name="literal">The literal to return</param>
+            <returns>The received value</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Identity(System.Single)">
+            <summary>
+            This method returns the literal value received
+            </summary>
+            <param name="literal">The literal to return</param>
+            <returns>The received value</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.Identity(System.Double)">
+            <summary>
+            This method returns the literal value received
+            </summary>
+            <param name="literal">The literal to return</param>
+            <returns>The received value</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.URShift(System.Int32,System.Int32)">
+            <summary>
+            Performs an unsigned bitwise right shift with the specified number
+            </summary>
+            <param name="number">Number to operate on</param>
+            <param name="bits">Ammount of bits to shift</param>
+            <returns>The resulting number from the shift operation</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.URShift(System.Int32,System.Int64)">
+            <summary>
+            Performs an unsigned bitwise right shift with the specified number
+            </summary>
+            <param name="number">Number to operate on</param>
+            <param name="bits">Ammount of bits to shift</param>
+            <returns>The resulting number from the shift operation</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.URShift(System.Int64,System.Int32)">
+            <summary>
+            Performs an unsigned bitwise right shift with the specified number
+            </summary>
+            <param name="number">Number to operate on</param>
+            <param name="bits">Ammount of bits to shift</param>
+            <returns>The resulting number from the shift operation</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.URShift(System.Int64,System.Int64)">
+            <summary>
+            Performs an unsigned bitwise right shift with the specified number
+            </summary>
+            <param name="number">Number to operate on</param>
+            <param name="bits">Ammount of bits to shift</param>
+            <returns>The resulting number from the shift operation</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.ReadInput(System.IO.Stream,System.Byte[],System.Int32,System.Int32)">
+            <summary>Reads a number of characters from the current source Stream and writes the data to the target array at the specified index.</summary>
+            <param name="sourceStream">The source Stream to ReadPos from.</param>
+            <param name="target">Contains the array of characters ReadPos from the source Stream.</param>
+            <param name="start">The starting index of the target array.</param>
+            <param name="count">The maximum number of characters to ReadPos from the source Stream.</param>
+            <returns>The number of characters ReadPos. The number will be less than or equal to count depending on the data available in the source Stream. Returns -1 if the End of the stream is reached.</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.ReadInput(System.IO.TextReader,System.Byte[],System.Int32,System.Int32)">
+            <summary>Reads a number of characters from the current source TextReader and writes the data to the target array at the specified index.</summary>
+            <param name="sourceTextReader">The source TextReader to ReadPos from</param>
+            <param name="target">Contains the array of characteres ReadPos from the source TextReader.</param>
+            <param name="start">The starting index of the target array.</param>
+            <param name="count">The maximum number of characters to ReadPos from the source TextReader.</param>
+            <returns>The number of characters ReadPos. The number will be less than or equal to count depending on the data available in the source TextReader. Returns -1 if the End of the stream is reached.</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.ToByteArray(System.String)">
+            <summary>
+            Converts a string to an array of bytes
+            </summary>
+            <param name="sourceString">The string to be converted</param>
+            <returns>The new array of bytes</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.ToCharArray(System.Byte[])">
+            <summary>
+            Converts an array of bytes to an array of chars
+            </summary>
+            <param name="byteArray">The array of bytes to convert</param>
+            <returns>The new array of chars</returns>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.ZLibUtil.CopyLargeArrayToSmall.CopyData">
+            <summary>
+            Copies large array which was passed as srcBuf to the Initialize method into the destination array which were passes as destBuff
+            </summary>
+            <returns>The number of bytes copied</returns>
+        </member>
+        <member name="T:ComponentAce.Compression.Libs.ZLib.Tree">
+            <summary>
+            This class represents a tree and is used in the Deflate class
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.Tree.dyn_tree">
+            <summary>
+            The dynamic tree
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.Tree.max_code">
+            <summary>
+            Largest code with non zero frequency
+            </summary>
+        </member>
+        <member name="F:ComponentAce.Compression.Libs.ZLib.Tree.stat_desc">
+            <summary>
+            the corresponding static tree
+            </summary>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.d_code(System.Int32)">
+            <summary>
+            Mapping from a distance to a distance code. dist is the distance - 1 and
+            must not have side effects. _dist_code[256] and _dist_code[257] are never
+            used.
+            </summary>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.gen_bitlen(ComponentAce.Compression.Libs.ZLib.Deflate)">
+            <summary>
+             Compute the optimal bit lengths for a tree and update the total bit length
+             for the current block.
+             IN assertion: the fields freq and dad are set, heap[heap_max] and
+                above are the tree nodes sorted by increasing frequency.
+             OUT assertions: the field count is set to the optimal bit length, the
+                 array bl_count contains the frequencies for each bit length.
+                 The length opt_len is updated; static_len is also updated if stree is
+                 not null.
+            </summary>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.build_tree(ComponentAce.Compression.Libs.ZLib.Deflate)">
+            <summary>
+             Construct one Huffman tree and assigns the code bit strings and lengths.
+             Update the total bit length for the current block.
+             IN assertion: the field freq is set for all tree elements.
+             OUT assertions: the fields count and code are set to the optimal bit length
+                 and corresponding code. The length opt_len is updated; static_len is
+                 also updated if stree is not null. The field max_code is set.
+            </summary>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.gen_codes(System.Int16[],System.Int32,System.Int16[])">
+            <summary>
+             Generate the codes for a given tree and bit counts (which need not be
+             optimal).
+             IN assertion: the array bl_count contains the bit length statistics for
+             the given tree and the field count is set for all tree elements.
+             OUT assertion: the field code is set for all tree elements of non
+                 zero code length.
+            </summary>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.Tree.bi_reverse(System.Int32,System.Int32)">
+            <summary>
+             Reverse the first count bits of a code, using straightforward code (a faster
+             method would use a table)
+            </summary>
+        </member>
+        <member name="P:ComponentAce.Compression.Libs.ZLib.Tree.DynTree">
+            <summary>
+            The dynamic tree
+            </summary>
+        </member>
+        <member name="P:ComponentAce.Compression.Libs.ZLib.Tree.MaxCode">
+            <summary>
+            Largest code with non zero frequency
+            </summary>
+        </member>
+        <member name="P:ComponentAce.Compression.Libs.ZLib.Tree.StatDesc">
+            <summary>
+            the corresponding static tree
+            </summary>
+        </member>
+        <member name="T:ComponentAce.Compression.Libs.ZLib.Adler32">
+            <summary>
+            This class represents adler32 checksum algorithm
+            </summary>
+        </member>
+        <member name="M:ComponentAce.Compression.Libs.ZLib.Adler32.GetAdler32Checksum(System.Int64,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            This static method returns adler32 checksum of the buffer data
             </summary>
         </member>
     </members>
