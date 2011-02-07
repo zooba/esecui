@@ -124,7 +124,7 @@
     <PostBuildEvent>ROBOCOPY /MIR "$(SolutionDir)esec\esec" "$(TargetDir)esec" &gt;nul
 ROBOCOPY /MIR "$(SolutionDir)esec\esdlc" "$(TargetDir)esdlc" &gt;nul
 ROBOCOPY /MIR "$(SolutionDir)pylib" "$(TargetDir)lib" &gt;nul
-</PostBuildEvent>
+CMD /C EXIT 0</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
