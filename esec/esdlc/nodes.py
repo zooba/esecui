@@ -55,7 +55,7 @@ class UnknownNode(NodeBase):
     def __str__(self): return '<?> ' + str(self.text) + ' <?>'
     
     @classmethod
-    def parse(cls, tokens, first_token):
+    def parse(cls, tokens, first_token):    #pylint: disable=R0911
         '''Parses an unidentified sequence of tokens.
         
         `tokens` is a list of tokens, `first_token` is the index of the
@@ -102,8 +102,9 @@ class UnknownNode(NodeBase):
             token = _get_token(tokens, token_i)
         
         cls._reduce_stack_attributes(stack)
-        cls._reduce_stack_unary_ops(stack)
-        cls._reduce_stack_binary_ops(stack)
+        for op in '~': cls._reduce_stack_unary_ops(stack, op)
+        for op in '^': cls._reduce_stack_binary_ops(stack, op, left_to_right=False)
+        for op in '%/*-+=': cls._reduce_stack_binary_ops(stack, op, left_to_right=True)
         
         if len(stack) == 1:
             return token_i, stack[0]
@@ -226,32 +227,31 @@ class UnknownNode(NodeBase):
                 stack[i-1:i+3] = [FunctionNode('_getattr', op_tokens, source=val1, attr=val2)]
     
     @classmethod
-    def _reduce_stack_unary_ops(cls, stack):
+    def _reduce_stack_unary_ops(cls, stack, op):
         '''Reduces unary operators into `FunctionNode`s where the name
         of the function begins with ``_uop_``.
         '''
-        for op in '~':
-            while op in stack:
-                i = stack.index(op)
-                if not i < len(stack)-2: raise error.InvalidSyntaxError(stack[i+1])
-                op_token, val = stack[i+1:i+3]
-                if isinstance(val, str): raise error.InvalidSyntaxError(stack[i+3])
-                op_tokens = list(val.tokens)
-                op_tokens.append(op_token)
-                stack[i:i+3] = [FunctionNode('_uop_' + op_token.tag, op_tokens, val)]
+        while op in stack:
+            i = stack.index(op)
+            if not i < len(stack)-2: raise error.InvalidSyntaxError(stack[i+1])
+            op_token, val = stack[i+1:i+3]
+            if isinstance(val, str): raise error.InvalidSyntaxError(stack[i+3])
+            op_tokens = list(val.tokens)
+            op_tokens.append(op_token)
+            stack[i:i+3] = [FunctionNode('_uop_' + op_token.tag, op_tokens, val)]
     
     @classmethod
-    def _reduce_stack_binary_ops(cls, stack):
+    def _reduce_stack_binary_ops(cls, stack, op, left_to_right=True):
         '''Reduces binary operators into `FunctionNode`s where the name
         of the function begins with ``_op_``. Assignment operators are
         also reduced and use the function ``_assign``.
         '''
-        for op in '^%/*-+=':
+        if left_to_right:
             while op in stack:
                 i = stack.index(op)
                 if not 0 < i < len(stack) - 2: raise error.InvalidSyntaxError(stack[i+1])
                 val1, _, op_token, val2 = stack[i-1:i+3]
-                if 1 < i and isinstance(stack[i-2], str): raise error.InvalidSyntaxError(op_token)
+                if i >= 2 and isinstance(stack[i-2], str): raise error.InvalidSyntaxError(op_token)
                 if isinstance(val2, str): raise error.InvalidSyntaxError(stack[i+3])
                 op_tokens = val1.tokens + val2.tokens
                 op_tokens.append(op_token)
@@ -259,6 +259,19 @@ class UnknownNode(NodeBase):
                     stack[i-1:i+3] = [FunctionNode('_assign', op_tokens, destination=val1, source=val2)]
                 else:
                     stack[i-1:i+3] = [FunctionNode('_op_' + op_token.tag, op_tokens, *(val1, val2))]
+        
+        else:
+            stack.reverse()
+            while op in stack:
+                i = stack.index(op)
+                if not 2 <= i < len(stack): raise error.InvalidSyntaxError(stack[i-1])
+                val1, _, op_token, val2 = reversed(stack[i-2:i+2])
+                if i < len(stack) - 1 and isinstance(stack[i+1], str): raise error.InvalidSyntaxError(op_token)
+                if isinstance(val2, str): raise error.InvalidSyntaxError(stack[i-3])
+                op_tokens = val1.tokens + val2.tokens
+                op_tokens.append(op_token)
+                stack[i-2:i+2] = [FunctionNode('_op_' + op_token.tag, op_tokens, *(val1, val2))]
+            stack.reverse()
 
 
 class FunctionNode(NodeBase):
@@ -282,7 +295,7 @@ class FunctionNode(NodeBase):
         for i, value in enumerate(positional_arguments):
             self.arguments['#%d' % i] = value
     
-    def __str__(self):
+    def __str__(self):  #pylint: disable=R0911
         if self.name == '_assign':
             return '%(destination)s = %(source)s' % self.arguments
         elif self.name == '_getattr':
@@ -504,7 +517,7 @@ class ValueNode(NodeBase):
                 raise error.InvalidNumberError(token, token.value)
         elif token.tag == 'constant':
             token_i += 1
-            value = cls.ConstantMap.get(token.value, token.value)
+            value = cls.ConstantMap.get(token.value.upper(), token.value)
             return token_i, ValueNode(value, [token])
         else:
             raise error.InvalidSyntaxError(token)
@@ -544,7 +557,7 @@ class VariableNode(NameNode):
     @classmethod
     def define_external(cls, name):
         '''Creates an external `VariableNode` from a string.'''
-        tokens = [Token('name', name, 0, 0)]
+        tokens = [Token('name', 'literal', name, 0, 0)]
         node = VariableNode(name, tokens)
         node.external = True
         return node
@@ -571,8 +584,9 @@ class BacktickNode(TextNode):
         if not token: raise error.InvalidSyntaxError(tokens[-1])
         if token.tag != 'backtick': raise error.InvalidSyntaxError(token)
         
+        value = token.value[1:]
         token_i += 1
-        return token_i, BacktickNode(token.value, [token])
+        return token_i, BacktickNode(value, [token])
 
 class GroupNode(NodeBase):
     '''Represents a group. Groups may be specified with a size.'''
