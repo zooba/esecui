@@ -76,14 +76,12 @@
             this.lblOr1 = new System.Windows.Forms.Label();
             this.lblOr3 = new System.Windows.Forms.Label();
             this.lblOr2 = new System.Windows.Forms.Label();
-            this.tabLog = new System.Windows.Forms.TabPage();
-            this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
-            this.watcherConfigurationDirectory = new System.IO.FileSystemWatcher();
             this.splitGraphStats = new System.Windows.Forms.SplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
             this.chartResults = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tab2DPlot = new System.Windows.Forms.TabPage();
+            this.visPopulation = new esecui.Visualiser();
             this.tableStats = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -101,7 +99,9 @@
             this.txtStatsCurrentBest = new System.Windows.Forms.TextBox();
             this.txtStatsCurrentMean = new System.Windows.Forms.TextBox();
             this.txtStatsCurrentWorst = new System.Windows.Forms.TextBox();
-            this.visPopulation = new esecui.Visualiser();
+            this.tabLog = new System.Windows.Forms.TabPage();
+            this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
+            this.watcherConfigurationDirectory = new System.IO.FileSystemWatcher();
             this.tabTabs.SuspendLayout();
             this.tabSystem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitSystemErrors)).BeginInit();
@@ -127,8 +127,6 @@
             this.splitLimitsGraph.SuspendLayout();
             this.tableResults.SuspendLayout();
             this.tableControls.SuspendLayout();
-            this.tabLog.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).BeginInit();
             this.splitGraphStats.Panel1.SuspendLayout();
             this.splitGraphStats.Panel2.SuspendLayout();
@@ -138,6 +136,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.chartResults)).BeginInit();
             this.tab2DPlot.SuspendLayout();
             this.tableStats.SuspendLayout();
+            this.tabLog.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).BeginInit();
             this.SuspendLayout();
             // 
             // tabTabs
@@ -742,40 +742,6 @@
             this.lblOr2.TabIndex = 6;
             this.lblOr2.Text = "or";
             // 
-            // tabLog
-            // 
-            this.tabLog.Controls.Add(this.txtLog);
-            this.tabLog.Location = new System.Drawing.Point(4, 23);
-            this.tabLog.Name = "tabLog";
-            this.tabLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLog.Size = new System.Drawing.Size(955, 619);
-            this.tabLog.TabIndex = 3;
-            this.tabLog.Text = "Log Messages (F12)";
-            this.tabLog.UseVisualStyleBackColor = true;
-            // 
-            // txtLog
-            // 
-            this.txtLog.ConvertTabsToSpaces = true;
-            this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtLog.EnableFolding = false;
-            this.txtLog.IsReadOnly = false;
-            this.txtLog.Location = new System.Drawing.Point(3, 3);
-            this.txtLog.Name = "txtLog";
-            this.txtLog.ShowLineNumbers = false;
-            this.txtLog.ShowVRuler = false;
-            this.txtLog.Size = new System.Drawing.Size(949, 614);
-            this.txtLog.TabIndex = 0;
-            // 
-            // watcherConfigurationDirectory
-            // 
-            this.watcherConfigurationDirectory.EnableRaisingEvents = true;
-            this.watcherConfigurationDirectory.Filter = "*.py;*.xml";
-            this.watcherConfigurationDirectory.SynchronizingObject = this;
-            this.watcherConfigurationDirectory.Changed += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Changed);
-            this.watcherConfigurationDirectory.Created += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Created);
-            this.watcherConfigurationDirectory.Deleted += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Deleted);
-            this.watcherConfigurationDirectory.Renamed += new System.IO.RenamedEventHandler(this.watcherConfigurationDirectory_Renamed);
-            // 
             // splitGraphStats
             // 
             this.splitGraphStats.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -821,19 +787,29 @@
             this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chartResults.Location = new System.Drawing.Point(3, 3);
             this.chartResults.Name = "chartResults";
-            this.chartResults.Size = new System.Drawing.Size(615, 426);
+            this.chartResults.Size = new System.Drawing.Size(615, 427);
             this.chartResults.TabIndex = 0;
             // 
             // tab2DPlot
             // 
             this.tab2DPlot.Controls.Add(this.visPopulation);
-            this.tab2DPlot.Location = new System.Drawing.Point(4, 23);
+            this.tab2DPlot.Location = new System.Drawing.Point(4, 22);
             this.tab2DPlot.Name = "tab2DPlot";
             this.tab2DPlot.Padding = new System.Windows.Forms.Padding(3);
-            this.tab2DPlot.Size = new System.Drawing.Size(621, 432);
+            this.tab2DPlot.Size = new System.Drawing.Size(621, 433);
             this.tab2DPlot.TabIndex = 1;
             this.tab2DPlot.Text = "2D Plot (Alt+2)";
             this.tab2DPlot.UseVisualStyleBackColor = true;
+            // 
+            // visPopulation
+            // 
+            this.visPopulation.AutoRange = true;
+            this.visPopulation.BackColor = System.Drawing.Color.White;
+            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.visPopulation.Location = new System.Drawing.Point(3, 3);
+            this.visPopulation.Name = "visPopulation";
+            this.visPopulation.Size = new System.Drawing.Size(615, 427);
+            this.visPopulation.TabIndex = 1;
             // 
             // tableStats
             // 
@@ -1037,15 +1013,39 @@
             this.txtStatsCurrentWorst.TabIndex = 15;
             this.txtStatsCurrentWorst.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // visPopulation
+            // tabLog
             // 
-            this.visPopulation.AutoRange = true;
-            this.visPopulation.BackColor = System.Drawing.Color.White;
-            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.visPopulation.Location = new System.Drawing.Point(3, 3);
-            this.visPopulation.Name = "visPopulation";
-            this.visPopulation.Size = new System.Drawing.Size(615, 427);
-            this.visPopulation.TabIndex = 1;
+            this.tabLog.Controls.Add(this.txtLog);
+            this.tabLog.Location = new System.Drawing.Point(4, 23);
+            this.tabLog.Name = "tabLog";
+            this.tabLog.Padding = new System.Windows.Forms.Padding(3);
+            this.tabLog.Size = new System.Drawing.Size(955, 619);
+            this.tabLog.TabIndex = 3;
+            this.tabLog.Text = "Log Messages (F12)";
+            this.tabLog.UseVisualStyleBackColor = true;
+            // 
+            // txtLog
+            // 
+            this.txtLog.ConvertTabsToSpaces = true;
+            this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLog.EnableFolding = false;
+            this.txtLog.IsReadOnly = false;
+            this.txtLog.Location = new System.Drawing.Point(3, 3);
+            this.txtLog.Name = "txtLog";
+            this.txtLog.ShowLineNumbers = false;
+            this.txtLog.ShowVRuler = false;
+            this.txtLog.Size = new System.Drawing.Size(949, 614);
+            this.txtLog.TabIndex = 0;
+            // 
+            // watcherConfigurationDirectory
+            // 
+            this.watcherConfigurationDirectory.EnableRaisingEvents = true;
+            this.watcherConfigurationDirectory.Filter = "*.py;*.xml";
+            this.watcherConfigurationDirectory.SynchronizingObject = this;
+            this.watcherConfigurationDirectory.Changed += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Changed);
+            this.watcherConfigurationDirectory.Created += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Created);
+            this.watcherConfigurationDirectory.Deleted += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Deleted);
+            this.watcherConfigurationDirectory.Renamed += new System.IO.RenamedEventHandler(this.watcherConfigurationDirectory_Renamed);
             // 
             // Editor
             // 
@@ -1057,7 +1057,7 @@
             this.Font = new System.Drawing.Font("Tahoma", 9F);
             this.KeyPreview = true;
             this.Name = "Editor";
-            this.Text = "esec Experiment";
+            this.Text = "esec Experiment Designer";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Editor_FormClosed);
             this.Load += new System.EventHandler(this.Editor_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Editor_KeyDown);
@@ -1091,8 +1091,6 @@
             this.tableResults.PerformLayout();
             this.tableControls.ResumeLayout(false);
             this.tableControls.PerformLayout();
-            this.tabLog.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).EndInit();
             this.splitGraphStats.Panel1.ResumeLayout(false);
             this.splitGraphStats.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).EndInit();
@@ -1103,6 +1101,8 @@
             this.tab2DPlot.ResumeLayout(false);
             this.tableStats.ResumeLayout(false);
             this.tableStats.PerformLayout();
+            this.tabLog.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).EndInit();
             this.ResumeLayout(false);
 
         }

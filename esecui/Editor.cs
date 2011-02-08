@@ -46,6 +46,96 @@ namespace esecui
             txtEvaluatorCode.SetHighlighting("Python");
         }
 
+        #region Startup and early termination
+
+        private Task InitialisationTask;
+        private CancellationTokenSource InitialisationTaskCTS;
+
+        private void Editor_Load(object sender, EventArgs e)
+        {
+            tabTabs.SelectedIndex = 0;
+
+            lstErrors.ListViewItemSorter = new ErrorItemSorter();
+            lstLandscapes.TreeViewNodeSorter = new LandscapeSorter();
+
+            Text = "esec Experiment Designer - Loading...";
+
+            var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            InitialisationTaskCTS = new CancellationTokenSource();
+
+            InitialisationTask = new Task(Task_Init, InitialisationTaskCTS.Token);
+            InitialisationTask.ContinueWith(Task_Init_Completed,
+                CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, guiScheduler);
+            InitialisationTask.ContinueWith(Task_Init_NotCompleted,
+                CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, guiScheduler);
+
+            InitialisationTask.Start();
+        }
+
+        private void Task_Init()
+        {
+            var libraryPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            Python = new PythonHost(libraryPath);
+
+            esec = Python.Import("esec");
+            esdlc = Python.Import("esdlc");
+
+            PrepareLandscapeTree();
+        }
+
+        private void Task_Init_Completed(Task task)
+        {
+            btnCheckSyntax.Enabled = true;
+            btnStartStop.Enabled = true;
+
+            FillLandscapeTree();
+            InitialisationTask.Dispose();
+            InitialisationTask = null;
+            InitialisationTaskCTS.Dispose();
+            InitialisationTaskCTS = null;
+
+            ConfigurationList_Refresh();
+            lstConfigurations.Enabled = true;
+            btnSaveConfiguration.Enabled = true;
+            btnSaveAsConfiguration.Enabled = true;
+
+            Text = "esec Experiment Designer";
+        }
+
+        private void Task_Init_NotCompleted(Task task)
+        {
+            if (!task.IsCanceled)
+            {
+                Log("An error occurred while initialising IronPython.\n");
+                var ae = task.Exception as AggregateException;
+                if (ae == null)
+                {
+                    Log(task.Exception.ToString());
+                }
+                else
+                {
+                    foreach (var ex in ae.InnerExceptions) Log(ex.ToString());
+                }
+                tabTabs.SelectedTab = tabLog;
+            }
+            InitialisationTask.Dispose();
+            InitialisationTask = null;
+            InitialisationTaskCTS = null;
+        }
+
+
+        private void Editor_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            var initTask = InitialisationTask;
+            var initTaskCTS = InitialisationTaskCTS;
+            if (initTask != null && initTaskCTS != null)
+            {
+                initTaskCTS.Cancel(false);
+            }
+        }
+
+        #endregion
+
         #region Landscape list handling
 
         private Dictionary<string, TreeNode> LandscapeNodes;
@@ -123,6 +213,7 @@ FitnessMinimise, each of which takes a list of values in its initialiser.
                 txtEvaluatorCode.Visible = true;
                 txtLandscapeInternalName.Text = CustomEvaluatorName;
                 txtLandscapeDescription.Text = CustomEvaluatorDescription;
+                txtLandscapeParameters.ResetText();
                 lblLandscapeParameters.Enabled = false;
                 txtLandscapeParameters.Enabled = false;
                 return;
@@ -172,92 +263,6 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             Python.Exec(code, scope);
             return scope.GetVariable("CustomEvaluator");
-        }
-
-        #endregion
-
-        #region Startup and early termination
-
-        private Task InitialisationTask;
-        private CancellationTokenSource InitialisationTaskCTS;
-
-        private void Editor_Load(object sender, EventArgs e)
-        {
-            tabTabs.SelectedIndex = 0;
-
-            lstErrors.ListViewItemSorter = new ErrorItemSorter();
-            lstLandscapes.TreeViewNodeSorter = new LandscapeSorter();
-
-            var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            InitialisationTaskCTS = new CancellationTokenSource();
-
-            InitialisationTask = new Task(Task_Init, InitialisationTaskCTS.Token);
-            InitialisationTask.ContinueWith(Task_Init_Completed,
-                CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, guiScheduler);
-            InitialisationTask.ContinueWith(Task_Init_NotCompleted,
-                CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, guiScheduler);
-
-            InitialisationTask.Start();
-        }
-
-        private void Task_Init()
-        {
-            var libraryPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            Python = new PythonHost(libraryPath);
-
-            esec = Python.Import("esec");
-            esdlc = Python.Import("esdlc");
-
-            PrepareLandscapeTree();
-        }
-
-        private void Task_Init_Completed(Task task)
-        {
-            btnCheckSyntax.Enabled = true;
-            btnStartStop.Enabled = true;
-
-            FillLandscapeTree();
-            InitialisationTask.Dispose();
-            InitialisationTask = null;
-            InitialisationTaskCTS.Dispose();
-            InitialisationTaskCTS = null;
-
-            ConfigurationList_Refresh();
-            lstConfigurations.Enabled = true;
-            btnSaveConfiguration.Enabled = true;
-            btnSaveAsConfiguration.Enabled = true;
-        }
-
-        private void Task_Init_NotCompleted(Task task)
-        {
-            if (!task.IsCanceled)
-            {
-                Log("An error occurred while initialising IronPython.\n");
-                var ae = task.Exception as AggregateException;
-                if (ae == null)
-                {
-                    Log(task.Exception.ToString());
-                }
-                else
-                {
-                    foreach (var ex in ae.InnerExceptions) Log(ex.ToString());
-                }
-                tabTabs.SelectedTab = tabLog;
-            }
-            InitialisationTask.Dispose();
-            InitialisationTask = null;
-            InitialisationTaskCTS = null;
-        }
-
-
-        private void Editor_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            var initTask = InitialisationTask;
-            var initTaskCTS = InitialisationTaskCTS;
-            if (initTask != null && initTaskCTS != null)
-            {
-                initTaskCTS.Cancel(false);
-            }
         }
 
         #endregion
