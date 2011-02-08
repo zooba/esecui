@@ -14,41 +14,76 @@ namespace esecui
         public string Source { get; set; }
 
         public string Definition { get; set; }
-        public IDictionary<object, object> SystemParameters { get; set; }
+        public string SystemParameters { get; set; }
 
         public string Landscape { get; set; }
-        public IDictionary<object, object> LandscapeParameters { get; set; }
+        public string LandscapeParameters { get; set; }
 
         public int? IterationLimit { get; set; }
         public int? EvaluationLimit { get; set; }
         public TimeSpan? TimeLimit { get; set; }
         public double? FitnessLimit { get; set; }
 
-
-        private static string ToLines(IDictionary<object, object> source, string indent)
+        private static string ToPythonCode(Dictionary<string,object> source, string indent)
         {
             var sb = new StringBuilder();
-            foreach (var kv in source)
+            foreach(var kv in source)
             {
                 sb.Append(indent);
+                string asStr;
+                Dictionary<string,object> asDict;
+
                 sb.Append("'");
-                sb.Append(kv.Key.ToString());
+                sb.Append(kv.Key);
                 sb.Append("': ");
-                var asStr = kv.Value as string;
-                if (asStr != null)
+
+                if((asStr = kv.Value as string) != null)
                 {
-                    sb.Append("'");
                     sb.Append(asStr);
-                    sb.Append("'");
                 }
-                else
+                else if ((asDict = kv.Value as Dictionary<string, object>) != null)
                 {
-                    sb.Append(kv.Value);
+                    sb.AppendLine(" {");
+                    sb.Append(ToPythonCode(asDict, indent + "    "));
+                    sb.Append(indent);
+                    sb.Append("}");
                 }
                 sb.AppendLine(",");
             }
-
             return sb.ToString();
+        }
+
+        private static string ToPythonCode(string source, string indent)
+        {
+            var dict = new Dictionary<string, object>();
+            var reader = new StringReader(source);
+            for (var line = reader.ReadLine(); line != null; line = reader.ReadLine())
+            {
+                int i1 = line.IndexOf('='), i2 = line.IndexOf(':');
+                if (i2 >= 0 && i2 < i1) i1 = i2;
+                if (i1 < 0)
+                {
+                    dict[line] = "True";
+                }
+                else
+                {
+                    var name = line.Substring(0, i1);
+                    var value = line.Substring(i1 + 1);
+                    var subdict = dict;
+                    var parts = name.Split('.');
+                    if (parts.Length > 1)
+                    {
+                        foreach (var part in parts.Take(parts.Length - 1))
+                        {
+                            if (!subdict.ContainsKey(part)) subdict[part] = new Dictionary<string, string>();
+                        }
+                    }
+                    subdict[parts[parts.Length - 1]] = value;
+                }
+            }
+             
+
+            return ToPythonCode(dict, indent);
         }
 
 
@@ -64,12 +99,12 @@ namespace esecui
 config = {
     'landscape': {
         'class': " + Landscape + @",
-" + ToLines(LandscapeParameters, "        ") + @"
+" + ToPythonCode(LandscapeParameters, "        ") + @"
     },
     'system': {
         'definition': r'''" + Definition + @",
         '''
-" + ToLines(SystemParameters, "        ") + @"
+" + ToPythonCode(SystemParameters, "        ") + @"
     },
     'monitor': {
         'limits': {
@@ -103,16 +138,18 @@ config = {
             dynamic config = scope.GetVariable("config");
 
             var landscape = (IDictionary<object, object>)config["landscape"];
-            LandscapeParameters = landscape.ToDictionary(kv => (object)kv.Key.ToString(), kv => kv.Value);
-            dynamic landscape_class = LandscapeParameters["class"];
+            var landscape_parameters = landscape.ToDictionary(kv => (object)kv.Key.ToString(), kv => kv.Value);
+            dynamic landscape_class = landscape_parameters["class"];
             Landscape = landscape_class.__module__ + "." + landscape_class.__name__;
-            LandscapeParameters.Remove("class");
+            landscape_parameters.Remove("class");
+            LandscapeParameters = landscape_parameters.ToText(python);
 
             var system = (IDictionary<object, object>)config["system"];
-            SystemParameters = system.ToDictionary(kv => (object)kv.Key.ToString(), kv => kv.Value);
-            Definition = SystemParameters["definition"] as string;
+            var system_parameters = system.ToDictionary(kv => (object)kv.Key.ToString(), kv => kv.Value);
+            Definition = system_parameters["definition"] as string;
             if (Definition != null) Definition = Definition.Trim().Trim('\r', '\n');
-            SystemParameters.Remove("definition");
+            system_parameters.Remove("definition");
+            SystemParameters = system_parameters.ToText(python);
 
             var limits = (IDictionary<object, object>)config["monitor"]["limits"];
             object temp;
@@ -136,10 +173,10 @@ config = {
                 new XAttribute("name", Name),
                 new XElement("system",
                     new XElement("definition", Definition),
-                    SystemParameters.Select(i => new XElement(i.Key.ToString(), python.Repr(i.Value)))),
+                    new XElement("parameters", SystemParameters)),
                 new XElement("landscape",
                     new XElement("class", Landscape),
-                    LandscapeParameters.Select(i => new XElement(i.Key.ToString(), python.Repr(i.Value)))),
+                    new XElement("parameters", LandscapeParameters)),
                 new XElement("monitor",
                     new XElement("limits",
                         IterationLimit.HasValue ? new XAttribute("iterations", IterationLimit.Value) : null,
@@ -149,22 +186,18 @@ config = {
             xml.WriteTo(destination);
         }
 
-        public void Read(string source, PythonHost python)
+        public void Read(string source)
         {
             var xml = XElement.Load(source) as XElement;
             if (xml == null) return;
 
             Name = (string)xml.Attribute("name");
 
-            SystemParameters = xml.Element("system").Elements()
-                .Where(e => e.Name.LocalName != "definition")
-                .ToDictionary(e => (object)e.Name.LocalName, e => (object)python.Eval(e.Value));
+            SystemParameters = xml.Element("system").Element("parameters").Value;
             Definition = (string)xml.Element("system").Element("definition");
             if (Definition != null) Definition = Definition.Trim().Trim('\n', '\r');
 
-            LandscapeParameters = xml.Element("landscape").Elements()
-                .Where(e => e.Name.LocalName != "class")
-                .ToDictionary(e => (object)e.Name.LocalName, e => (object)python.Eval(e.Value));
+            LandscapeParameters = xml.Element("landscape").Element("parameters").Value;
             Landscape = (string)xml.Element("landscape").Element("class");
 
             var limits = xml.Element("monitor").Element("limits");

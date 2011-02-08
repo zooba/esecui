@@ -81,7 +81,6 @@
             this.tabChart = new System.Windows.Forms.TabPage();
             this.chartResults = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tab2DPlot = new System.Windows.Forms.TabPage();
-            this.visPopulation = new esecui.Visualiser();
             this.tableStats = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -102,6 +101,7 @@
             this.tabLog = new System.Windows.Forms.TabPage();
             this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
             this.watcherConfigurationDirectory = new System.IO.FileSystemWatcher();
+            this.visPopulation = new esecui.Visualiser();
             this.tabTabs.SuspendLayout();
             this.tabSystem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitSystemErrors)).BeginInit();
@@ -226,6 +226,7 @@
             this.txtSystemVariables.ShowVRuler = false;
             this.txtSystemVariables.Size = new System.Drawing.Size(292, 437);
             this.txtSystemVariables.TabIndex = 0;
+            this.txtSystemVariables.Text = "size: 50";
             // 
             // lstErrors
             // 
@@ -787,29 +788,19 @@
             this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chartResults.Location = new System.Drawing.Point(3, 3);
             this.chartResults.Name = "chartResults";
-            this.chartResults.Size = new System.Drawing.Size(615, 427);
+            this.chartResults.Size = new System.Drawing.Size(615, 426);
             this.chartResults.TabIndex = 0;
             // 
             // tab2DPlot
             // 
             this.tab2DPlot.Controls.Add(this.visPopulation);
-            this.tab2DPlot.Location = new System.Drawing.Point(4, 22);
+            this.tab2DPlot.Location = new System.Drawing.Point(4, 23);
             this.tab2DPlot.Name = "tab2DPlot";
             this.tab2DPlot.Padding = new System.Windows.Forms.Padding(3);
-            this.tab2DPlot.Size = new System.Drawing.Size(621, 433);
+            this.tab2DPlot.Size = new System.Drawing.Size(621, 432);
             this.tab2DPlot.TabIndex = 1;
             this.tab2DPlot.Text = "2D Plot (Alt+2)";
             this.tab2DPlot.UseVisualStyleBackColor = true;
-            // 
-            // visPopulation
-            // 
-            this.visPopulation.AutoRange = true;
-            this.visPopulation.BackColor = System.Drawing.Color.White;
-            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.visPopulation.Location = new System.Drawing.Point(3, 3);
-            this.visPopulation.Name = "visPopulation";
-            this.visPopulation.Size = new System.Drawing.Size(615, 427);
-            this.visPopulation.TabIndex = 1;
             // 
             // tableStats
             // 
@@ -1046,6 +1037,16 @@
             this.watcherConfigurationDirectory.Created += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Created);
             this.watcherConfigurationDirectory.Deleted += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Deleted);
             this.watcherConfigurationDirectory.Renamed += new System.IO.RenamedEventHandler(this.watcherConfigurationDirectory_Renamed);
+            // 
+            // visPopulation
+            // 
+            this.visPopulation.AutoRange = true;
+            this.visPopulation.BackColor = System.Drawing.Color.White;
+            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.visPopulation.Location = new System.Drawing.Point(3, 3);
+            this.visPopulation.Name = "visPopulation";
+            this.visPopulation.Size = new System.Drawing.Size(615, 427);
+            this.visPopulation.TabIndex = 1;
             // 
             // Editor
             // 

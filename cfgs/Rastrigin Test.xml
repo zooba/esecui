@@ -8,5 +8,7 @@ BEGIN generation
     
     FROM population, offspring SELECT size population USING best
     YIELD population
-END generation
-</definition><length>2</length><size>50</size></system><landscape><class>esec.landscape.real.Rastrigin</class><bounds>{'lower': -5.12, 'upper': 5.12}</bounds><parameters>None</parameters><size>{'max': 0, 'min': 0, 'exact': 2}</size><random_seed>None</random_seed></landscape><monitor><limits iterations="100" /></monitor></configuration>
+END generation</definition><parameters>length = 2
+size = 50</parameters></system><landscape><class>esec.landscape.real.Rastrigin</class><parameters>bounds.lower: -5.12
+bounds.upper: 5.12
+size.exact: 2</parameters></landscape><monitor><limits iterations="100" /></monitor></configuration>

@@ -60,6 +60,9 @@ namespace esecui
 
             Text = "esec Experiment Designer - Loading...";
 
+            UseWaitCursor = true;
+            tabTabs.Enabled = false;
+            
             var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
             InitialisationTaskCTS = new CancellationTokenSource();
 
@@ -94,10 +97,19 @@ namespace esecui
             InitialisationTaskCTS.Dispose();
             InitialisationTaskCTS = null;
 
+            tabTabs.Enabled = true;
+            UseWaitCursor = false;
+
             ConfigurationList_Refresh();
             lstConfigurations.Enabled = true;
             btnSaveConfiguration.Enabled = true;
             btnSaveAsConfiguration.Enabled = true;
+
+            // Select the GA template by default
+            var config = lstConfigurations.Items
+                .OfType<Configuration>()
+                .FirstOrDefault(c => c.Name == "Template: Genetic Algorithm");
+            if (config != null) lstConfigurations.SelectedItem = config;
 
             Text = "esec Experiment Designer";
         }
@@ -231,8 +243,11 @@ FitnessMinimise, each of which takes a list of values in its initialiser.
                 dynamic landscape = e.Node.Tag;
                 txtLandscapeInternalName.Text = e.Node.Name;
                 txtLandscapeDescription.Text = ((string)landscape.__doc__).Replace("\n", "\r\n");
-                txtLandscapeParameters.ResetText();
-                txtLandscapeParameters.Text = Python.FromSyntaxDefaults((object)landscape).ToText(Python);
+                if (e.Action != TreeViewAction.Unknown)
+                {
+                    txtLandscapeParameters.ResetText();
+                    txtLandscapeParameters.Text = Python.FromSyntaxDefaults((object)landscape).ToText(Python);
+                }
             }
             else
             {
@@ -784,7 +799,19 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void ConfigurationList_Refresh(string selectSource = null)
         {
-            if (!Directory.Exists(Properties.Settings.Default.ConfigurationDirectory)) return;
+            if (!Directory.Exists(Properties.Settings.Default.ConfigurationDirectory))
+            {
+                var defaultDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cfgs");
+                if (Directory.Exists(defaultDirectory))
+                {
+                    Properties.Settings.Default.ConfigurationDirectory = defaultDirectory;
+                    Properties.Settings.Default.Save();
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             if (watcherConfigurationDirectory.EnableRaisingEvents == false)
             {
@@ -801,7 +828,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                     {
                         var config = new Configuration();
                         config.Source = file;
-                        config.Read(file, Python);
+                        config.Read(file);
                         if (string.IsNullOrWhiteSpace(config.Name)) config.Name = Path.GetFileNameWithoutExtension(file);
 
                         if (lstConfigurations.Items.Contains(config)) lstConfigurations.Items.Remove(config);
@@ -809,6 +836,8 @@ class CustomEvaluator(esec.landscape.Landscape):
                     }
                     catch { }
                 }
+
+
                 foreach (var file in Directory.EnumerateFiles(Properties.Settings.Default.ConfigurationDirectory, "*.py"))
                 {
                     try
@@ -862,13 +891,14 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtSystem.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystem.Refresh();
 
-            txtSystemVariables.Text = config.SystemParameters.ToText(Python);
+            txtSystemVariables.Text = config.SystemParameters;
             txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystemVariables.Refresh();
 
             lstLandscapes.SelectedNode = lstLandscapes.Nodes.Find(config.Landscape, true).FirstOrDefault();
+            lstLandscapes.Refresh();
 
-            txtLandscapeParameters.Text = config.LandscapeParameters.ToText(Python);
+            txtLandscapeParameters.Text = config.LandscapeParameters;
             txtLandscapeParameters.Document.MarkerStrategy.RemoveAll(_ => true);
             txtLandscapeParameters.Refresh();
 
@@ -882,9 +912,9 @@ class CustomEvaluator(esec.landscape.Landscape):
         private void UpdateConfig(Configuration config)
         {
             config.Definition = txtSystem.Text;
-            config.SystemParameters = Python.ConfigDict(txtSystemVariables);
+            config.SystemParameters = txtSystemVariables.Text;
             config.Landscape = (lstLandscapes.SelectedNode ?? lstLandscapes.Nodes["Custom"]).Name;
-            config.LandscapeParameters = Python.ConfigDict(txtLandscapeParameters);
+            config.LandscapeParameters = txtLandscapeParameters.Text;
 
             config.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
             config.EvaluationLimit = chkEvaluations.Checked ? int.Parse(txtEvaluations.Text) : (int?)null;
