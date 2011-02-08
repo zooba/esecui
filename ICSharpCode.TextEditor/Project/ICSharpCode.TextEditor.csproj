@@ -47,7 +47,7 @@
     <Optimize>False</Optimize>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>..\..\esecui\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;DATACONSISTENCYTEST</DefineConstants>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CodeAnalysisRules>
@@ -58,7 +58,7 @@
     <Optimize>True</Optimize>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <OutputPath>..\..\esecui\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
