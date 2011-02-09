@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Evolutionary Programming"><system><definition># Evolutionary Programming
+#
+# Uses real-valued individuals, random selection, Gaussian mutation.
+#
+
+FROM random_real(length=2, lowest=-100, highest=100) SELECT (size) population
+YIELD population
+
+BEGIN generation
+    FROM population SELECT offspring \
+        USING mutate_gaussian(step_size,per_gene_rate=1.0)
+    
+    FROM population, offspring SELECT (size) population USING best
+    YIELD population
+END generation
+</definition><parameters>step_size: 1.0
+size: 50</parameters></system><landscape><class>esec.landscape.real.Sphere</class><parameters>bounds.lower: -100.0
+bounds.upper: 100.0</parameters></landscape><monitor><limits iterations="500" fitness="0.001" /></monitor></configuration>

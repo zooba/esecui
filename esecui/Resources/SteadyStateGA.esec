@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Steady State GA"><system><definition># Steady-State Genetic Algorithm
+#
+# Uses binary-valued individuals, binary tournament, Gaussian mutation.
+#
+
+FROM random_binary(length=100) SELECT (size) population
+YIELD population
+
+BEGIN generation
+    REPEAT (size)
+        FROM population SELECT 2 parents USING tournament(k)
+        FROM parents    SELECT 1 offspring \
+             USING crossover_one(per_pair_rate=0.9), \
+                   mutate_bitflip(genes=1), \
+                   best
+        
+        FROM population SELECT 1 replacee, rest USING uniform_shuffle
+        FROM offspring, rest SELECT population
+    END repeat
+
+    YIELD population
+END
+</definition><parameters>size: 50
+step_size: 1
+k = 2 # binary tournament</parameters></system><landscape><class>esec.landscape.binary.Multimodal</class><parameters>N = 100
+P = 100</parameters></landscape><monitor><limits iterations="100" fitness="1" /></monitor></configuration>

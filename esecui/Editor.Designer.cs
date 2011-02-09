@@ -28,10 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.ToolStripSeparator menuConfigurationSeparator1;
+            System.Windows.Forms.ToolStripSeparator menuConfigurationSeparator2;
+            System.Windows.Forms.ToolStripSeparator menuConfigurationSeparator3;
+            System.Windows.Forms.ToolStripSeparator menuViewSeparator1;
+            System.Windows.Forms.ToolStripSeparator menuViewSeparator2;
+            System.Windows.Forms.ToolStripSeparator menuViewSeparator3;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
-            this.tabTabs = new System.Windows.Forms.TabControl();
-            this.tabSystem = new System.Windows.Forms.TabPage();
             this.splitSystemErrors = new System.Windows.Forms.SplitContainer();
             this.splitSystemVariables = new System.Windows.Forms.SplitContainer();
             this.txtSystem = new ICSharpCode.TextEditor.TextEditorControl();
@@ -40,14 +43,7 @@
             this.colLocation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colCode = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnCheckSyntax = new System.Windows.Forms.Button();
-            this.btnSaveConfiguration = new System.Windows.Forms.Button();
-            this.btnSaveAsConfiguration = new System.Windows.Forms.Button();
             this.lstConfigurations = new System.Windows.Forms.ComboBox();
-            this.menuConfigurationSource = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.menuConfigurationDirectory = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabLandscape = new System.Windows.Forms.TabPage();
             this.splitLandscape = new System.Windows.Forms.SplitContainer();
             this.lstLandscapes = new System.Windows.Forms.TreeView();
             this.tableLandscape = new System.Windows.Forms.TableLayoutPanel();
@@ -59,7 +55,6 @@
             this.lblLandscapeParameters = new System.Windows.Forms.Label();
             this.txtLandscapeParameters = new ICSharpCode.TextEditor.TextEditorControl();
             this.lblEvaluatorCode = new System.Windows.Forms.Label();
-            this.tabResults = new System.Windows.Forms.TabPage();
             this.splitLimitsGraph = new System.Windows.Forms.SplitContainer();
             this.tableResults = new System.Windows.Forms.TableLayoutPanel();
             this.tableControls = new System.Windows.Forms.TableLayoutPanel();
@@ -76,9 +71,6 @@
             this.lblOr1 = new System.Windows.Forms.Label();
             this.lblOr3 = new System.Windows.Forms.Label();
             this.lblOr2 = new System.Windows.Forms.Label();
-            this.tabLog = new System.Windows.Forms.TabPage();
-            this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
-            this.watcherConfigurationDirectory = new System.IO.FileSystemWatcher();
             this.splitGraphStats = new System.Windows.Forms.SplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
@@ -104,10 +96,44 @@
             this.chkChartCurrentMean = new System.Windows.Forms.CheckBox();
             this.chkChartCurrentBest = new System.Windows.Forms.CheckBox();
             this.chkChartBestFitness = new System.Windows.Forms.CheckBox();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.menuConfiguration = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuNew = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuOpen = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSaveAs = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuExport = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuCheckSyntax = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuView = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewSystem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewLandscape = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewResults = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewResultsChart = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewResultsPlot = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewLog = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuControl = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuControlStartStop = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelMenu = new System.Windows.Forms.FlowLayoutPanel();
+            this.chkSystem = new System.Windows.Forms.RadioButton();
+            this.chkLandscape = new System.Windows.Forms.RadioButton();
+            this.chkResults = new System.Windows.Forms.RadioButton();
+            this.chkLog = new System.Windows.Forms.RadioButton();
+            this.panelSystem = new System.Windows.Forms.Panel();
+            this.panelLandscape = new System.Windows.Forms.Panel();
+            this.panelResults = new System.Windows.Forms.Panel();
+            this.panelLog = new System.Windows.Forms.Panel();
+            this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
             this.chartResults = new esecui.Visualiser();
             this.visPopulation = new esecui.Visualiser();
-            this.tabTabs.SuspendLayout();
-            this.tabSystem.SuspendLayout();
+            menuConfigurationSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            menuConfigurationSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            menuConfigurationSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            menuViewSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            menuViewSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            menuViewSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.splitSystemErrors)).BeginInit();
             this.splitSystemErrors.Panel1.SuspendLayout();
             this.splitSystemErrors.Panel2.SuspendLayout();
@@ -116,23 +142,17 @@
             this.splitSystemVariables.Panel1.SuspendLayout();
             this.splitSystemVariables.Panel2.SuspendLayout();
             this.splitSystemVariables.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.menuConfigurationSource.SuspendLayout();
-            this.tabLandscape.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLandscape)).BeginInit();
             this.splitLandscape.Panel1.SuspendLayout();
             this.splitLandscape.Panel2.SuspendLayout();
             this.splitLandscape.SuspendLayout();
             this.tableLandscape.SuspendLayout();
-            this.tabResults.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLimitsGraph)).BeginInit();
             this.splitLimitsGraph.Panel1.SuspendLayout();
             this.splitLimitsGraph.Panel2.SuspendLayout();
             this.splitLimitsGraph.SuspendLayout();
             this.tableResults.SuspendLayout();
             this.tableControls.SuspendLayout();
-            this.tabLog.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).BeginInit();
             this.splitGraphStats.Panel1.SuspendLayout();
             this.splitGraphStats.Panel2.SuspendLayout();
@@ -141,36 +161,48 @@
             this.tabChart.SuspendLayout();
             this.tab2DPlot.SuspendLayout();
             this.tableStats.SuspendLayout();
+            this.menuStrip.SuspendLayout();
+            this.panelMenu.SuspendLayout();
+            this.panelSystem.SuspendLayout();
+            this.panelLandscape.SuspendLayout();
+            this.panelResults.SuspendLayout();
+            this.panelLog.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tabTabs
+            // menuConfigurationSeparator1
             // 
-            this.tabTabs.Controls.Add(this.tabSystem);
-            this.tabTabs.Controls.Add(this.tabLandscape);
-            this.tabTabs.Controls.Add(this.tabResults);
-            this.tabTabs.Controls.Add(this.tabLog);
-            this.tabTabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabTabs.Location = new System.Drawing.Point(0, 0);
-            this.tabTabs.Name = "tabTabs";
-            this.tabTabs.SelectedIndex = 0;
-            this.tabTabs.Size = new System.Drawing.Size(963, 646);
-            this.tabTabs.TabIndex = 0;
+            menuConfigurationSeparator1.Name = "menuConfigurationSeparator1";
+            menuConfigurationSeparator1.Size = new System.Drawing.Size(192, 6);
             // 
-            // tabSystem
+            // menuConfigurationSeparator2
             // 
-            this.tabSystem.Controls.Add(this.splitSystemErrors);
-            this.tabSystem.Location = new System.Drawing.Point(4, 23);
-            this.tabSystem.Name = "tabSystem";
-            this.tabSystem.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSystem.Size = new System.Drawing.Size(955, 619);
-            this.tabSystem.TabIndex = 0;
-            this.tabSystem.Text = "System (F1)";
-            this.tabSystem.UseVisualStyleBackColor = true;
+            menuConfigurationSeparator2.Name = "menuConfigurationSeparator2";
+            menuConfigurationSeparator2.Size = new System.Drawing.Size(192, 6);
+            // 
+            // menuConfigurationSeparator3
+            // 
+            menuConfigurationSeparator3.Name = "menuConfigurationSeparator3";
+            menuConfigurationSeparator3.Size = new System.Drawing.Size(192, 6);
+            // 
+            // menuViewSeparator1
+            // 
+            menuViewSeparator1.Name = "menuViewSeparator1";
+            menuViewSeparator1.Size = new System.Drawing.Size(159, 6);
+            // 
+            // menuViewSeparator2
+            // 
+            menuViewSeparator2.Name = "menuViewSeparator2";
+            menuViewSeparator2.Size = new System.Drawing.Size(159, 6);
+            // 
+            // menuViewSeparator3
+            // 
+            menuViewSeparator3.Name = "menuViewSeparator3";
+            menuViewSeparator3.Size = new System.Drawing.Size(159, 6);
             // 
             // splitSystemErrors
             // 
             this.splitSystemErrors.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitSystemErrors.Location = new System.Drawing.Point(3, 3);
+            this.splitSystemErrors.Location = new System.Drawing.Point(0, 0);
             this.splitSystemErrors.Name = "splitSystemErrors";
             this.splitSystemErrors.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -181,9 +213,8 @@
             // splitSystemErrors.Panel2
             // 
             this.splitSystemErrors.Panel2.Controls.Add(this.lstErrors);
-            this.splitSystemErrors.Panel2.Controls.Add(this.tableLayoutPanel1);
-            this.splitSystemErrors.Size = new System.Drawing.Size(949, 613);
-            this.splitSystemErrors.SplitterDistance = 437;
+            this.splitSystemErrors.Size = new System.Drawing.Size(963, 616);
+            this.splitSystemErrors.SplitterDistance = 439;
             this.splitSystemErrors.TabIndex = 0;
             // 
             // splitSystemVariables
@@ -199,8 +230,8 @@
             // splitSystemVariables.Panel2
             // 
             this.splitSystemVariables.Panel2.Controls.Add(this.txtSystemVariables);
-            this.splitSystemVariables.Size = new System.Drawing.Size(949, 437);
-            this.splitSystemVariables.SplitterDistance = 653;
+            this.splitSystemVariables.Size = new System.Drawing.Size(963, 439);
+            this.splitSystemVariables.SplitterDistance = 662;
             this.splitSystemVariables.TabIndex = 0;
             // 
             // txtSystem
@@ -212,7 +243,7 @@
             this.txtSystem.Location = new System.Drawing.Point(0, 0);
             this.txtSystem.Name = "txtSystem";
             this.txtSystem.ShowVRuler = false;
-            this.txtSystem.Size = new System.Drawing.Size(653, 437);
+            this.txtSystem.Size = new System.Drawing.Size(662, 439);
             this.txtSystem.TabIndex = 0;
             this.txtSystem.Text = resources.GetString("txtSystem.Text");
             // 
@@ -227,7 +258,7 @@
             this.txtSystemVariables.Name = "txtSystemVariables";
             this.txtSystemVariables.ShowLineNumbers = false;
             this.txtSystemVariables.ShowVRuler = false;
-            this.txtSystemVariables.Size = new System.Drawing.Size(292, 437);
+            this.txtSystemVariables.Size = new System.Drawing.Size(297, 439);
             this.txtSystemVariables.TabIndex = 0;
             this.txtSystemVariables.Text = "size: 50";
             // 
@@ -239,9 +270,9 @@
             this.colMessage});
             this.lstErrors.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstErrors.FullRowSelect = true;
-            this.lstErrors.Location = new System.Drawing.Point(0, 36);
+            this.lstErrors.Location = new System.Drawing.Point(0, 0);
             this.lstErrors.Name = "lstErrors";
-            this.lstErrors.Size = new System.Drawing.Size(949, 136);
+            this.lstErrors.Size = new System.Drawing.Size(963, 173);
             this.lstErrors.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lstErrors.TabIndex = 1;
             this.lstErrors.UseCompatibleStateImageBehavior = false;
@@ -261,116 +292,24 @@
             this.colMessage.Text = "Message";
             this.colMessage.Width = 400;
             // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.AutoSize = true;
-            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.btnCheckSyntax, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.btnSaveConfiguration, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.btnSaveAsConfiguration, 3, 0);
-            this.tableLayoutPanel1.Controls.Add(this.lstConfigurations, 1, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(949, 36);
-            this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // btnCheckSyntax
-            // 
-            this.btnCheckSyntax.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnCheckSyntax.AutoSize = true;
-            this.btnCheckSyntax.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnCheckSyntax.Enabled = false;
-            this.btnCheckSyntax.Location = new System.Drawing.Point(136, 3);
-            this.btnCheckSyntax.Name = "btnCheckSyntax";
-            this.btnCheckSyntax.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
-            this.btnCheckSyntax.Size = new System.Drawing.Size(130, 30);
-            this.btnCheckSyntax.TabIndex = 0;
-            this.btnCheckSyntax.Text = "&Check Syntax (F4)";
-            this.btnCheckSyntax.UseVisualStyleBackColor = true;
-            this.btnCheckSyntax.Click += new System.EventHandler(this.btnCheckSyntax_Click);
-            // 
-            // btnSaveConfiguration
-            // 
-            this.btnSaveConfiguration.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnSaveConfiguration.AutoSize = true;
-            this.btnSaveConfiguration.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnSaveConfiguration.Enabled = false;
-            this.btnSaveConfiguration.Location = new System.Drawing.Point(807, 4);
-            this.btnSaveConfiguration.Name = "btnSaveConfiguration";
-            this.btnSaveConfiguration.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnSaveConfiguration.Size = new System.Drawing.Size(49, 28);
-            this.btnSaveConfiguration.TabIndex = 0;
-            this.btnSaveConfiguration.Text = "&Save";
-            this.btnSaveConfiguration.UseVisualStyleBackColor = true;
-            this.btnSaveConfiguration.Click += new System.EventHandler(this.btnSaveConfiguration_Click);
-            // 
-            // btnSaveAsConfiguration
-            // 
-            this.btnSaveAsConfiguration.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnSaveAsConfiguration.AutoSize = true;
-            this.btnSaveAsConfiguration.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnSaveAsConfiguration.Enabled = false;
-            this.btnSaveAsConfiguration.Location = new System.Drawing.Point(862, 3);
-            this.btnSaveAsConfiguration.Name = "btnSaveAsConfiguration";
-            this.btnSaveAsConfiguration.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
-            this.btnSaveAsConfiguration.Size = new System.Drawing.Size(84, 30);
-            this.btnSaveAsConfiguration.TabIndex = 0;
-            this.btnSaveAsConfiguration.Text = "Save &As...";
-            this.btnSaveAsConfiguration.UseVisualStyleBackColor = true;
-            this.btnSaveAsConfiguration.Click += new System.EventHandler(this.btnSaveAsConfiguration_Click);
-            // 
             // lstConfigurations
             // 
             this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.lstConfigurations.ContextMenuStrip = this.menuConfigurationSource;
             this.lstConfigurations.Enabled = false;
             this.lstConfigurations.FormattingEnabled = true;
-            this.lstConfigurations.Location = new System.Drawing.Point(408, 7);
+            this.lstConfigurations.Location = new System.Drawing.Point(769, 4);
             this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
             this.lstConfigurations.Name = "lstConfigurations";
-            this.lstConfigurations.Size = new System.Drawing.Size(390, 22);
-            this.lstConfigurations.Sorted = true;
+            this.lstConfigurations.Size = new System.Drawing.Size(376, 22);
             this.lstConfigurations.TabIndex = 1;
             this.lstConfigurations.SelectedIndexChanged += new System.EventHandler(this.lstConfigurations_SelectedIndexChanged);
             this.lstConfigurations.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.lstConfigurations_Format);
             // 
-            // menuConfigurationSource
-            // 
-            this.menuConfigurationSource.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuConfigurationDirectory});
-            this.menuConfigurationSource.Name = "menuConfigurationSource";
-            this.menuConfigurationSource.Size = new System.Drawing.Size(151, 26);
-            // 
-            // menuConfigurationDirectory
-            // 
-            this.menuConfigurationDirectory.Name = "menuConfigurationDirectory";
-            this.menuConfigurationDirectory.Size = new System.Drawing.Size(150, 22);
-            this.menuConfigurationDirectory.Text = "&Set Directory...";
-            this.menuConfigurationDirectory.Click += new System.EventHandler(this.menuConfigurationDirectory_Click);
-            // 
-            // tabLandscape
-            // 
-            this.tabLandscape.Controls.Add(this.splitLandscape);
-            this.tabLandscape.Location = new System.Drawing.Point(4, 23);
-            this.tabLandscape.Name = "tabLandscape";
-            this.tabLandscape.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLandscape.Size = new System.Drawing.Size(955, 619);
-            this.tabLandscape.TabIndex = 1;
-            this.tabLandscape.Text = "Landscape (F2)";
-            this.tabLandscape.UseVisualStyleBackColor = true;
-            // 
             // splitLandscape
             // 
             this.splitLandscape.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitLandscape.Location = new System.Drawing.Point(3, 3);
+            this.splitLandscape.Location = new System.Drawing.Point(0, 0);
             this.splitLandscape.Name = "splitLandscape";
             // 
             // splitLandscape.Panel1
@@ -380,8 +319,8 @@
             // splitLandscape.Panel2
             // 
             this.splitLandscape.Panel2.Controls.Add(this.tableLandscape);
-            this.splitLandscape.Size = new System.Drawing.Size(949, 614);
-            this.splitLandscape.SplitterDistance = 316;
+            this.splitLandscape.Size = new System.Drawing.Size(963, 616);
+            this.splitLandscape.SplitterDistance = 320;
             this.splitLandscape.TabIndex = 0;
             // 
             // lstLandscapes
@@ -389,7 +328,7 @@
             this.lstLandscapes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstLandscapes.Location = new System.Drawing.Point(0, 0);
             this.lstLandscapes.Name = "lstLandscapes";
-            this.lstLandscapes.Size = new System.Drawing.Size(316, 614);
+            this.lstLandscapes.Size = new System.Drawing.Size(320, 616);
             this.lstLandscapes.TabIndex = 0;
             this.lstLandscapes.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstLandscapes_AfterSelect);
             // 
@@ -414,7 +353,7 @@
             this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLandscape.Size = new System.Drawing.Size(629, 614);
+            this.tableLandscape.Size = new System.Drawing.Size(639, 616);
             this.tableLandscape.TabIndex = 0;
             // 
             // txtEvaluatorCode
@@ -424,11 +363,11 @@
             this.txtEvaluatorCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtEvaluatorCode.EnableFolding = false;
             this.txtEvaluatorCode.IsReadOnly = false;
-            this.txtEvaluatorCode.Location = new System.Drawing.Point(96, 440);
+            this.txtEvaluatorCode.Location = new System.Drawing.Point(96, 442);
             this.txtEvaluatorCode.Name = "txtEvaluatorCode";
             this.txtEvaluatorCode.ShowLineNumbers = false;
             this.txtEvaluatorCode.ShowVRuler = false;
-            this.txtEvaluatorCode.Size = new System.Drawing.Size(530, 171);
+            this.txtEvaluatorCode.Size = new System.Drawing.Size(540, 171);
             this.txtEvaluatorCode.TabIndex = 6;
             this.txtEvaluatorCode.Text = "fitness = 0.0\r\nfor x in indiv:\r\n    fitness += x**2\r\n\r\nreturn FitnessMinimise(fit" +
                 "ness)";
@@ -451,14 +390,14 @@
             this.txtLandscapeInternalName.Location = new System.Drawing.Point(96, 3);
             this.txtLandscapeInternalName.Name = "txtLandscapeInternalName";
             this.txtLandscapeInternalName.ReadOnly = true;
-            this.txtLandscapeInternalName.Size = new System.Drawing.Size(530, 22);
+            this.txtLandscapeInternalName.Size = new System.Drawing.Size(540, 22);
             this.txtLandscapeInternalName.TabIndex = 1;
             // 
             // lblLandscapeDescription
             // 
             this.lblLandscapeDescription.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblLandscapeDescription.AutoSize = true;
-            this.lblLandscapeDescription.Location = new System.Drawing.Point(19, 108);
+            this.lblLandscapeDescription.Location = new System.Drawing.Point(19, 109);
             this.lblLandscapeDescription.Name = "lblLandscapeDescription";
             this.lblLandscapeDescription.Size = new System.Drawing.Size(71, 14);
             this.lblLandscapeDescription.TabIndex = 2;
@@ -474,14 +413,14 @@
             this.txtLandscapeDescription.Name = "txtLandscapeDescription";
             this.txtLandscapeDescription.ReadOnly = true;
             this.txtLandscapeDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLandscapeDescription.Size = new System.Drawing.Size(530, 169);
+            this.txtLandscapeDescription.Size = new System.Drawing.Size(540, 170);
             this.txtLandscapeDescription.TabIndex = 3;
             // 
             // lblLandscapeParameters
             // 
             this.lblLandscapeParameters.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblLandscapeParameters.AutoSize = true;
-            this.lblLandscapeParameters.Location = new System.Drawing.Point(18, 313);
+            this.lblLandscapeParameters.Location = new System.Drawing.Point(18, 314);
             this.lblLandscapeParameters.Name = "lblLandscapeParameters";
             this.lblLandscapeParameters.Size = new System.Drawing.Size(72, 14);
             this.lblLandscapeParameters.TabIndex = 4;
@@ -493,39 +432,28 @@
             this.txtLandscapeParameters.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtLandscapeParameters.EnableFolding = false;
             this.txtLandscapeParameters.IsReadOnly = false;
-            this.txtLandscapeParameters.Location = new System.Drawing.Point(96, 206);
+            this.txtLandscapeParameters.Location = new System.Drawing.Point(96, 207);
             this.txtLandscapeParameters.Name = "txtLandscapeParameters";
             this.txtLandscapeParameters.ShowLineNumbers = false;
             this.txtLandscapeParameters.ShowVRuler = false;
-            this.txtLandscapeParameters.Size = new System.Drawing.Size(530, 228);
+            this.txtLandscapeParameters.Size = new System.Drawing.Size(540, 229);
             this.txtLandscapeParameters.TabIndex = 5;
             // 
             // lblEvaluatorCode
             // 
             this.lblEvaluatorCode.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblEvaluatorCode.AutoSize = true;
-            this.lblEvaluatorCode.Location = new System.Drawing.Point(8, 518);
+            this.lblEvaluatorCode.Location = new System.Drawing.Point(8, 520);
             this.lblEvaluatorCode.Name = "lblEvaluatorCode";
             this.lblEvaluatorCode.Size = new System.Drawing.Size(82, 14);
             this.lblEvaluatorCode.TabIndex = 4;
             this.lblEvaluatorCode.Text = "Python Code:";
             this.lblEvaluatorCode.Visible = false;
             // 
-            // tabResults
-            // 
-            this.tabResults.Controls.Add(this.splitLimitsGraph);
-            this.tabResults.Location = new System.Drawing.Point(4, 23);
-            this.tabResults.Name = "tabResults";
-            this.tabResults.Padding = new System.Windows.Forms.Padding(3);
-            this.tabResults.Size = new System.Drawing.Size(955, 619);
-            this.tabResults.TabIndex = 2;
-            this.tabResults.Text = "Results (F3)";
-            this.tabResults.UseVisualStyleBackColor = true;
-            // 
             // splitLimitsGraph
             // 
             this.splitLimitsGraph.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitLimitsGraph.Location = new System.Drawing.Point(3, 3);
+            this.splitLimitsGraph.Location = new System.Drawing.Point(0, 0);
             this.splitLimitsGraph.Name = "splitLimitsGraph";
             // 
             // splitLimitsGraph.Panel1
@@ -535,8 +463,8 @@
             // splitLimitsGraph.Panel2
             // 
             this.splitLimitsGraph.Panel2.Controls.Add(this.splitGraphStats);
-            this.splitLimitsGraph.Size = new System.Drawing.Size(949, 613);
-            this.splitLimitsGraph.SplitterDistance = 316;
+            this.splitLimitsGraph.Size = new System.Drawing.Size(963, 616);
+            this.splitLimitsGraph.SplitterDistance = 320;
             this.splitLimitsGraph.TabIndex = 0;
             // 
             // tableResults
@@ -556,7 +484,7 @@
             this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableResults.Size = new System.Drawing.Size(316, 613);
+            this.tableResults.Size = new System.Drawing.Size(320, 616);
             this.tableResults.TabIndex = 0;
             // 
             // tableControls
@@ -590,7 +518,7 @@
             this.tableControls.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableControls.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableControls.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableControls.Size = new System.Drawing.Size(316, 163);
+            this.tableControls.Size = new System.Drawing.Size(320, 163);
             this.tableControls.TabIndex = 0;
             // 
             // btnStartStop
@@ -601,7 +529,7 @@
             this.tableControls.SetColumnSpan(this.btnStartStop, 3);
             this.btnStartStop.Enabled = false;
             this.btnStartStop.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
-            this.btnStartStop.Location = new System.Drawing.Point(101, 3);
+            this.btnStartStop.Location = new System.Drawing.Point(103, 3);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Padding = new System.Windows.Forms.Padding(8);
             this.btnStartStop.Size = new System.Drawing.Size(114, 45);
@@ -616,7 +544,7 @@
             this.chkIterations.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkIterations.Checked = true;
             this.chkIterations.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkIterations.Location = new System.Drawing.Point(227, 56);
+            this.chkIterations.Location = new System.Drawing.Point(231, 56);
             this.chkIterations.Name = "chkIterations";
             this.chkIterations.Size = new System.Drawing.Size(86, 18);
             this.chkIterations.TabIndex = 2;
@@ -629,7 +557,7 @@
             // 
             this.chkFitness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkFitness.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkFitness.Location = new System.Drawing.Point(227, 140);
+            this.chkFitness.Location = new System.Drawing.Point(231, 140);
             this.chkFitness.Name = "chkFitness";
             this.chkFitness.Size = new System.Drawing.Size(86, 18);
             this.chkFitness.TabIndex = 11;
@@ -642,7 +570,7 @@
             // 
             this.chkSeconds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSeconds.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkSeconds.Location = new System.Drawing.Point(227, 112);
+            this.chkSeconds.Location = new System.Drawing.Point(231, 112);
             this.chkSeconds.Name = "chkSeconds";
             this.chkSeconds.Size = new System.Drawing.Size(86, 18);
             this.chkSeconds.TabIndex = 8;
@@ -656,7 +584,7 @@
             this.chkEvaluations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkEvaluations.AutoSize = true;
             this.chkEvaluations.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkEvaluations.Location = new System.Drawing.Point(227, 84);
+            this.chkEvaluations.Location = new System.Drawing.Point(231, 84);
             this.chkEvaluations.Name = "chkEvaluations";
             this.chkEvaluations.Size = new System.Drawing.Size(86, 18);
             this.chkEvaluations.TabIndex = 5;
@@ -670,7 +598,7 @@
             this.txtFitness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFitness.Location = new System.Drawing.Point(72, 138);
             this.txtFitness.Name = "txtFitness";
-            this.txtFitness.Size = new System.Drawing.Size(149, 22);
+            this.txtFitness.Size = new System.Drawing.Size(153, 22);
             this.txtFitness.TabIndex = 10;
             this.txtFitness.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFitness_KeyDown);
             this.txtFitness.Validated += new System.EventHandler(this.txtFitness_Validated);
@@ -680,7 +608,7 @@
             this.txtEvaluations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtEvaluations.Location = new System.Drawing.Point(72, 82);
             this.txtEvaluations.Name = "txtEvaluations";
-            this.txtEvaluations.Size = new System.Drawing.Size(149, 22);
+            this.txtEvaluations.Size = new System.Drawing.Size(153, 22);
             this.txtEvaluations.TabIndex = 4;
             this.txtEvaluations.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtEvaluations_KeyDown);
             this.txtEvaluations.Validated += new System.EventHandler(this.txtEvaluations_Validated);
@@ -690,7 +618,7 @@
             this.txtSeconds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeconds.Location = new System.Drawing.Point(72, 110);
             this.txtSeconds.Name = "txtSeconds";
-            this.txtSeconds.Size = new System.Drawing.Size(149, 22);
+            this.txtSeconds.Size = new System.Drawing.Size(153, 22);
             this.txtSeconds.TabIndex = 7;
             this.txtSeconds.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSeconds_KeyDown);
             this.txtSeconds.Validated += new System.EventHandler(this.txtSeconds_Validated);
@@ -700,7 +628,7 @@
             this.txtIterations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtIterations.Location = new System.Drawing.Point(72, 54);
             this.txtIterations.Name = "txtIterations";
-            this.txtIterations.Size = new System.Drawing.Size(149, 22);
+            this.txtIterations.Size = new System.Drawing.Size(153, 22);
             this.txtIterations.TabIndex = 1;
             this.txtIterations.Text = "10";
             this.txtIterations.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtIterations_KeyDown);
@@ -746,40 +674,6 @@
             this.lblOr2.TabIndex = 6;
             this.lblOr2.Text = "or";
             // 
-            // tabLog
-            // 
-            this.tabLog.Controls.Add(this.txtLog);
-            this.tabLog.Location = new System.Drawing.Point(4, 23);
-            this.tabLog.Name = "tabLog";
-            this.tabLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLog.Size = new System.Drawing.Size(955, 619);
-            this.tabLog.TabIndex = 3;
-            this.tabLog.Text = "Log Messages (F12)";
-            this.tabLog.UseVisualStyleBackColor = true;
-            // 
-            // txtLog
-            // 
-            this.txtLog.ConvertTabsToSpaces = true;
-            this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtLog.EnableFolding = false;
-            this.txtLog.IsReadOnly = false;
-            this.txtLog.Location = new System.Drawing.Point(3, 3);
-            this.txtLog.Name = "txtLog";
-            this.txtLog.ShowLineNumbers = false;
-            this.txtLog.ShowVRuler = false;
-            this.txtLog.Size = new System.Drawing.Size(949, 614);
-            this.txtLog.TabIndex = 0;
-            // 
-            // watcherConfigurationDirectory
-            // 
-            this.watcherConfigurationDirectory.EnableRaisingEvents = true;
-            this.watcherConfigurationDirectory.Filter = "*.py;*.xml";
-            this.watcherConfigurationDirectory.SynchronizingObject = this;
-            this.watcherConfigurationDirectory.Changed += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Changed);
-            this.watcherConfigurationDirectory.Created += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Created);
-            this.watcherConfigurationDirectory.Deleted += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Deleted);
-            this.watcherConfigurationDirectory.Renamed += new System.IO.RenamedEventHandler(this.watcherConfigurationDirectory_Renamed);
-            // 
             // splitGraphStats
             // 
             this.splitGraphStats.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -794,8 +688,8 @@
             // splitGraphStats.Panel2
             // 
             this.splitGraphStats.Panel2.Controls.Add(this.tableStats);
-            this.splitGraphStats.Size = new System.Drawing.Size(629, 613);
-            this.splitGraphStats.SplitterDistance = 458;
+            this.splitGraphStats.Size = new System.Drawing.Size(639, 616);
+            this.splitGraphStats.SplitterDistance = 459;
             this.splitGraphStats.TabIndex = 0;
             // 
             // tabResultView
@@ -806,7 +700,7 @@
             this.tabResultView.Location = new System.Drawing.Point(0, 0);
             this.tabResultView.Name = "tabResultView";
             this.tabResultView.SelectedIndex = 0;
-            this.tabResultView.Size = new System.Drawing.Size(629, 458);
+            this.tabResultView.Size = new System.Drawing.Size(639, 459);
             this.tabResultView.TabIndex = 0;
             // 
             // tabChart
@@ -815,7 +709,7 @@
             this.tabChart.Location = new System.Drawing.Point(4, 23);
             this.tabChart.Name = "tabChart";
             this.tabChart.Padding = new System.Windows.Forms.Padding(3);
-            this.tabChart.Size = new System.Drawing.Size(621, 431);
+            this.tabChart.Size = new System.Drawing.Size(631, 432);
             this.tabChart.TabIndex = 0;
             this.tabChart.Text = "Chart (Alt+1)";
             this.tabChart.UseVisualStyleBackColor = true;
@@ -826,7 +720,7 @@
             this.tab2DPlot.Location = new System.Drawing.Point(4, 23);
             this.tab2DPlot.Name = "tab2DPlot";
             this.tab2DPlot.Padding = new System.Windows.Forms.Padding(3);
-            this.tab2DPlot.Size = new System.Drawing.Size(621, 431);
+            this.tab2DPlot.Size = new System.Drawing.Size(631, 432);
             this.tab2DPlot.TabIndex = 1;
             this.tab2DPlot.Text = "2D Plot (Alt+2)";
             this.tab2DPlot.UseVisualStyleBackColor = true;
@@ -867,14 +761,14 @@
             this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableStats.Size = new System.Drawing.Size(629, 151);
+            this.tableStats.Size = new System.Drawing.Size(639, 153);
             this.tableStats.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 11);
+            this.label1.Location = new System.Drawing.Point(3, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(63, 14);
             this.label1.TabIndex = 0;
@@ -884,7 +778,7 @@
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 48);
+            this.label2.Location = new System.Drawing.Point(3, 50);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(71, 14);
             this.label2.TabIndex = 2;
@@ -894,7 +788,7 @@
             // 
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 85);
+            this.label4.Location = new System.Drawing.Point(3, 88);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 14);
             this.label4.TabIndex = 4;
@@ -904,7 +798,7 @@
             // 
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 124);
+            this.label3.Location = new System.Drawing.Point(3, 126);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(38, 14);
             this.label3.TabIndex = 6;
@@ -914,7 +808,7 @@
             // 
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(285, 11);
+            this.label5.Location = new System.Drawing.Point(290, 12);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(76, 14);
             this.label5.TabIndex = 8;
@@ -924,7 +818,7 @@
             // 
             this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(285, 48);
+            this.label6.Location = new System.Drawing.Point(290, 50);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(80, 14);
             this.label6.TabIndex = 10;
@@ -934,7 +828,7 @@
             // 
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(285, 85);
+            this.label7.Location = new System.Drawing.Point(290, 88);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(85, 14);
             this.label7.TabIndex = 12;
@@ -944,7 +838,7 @@
             // 
             this.label8.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(285, 124);
+            this.label8.Location = new System.Drawing.Point(290, 126);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(89, 14);
             this.label8.TabIndex = 14;
@@ -953,88 +847,88 @@
             // txtStatsIterations
             // 
             this.txtStatsIterations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsIterations.Location = new System.Drawing.Point(86, 7);
+            this.txtStatsIterations.Location = new System.Drawing.Point(86, 8);
             this.txtStatsIterations.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsIterations.Name = "txtStatsIterations";
             this.txtStatsIterations.ReadOnly = true;
-            this.txtStatsIterations.Size = new System.Drawing.Size(187, 22);
+            this.txtStatsIterations.Size = new System.Drawing.Size(192, 22);
             this.txtStatsIterations.TabIndex = 1;
             this.txtStatsIterations.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsEvaluations
             // 
             this.txtStatsEvaluations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsEvaluations.Location = new System.Drawing.Point(86, 44);
+            this.txtStatsEvaluations.Location = new System.Drawing.Point(86, 46);
             this.txtStatsEvaluations.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsEvaluations.Name = "txtStatsEvaluations";
             this.txtStatsEvaluations.ReadOnly = true;
-            this.txtStatsEvaluations.Size = new System.Drawing.Size(187, 22);
+            this.txtStatsEvaluations.Size = new System.Drawing.Size(192, 22);
             this.txtStatsEvaluations.TabIndex = 3;
             this.txtStatsEvaluations.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsBirths
             // 
             this.txtStatsBirths.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsBirths.Location = new System.Drawing.Point(86, 81);
+            this.txtStatsBirths.Location = new System.Drawing.Point(86, 84);
             this.txtStatsBirths.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsBirths.Name = "txtStatsBirths";
             this.txtStatsBirths.ReadOnly = true;
-            this.txtStatsBirths.Size = new System.Drawing.Size(187, 22);
+            this.txtStatsBirths.Size = new System.Drawing.Size(192, 22);
             this.txtStatsBirths.TabIndex = 5;
             this.txtStatsBirths.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsTime
             // 
             this.txtStatsTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsTime.Location = new System.Drawing.Point(86, 120);
+            this.txtStatsTime.Location = new System.Drawing.Point(86, 122);
             this.txtStatsTime.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsTime.Name = "txtStatsTime";
             this.txtStatsTime.ReadOnly = true;
-            this.txtStatsTime.Size = new System.Drawing.Size(187, 22);
+            this.txtStatsTime.Size = new System.Drawing.Size(192, 22);
             this.txtStatsTime.TabIndex = 7;
             this.txtStatsTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsBestFitness
             // 
             this.txtStatsBestFitness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsBestFitness.Location = new System.Drawing.Point(431, 7);
+            this.txtStatsBestFitness.Location = new System.Drawing.Point(437, 8);
             this.txtStatsBestFitness.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsBestFitness.Name = "txtStatsBestFitness";
             this.txtStatsBestFitness.ReadOnly = true;
-            this.txtStatsBestFitness.Size = new System.Drawing.Size(189, 22);
+            this.txtStatsBestFitness.Size = new System.Drawing.Size(193, 22);
             this.txtStatsBestFitness.TabIndex = 9;
             this.txtStatsBestFitness.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsCurrentBest
             // 
             this.txtStatsCurrentBest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsCurrentBest.Location = new System.Drawing.Point(431, 44);
+            this.txtStatsCurrentBest.Location = new System.Drawing.Point(437, 46);
             this.txtStatsCurrentBest.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsCurrentBest.Name = "txtStatsCurrentBest";
             this.txtStatsCurrentBest.ReadOnly = true;
-            this.txtStatsCurrentBest.Size = new System.Drawing.Size(189, 22);
+            this.txtStatsCurrentBest.Size = new System.Drawing.Size(193, 22);
             this.txtStatsCurrentBest.TabIndex = 11;
             this.txtStatsCurrentBest.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsCurrentMean
             // 
             this.txtStatsCurrentMean.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsCurrentMean.Location = new System.Drawing.Point(431, 81);
+            this.txtStatsCurrentMean.Location = new System.Drawing.Point(437, 84);
             this.txtStatsCurrentMean.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsCurrentMean.Name = "txtStatsCurrentMean";
             this.txtStatsCurrentMean.ReadOnly = true;
-            this.txtStatsCurrentMean.Size = new System.Drawing.Size(189, 22);
+            this.txtStatsCurrentMean.Size = new System.Drawing.Size(193, 22);
             this.txtStatsCurrentMean.TabIndex = 13;
             this.txtStatsCurrentMean.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsCurrentWorst
             // 
             this.txtStatsCurrentWorst.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsCurrentWorst.Location = new System.Drawing.Point(431, 120);
+            this.txtStatsCurrentWorst.Location = new System.Drawing.Point(437, 122);
             this.txtStatsCurrentWorst.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsCurrentWorst.Name = "txtStatsCurrentWorst";
             this.txtStatsCurrentWorst.ReadOnly = true;
-            this.txtStatsCurrentWorst.Size = new System.Drawing.Size(189, 22);
+            this.txtStatsCurrentWorst.Size = new System.Drawing.Size(193, 22);
             this.txtStatsCurrentWorst.TabIndex = 15;
             this.txtStatsCurrentWorst.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -1043,9 +937,9 @@
             this.chkChartCurrentWorst.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkChartCurrentWorst.AutoSize = true;
             this.chkChartCurrentWorst.BackColor = System.Drawing.Color.Blue;
-            this.chkChartCurrentWorst.Location = new System.Drawing.Point(380, 124);
+            this.chkChartCurrentWorst.Location = new System.Drawing.Point(385, 126);
             this.chkChartCurrentWorst.Name = "chkChartCurrentWorst";
-            this.chkChartCurrentWorst.Size = new System.Drawing.Size(39, 14);
+            this.chkChartCurrentWorst.Size = new System.Drawing.Size(40, 14);
             this.chkChartCurrentWorst.TabIndex = 17;
             this.chkChartCurrentWorst.UseVisualStyleBackColor = false;
             this.chkChartCurrentWorst.CheckedChanged += new System.EventHandler(this.chkChartCurrentWorst_CheckedChanged);
@@ -1055,9 +949,9 @@
             this.chkChartCurrentMean.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkChartCurrentMean.AutoSize = true;
             this.chkChartCurrentMean.BackColor = System.Drawing.Color.Blue;
-            this.chkChartCurrentMean.Location = new System.Drawing.Point(380, 85);
+            this.chkChartCurrentMean.Location = new System.Drawing.Point(385, 88);
             this.chkChartCurrentMean.Name = "chkChartCurrentMean";
-            this.chkChartCurrentMean.Size = new System.Drawing.Size(39, 14);
+            this.chkChartCurrentMean.Size = new System.Drawing.Size(40, 14);
             this.chkChartCurrentMean.TabIndex = 17;
             this.chkChartCurrentMean.UseVisualStyleBackColor = false;
             this.chkChartCurrentMean.CheckedChanged += new System.EventHandler(this.chkChartCurrentMean_CheckedChanged);
@@ -1069,9 +963,9 @@
             this.chkChartCurrentBest.BackColor = System.Drawing.Color.Blue;
             this.chkChartCurrentBest.Checked = true;
             this.chkChartCurrentBest.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkChartCurrentBest.Location = new System.Drawing.Point(380, 48);
+            this.chkChartCurrentBest.Location = new System.Drawing.Point(385, 50);
             this.chkChartCurrentBest.Name = "chkChartCurrentBest";
-            this.chkChartCurrentBest.Size = new System.Drawing.Size(39, 14);
+            this.chkChartCurrentBest.Size = new System.Drawing.Size(40, 14);
             this.chkChartCurrentBest.TabIndex = 17;
             this.chkChartCurrentBest.UseVisualStyleBackColor = false;
             this.chkChartCurrentBest.CheckedChanged += new System.EventHandler(this.chkChartCurrentBest_CheckedChanged);
@@ -1083,12 +977,325 @@
             this.chkChartBestFitness.BackColor = System.Drawing.Color.Blue;
             this.chkChartBestFitness.Checked = true;
             this.chkChartBestFitness.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkChartBestFitness.Location = new System.Drawing.Point(380, 11);
+            this.chkChartBestFitness.Location = new System.Drawing.Point(385, 12);
             this.chkChartBestFitness.Name = "chkChartBestFitness";
-            this.chkChartBestFitness.Size = new System.Drawing.Size(39, 14);
+            this.chkChartBestFitness.Size = new System.Drawing.Size(40, 14);
             this.chkChartBestFitness.TabIndex = 17;
             this.chkChartBestFitness.UseVisualStyleBackColor = false;
             this.chkChartBestFitness.CheckedChanged += new System.EventHandler(this.chkChartBestFitness_CheckedChanged);
+            // 
+            // menuStrip
+            // 
+            this.menuStrip.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuConfiguration,
+            this.menuHelp,
+            this.menuView,
+            this.menuControl});
+            this.menuStrip.Location = new System.Drawing.Point(0, 3);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Padding = new System.Windows.Forms.Padding(6, 2, 6, 2);
+            this.menuStrip.Size = new System.Drawing.Size(346, 24);
+            this.menuStrip.TabIndex = 1;
+            this.menuStrip.Text = "Main Menu";
+            // 
+            // menuConfiguration
+            // 
+            this.menuConfiguration.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuNew,
+            this.menuOpen,
+            this.menuSave,
+            this.menuSaveAs,
+            menuConfigurationSeparator1,
+            this.menuExport,
+            menuConfigurationSeparator2,
+            this.menuCheckSyntax,
+            menuConfigurationSeparator3,
+            this.menuExit});
+            this.menuConfiguration.Name = "menuConfiguration";
+            this.menuConfiguration.Size = new System.Drawing.Size(93, 20);
+            this.menuConfiguration.Text = "&Configuration";
+            // 
+            // menuNew
+            // 
+            this.menuNew.Name = "menuNew";
+            this.menuNew.Size = new System.Drawing.Size(195, 22);
+            this.menuNew.Text = "&New";
+            this.menuNew.Click += new System.EventHandler(this.menuNew_Click);
+            // 
+            // menuOpen
+            // 
+            this.menuOpen.Name = "menuOpen";
+            this.menuOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.menuOpen.Size = new System.Drawing.Size(195, 22);
+            this.menuOpen.Text = "&Open...";
+            this.menuOpen.Click += new System.EventHandler(this.menuOpen_Click);
+            // 
+            // menuSave
+            // 
+            this.menuSave.Name = "menuSave";
+            this.menuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.menuSave.Size = new System.Drawing.Size(195, 22);
+            this.menuSave.Text = "&Save";
+            this.menuSave.Click += new System.EventHandler(this.menuSave_Click);
+            // 
+            // menuSaveAs
+            // 
+            this.menuSaveAs.Name = "menuSaveAs";
+            this.menuSaveAs.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
+                        | System.Windows.Forms.Keys.S)));
+            this.menuSaveAs.Size = new System.Drawing.Size(195, 22);
+            this.menuSaveAs.Text = "Save &As...";
+            this.menuSaveAs.Click += new System.EventHandler(this.menuSaveAs_Click);
+            // 
+            // menuExport
+            // 
+            this.menuExport.Enabled = false;
+            this.menuExport.Name = "menuExport";
+            this.menuExport.Size = new System.Drawing.Size(195, 22);
+            this.menuExport.Text = "&Export...";
+            // 
+            // menuCheckSyntax
+            // 
+            this.menuCheckSyntax.Name = "menuCheckSyntax";
+            this.menuCheckSyntax.ShortcutKeys = System.Windows.Forms.Keys.F4;
+            this.menuCheckSyntax.Size = new System.Drawing.Size(195, 22);
+            this.menuCheckSyntax.Text = "&Check Syntax";
+            // 
+            // menuExit
+            // 
+            this.menuExit.Name = "menuExit";
+            this.menuExit.Size = new System.Drawing.Size(195, 22);
+            this.menuExit.Text = "E&xit";
+            this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
+            // 
+            // menuHelp
+            // 
+            this.menuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuAbout});
+            this.menuHelp.Name = "menuHelp";
+            this.menuHelp.Size = new System.Drawing.Size(44, 20);
+            this.menuHelp.Text = "&Help";
+            // 
+            // menuAbout
+            // 
+            this.menuAbout.Enabled = false;
+            this.menuAbout.Name = "menuAbout";
+            this.menuAbout.Size = new System.Drawing.Size(107, 22);
+            this.menuAbout.Text = "&About";
+            // 
+            // menuView
+            // 
+            this.menuView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuViewSystem,
+            menuViewSeparator1,
+            this.menuViewLandscape,
+            menuViewSeparator2,
+            this.menuViewResults,
+            this.menuViewResultsChart,
+            this.menuViewResultsPlot,
+            menuViewSeparator3,
+            this.menuViewLog});
+            this.menuView.Name = "menuView";
+            this.menuView.Size = new System.Drawing.Size(44, 20);
+            this.menuView.Text = "&View";
+            this.menuView.Visible = false;
+            // 
+            // menuViewSystem
+            // 
+            this.menuViewSystem.Name = "menuViewSystem";
+            this.menuViewSystem.ShortcutKeys = System.Windows.Forms.Keys.F1;
+            this.menuViewSystem.Size = new System.Drawing.Size(162, 22);
+            this.menuViewSystem.Text = "&System";
+            this.menuViewSystem.Click += new System.EventHandler(this.menuViewSystem_Click);
+            // 
+            // menuViewLandscape
+            // 
+            this.menuViewLandscape.Name = "menuViewLandscape";
+            this.menuViewLandscape.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.menuViewLandscape.Size = new System.Drawing.Size(162, 22);
+            this.menuViewLandscape.Text = "&Landscape";
+            this.menuViewLandscape.Click += new System.EventHandler(this.menuViewLandscape_Click);
+            // 
+            // menuViewResults
+            // 
+            this.menuViewResults.Name = "menuViewResults";
+            this.menuViewResults.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.menuViewResults.Size = new System.Drawing.Size(162, 22);
+            this.menuViewResults.Text = "&Results";
+            this.menuViewResults.Click += new System.EventHandler(this.menuViewResults_Click);
+            // 
+            // menuViewResultsChart
+            // 
+            this.menuViewResultsChart.Enabled = false;
+            this.menuViewResultsChart.Name = "menuViewResultsChart";
+            this.menuViewResultsChart.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D1)));
+            this.menuViewResultsChart.Size = new System.Drawing.Size(162, 22);
+            this.menuViewResultsChart.Text = "as &Chart";
+            this.menuViewResultsChart.Click += new System.EventHandler(this.menuViewResultsChart_Click);
+            // 
+            // menuViewResultsPlot
+            // 
+            this.menuViewResultsPlot.Enabled = false;
+            this.menuViewResultsPlot.Name = "menuViewResultsPlot";
+            this.menuViewResultsPlot.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D2)));
+            this.menuViewResultsPlot.Size = new System.Drawing.Size(162, 22);
+            this.menuViewResultsPlot.Text = "as 2D &Plot";
+            this.menuViewResultsPlot.Click += new System.EventHandler(this.menuViewResultsPlot_Click);
+            // 
+            // menuViewLog
+            // 
+            this.menuViewLog.Name = "menuViewLog";
+            this.menuViewLog.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.menuViewLog.Size = new System.Drawing.Size(162, 22);
+            this.menuViewLog.Text = "Lo&g";
+            this.menuViewLog.Click += new System.EventHandler(this.menuViewLog_Click);
+            // 
+            // menuControl
+            // 
+            this.menuControl.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuControlStartStop});
+            this.menuControl.Name = "menuControl";
+            this.menuControl.Size = new System.Drawing.Size(59, 20);
+            this.menuControl.Text = "&Control";
+            this.menuControl.Visible = false;
+            // 
+            // menuControlStartStop
+            // 
+            this.menuControlStartStop.Name = "menuControlStartStop";
+            this.menuControlStartStop.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.menuControlStartStop.Size = new System.Drawing.Size(146, 22);
+            this.menuControlStartStop.Text = "Start/Stop";
+            this.menuControlStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
+            // 
+            // panelMenu
+            // 
+            this.panelMenu.AutoSize = true;
+            this.panelMenu.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelMenu.Controls.Add(this.menuStrip);
+            this.panelMenu.Controls.Add(this.chkSystem);
+            this.panelMenu.Controls.Add(this.chkLandscape);
+            this.panelMenu.Controls.Add(this.chkResults);
+            this.panelMenu.Controls.Add(this.chkLog);
+            this.panelMenu.Controls.Add(this.lstConfigurations);
+            this.panelMenu.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelMenu.Location = new System.Drawing.Point(0, 0);
+            this.panelMenu.Name = "panelMenu";
+            this.panelMenu.Size = new System.Drawing.Size(963, 30);
+            this.panelMenu.TabIndex = 3;
+            this.panelMenu.WrapContents = false;
+            this.panelMenu.Layout += new System.Windows.Forms.LayoutEventHandler(this.panelMenu_Layout);
+            // 
+            // chkSystem
+            // 
+            this.chkSystem.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkSystem.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkSystem.AutoSize = true;
+            this.chkSystem.Checked = true;
+            this.chkSystem.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkSystem.Location = new System.Drawing.Point(349, 3);
+            this.chkSystem.Name = "chkSystem";
+            this.chkSystem.Size = new System.Drawing.Size(84, 24);
+            this.chkSystem.TabIndex = 2;
+            this.chkSystem.TabStop = true;
+            this.chkSystem.Text = "System (F1)";
+            this.chkSystem.UseVisualStyleBackColor = true;
+            this.chkSystem.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
+            // 
+            // chkLandscape
+            // 
+            this.chkLandscape.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkLandscape.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkLandscape.AutoSize = true;
+            this.chkLandscape.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkLandscape.Location = new System.Drawing.Point(439, 3);
+            this.chkLandscape.Name = "chkLandscape";
+            this.chkLandscape.Size = new System.Drawing.Size(101, 24);
+            this.chkLandscape.TabIndex = 2;
+            this.chkLandscape.Text = "Landscape (F2)";
+            this.chkLandscape.UseVisualStyleBackColor = true;
+            this.chkLandscape.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
+            // 
+            // chkResults
+            // 
+            this.chkResults.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkResults.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkResults.AutoSize = true;
+            this.chkResults.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkResults.Location = new System.Drawing.Point(546, 3);
+            this.chkResults.Name = "chkResults";
+            this.chkResults.Size = new System.Drawing.Size(82, 24);
+            this.chkResults.TabIndex = 2;
+            this.chkResults.Text = "Results (F3)";
+            this.chkResults.UseVisualStyleBackColor = true;
+            this.chkResults.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
+            // 
+            // chkLog
+            // 
+            this.chkLog.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkLog.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkLog.AutoSize = true;
+            this.chkLog.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkLog.Location = new System.Drawing.Point(634, 3);
+            this.chkLog.Name = "chkLog";
+            this.chkLog.Size = new System.Drawing.Size(126, 24);
+            this.chkLog.TabIndex = 2;
+            this.chkLog.Text = "Log Messages (F12)";
+            this.chkLog.UseVisualStyleBackColor = true;
+            this.chkLog.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
+            // 
+            // panelSystem
+            // 
+            this.panelSystem.Controls.Add(this.splitSystemErrors);
+            this.panelSystem.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelSystem.Location = new System.Drawing.Point(0, 30);
+            this.panelSystem.Name = "panelSystem";
+            this.panelSystem.Size = new System.Drawing.Size(963, 616);
+            this.panelSystem.TabIndex = 4;
+            // 
+            // panelLandscape
+            // 
+            this.panelLandscape.Controls.Add(this.splitLandscape);
+            this.panelLandscape.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelLandscape.Location = new System.Drawing.Point(0, 30);
+            this.panelLandscape.Name = "panelLandscape";
+            this.panelLandscape.Size = new System.Drawing.Size(963, 616);
+            this.panelLandscape.TabIndex = 5;
+            this.panelLandscape.Visible = false;
+            // 
+            // panelResults
+            // 
+            this.panelResults.Controls.Add(this.splitLimitsGraph);
+            this.panelResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelResults.Location = new System.Drawing.Point(0, 30);
+            this.panelResults.Name = "panelResults";
+            this.panelResults.Size = new System.Drawing.Size(963, 616);
+            this.panelResults.TabIndex = 6;
+            this.panelResults.Visible = false;
+            // 
+            // panelLog
+            // 
+            this.panelLog.Controls.Add(this.txtLog);
+            this.panelLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelLog.Location = new System.Drawing.Point(0, 30);
+            this.panelLog.Name = "panelLog";
+            this.panelLog.Size = new System.Drawing.Size(963, 616);
+            this.panelLog.TabIndex = 7;
+            this.panelLog.Visible = false;
+            // 
+            // txtLog
+            // 
+            this.txtLog.ConvertTabsToSpaces = true;
+            this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLog.EnableFolding = false;
+            this.txtLog.IsReadOnly = false;
+            this.txtLog.Location = new System.Drawing.Point(0, 0);
+            this.txtLog.Name = "txtLog";
+            this.txtLog.ShowLineNumbers = false;
+            this.txtLog.ShowVRuler = false;
+            this.txtLog.Size = new System.Drawing.Size(963, 616);
+            this.txtLog.TabIndex = 0;
             // 
             // chartResults
             // 
@@ -1100,7 +1307,7 @@
             this.chartResults.MustIncludeHorizontalZero = true;
             this.chartResults.MustIncludeVerticalZero = true;
             this.chartResults.Name = "chartResults";
-            this.chartResults.Size = new System.Drawing.Size(615, 425);
+            this.chartResults.Size = new System.Drawing.Size(625, 426);
             this.chartResults.TabIndex = 0;
             // 
             // visPopulation
@@ -1111,7 +1318,7 @@
             this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.visPopulation.Location = new System.Drawing.Point(3, 3);
             this.visPopulation.Name = "visPopulation";
-            this.visPopulation.Size = new System.Drawing.Size(615, 426);
+            this.visPopulation.Size = new System.Drawing.Size(625, 427);
             this.visPopulation.TabIndex = 1;
             // 
             // Editor
@@ -1119,37 +1326,33 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(963, 646);
-            this.Controls.Add(this.tabTabs);
+            this.Controls.Add(this.panelSystem);
+            this.Controls.Add(this.panelLog);
+            this.Controls.Add(this.panelResults);
+            this.Controls.Add(this.panelLandscape);
+            this.Controls.Add(this.panelMenu);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Tahoma", 9F);
             this.KeyPreview = true;
+            this.MainMenuStrip = this.menuStrip;
             this.Name = "Editor";
             this.Text = "esec Experiment Designer";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Editor_FormClosed);
             this.Load += new System.EventHandler(this.Editor_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Editor_KeyDown);
-            this.tabTabs.ResumeLayout(false);
-            this.tabSystem.ResumeLayout(false);
             this.splitSystemErrors.Panel1.ResumeLayout(false);
             this.splitSystemErrors.Panel2.ResumeLayout(false);
-            this.splitSystemErrors.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitSystemErrors)).EndInit();
             this.splitSystemErrors.ResumeLayout(false);
             this.splitSystemVariables.Panel1.ResumeLayout(false);
             this.splitSystemVariables.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitSystemVariables)).EndInit();
             this.splitSystemVariables.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.menuConfigurationSource.ResumeLayout(false);
-            this.tabLandscape.ResumeLayout(false);
             this.splitLandscape.Panel1.ResumeLayout(false);
             this.splitLandscape.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitLandscape)).EndInit();
             this.splitLandscape.ResumeLayout(false);
             this.tableLandscape.ResumeLayout(false);
             this.tableLandscape.PerformLayout();
-            this.tabResults.ResumeLayout(false);
             this.splitLimitsGraph.Panel1.ResumeLayout(false);
             this.splitLimitsGraph.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitLimitsGraph)).EndInit();
@@ -1158,8 +1361,6 @@
             this.tableResults.PerformLayout();
             this.tableControls.ResumeLayout(false);
             this.tableControls.PerformLayout();
-            this.tabLog.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).EndInit();
             this.splitGraphStats.Panel1.ResumeLayout(false);
             this.splitGraphStats.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).EndInit();
@@ -1169,25 +1370,27 @@
             this.tab2DPlot.ResumeLayout(false);
             this.tableStats.ResumeLayout(false);
             this.tableStats.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
+            this.panelMenu.ResumeLayout(false);
+            this.panelMenu.PerformLayout();
+            this.panelSystem.ResumeLayout(false);
+            this.panelLandscape.ResumeLayout(false);
+            this.panelResults.ResumeLayout(false);
+            this.panelLog.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabTabs;
-        private System.Windows.Forms.TabPage tabSystem;
-        private System.Windows.Forms.TabPage tabLandscape;
-        private System.Windows.Forms.TabPage tabResults;
         private System.Windows.Forms.SplitContainer splitSystemErrors;
         private System.Windows.Forms.SplitContainer splitSystemVariables;
         private System.Windows.Forms.ListView lstErrors;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Button btnCheckSyntax;
         private System.Windows.Forms.ColumnHeader colLocation;
         private System.Windows.Forms.ColumnHeader colCode;
         private System.Windows.Forms.ColumnHeader colMessage;
-        private System.Windows.Forms.TabPage tabLog;
         private System.Windows.Forms.SplitContainer splitLandscape;
         private System.Windows.Forms.TreeView lstLandscapes;
         private System.Windows.Forms.TableLayoutPanel tableLandscape;
@@ -1220,12 +1423,7 @@
         private ICSharpCode.TextEditor.TextEditorControl txtSystemVariables;
         private ICSharpCode.TextEditor.TextEditorControl txtLog;
         private ICSharpCode.TextEditor.TextEditorControl txtLandscapeParameters;
-        private System.Windows.Forms.Button btnSaveConfiguration;
-        private System.Windows.Forms.Button btnSaveAsConfiguration;
         private System.Windows.Forms.ComboBox lstConfigurations;
-        private System.Windows.Forms.ContextMenuStrip menuConfigurationSource;
-        private System.IO.FileSystemWatcher watcherConfigurationDirectory;
-        private System.Windows.Forms.ToolStripMenuItem menuConfigurationDirectory;
         private System.Windows.Forms.TableLayoutPanel tableControls;
         private System.Windows.Forms.Button btnStartStop;
         private System.Windows.Forms.CheckBox chkIterations;
@@ -1251,6 +1449,35 @@
         private System.Windows.Forms.CheckBox chkChartCurrentMean;
         private System.Windows.Forms.CheckBox chkChartCurrentBest;
         private System.Windows.Forms.CheckBox chkChartBestFitness;
+        private System.Windows.Forms.MenuStrip menuStrip;
+        private System.Windows.Forms.ToolStripMenuItem menuConfiguration;
+        private System.Windows.Forms.ToolStripMenuItem menuNew;
+        private System.Windows.Forms.ToolStripMenuItem menuOpen;
+        private System.Windows.Forms.ToolStripMenuItem menuSave;
+        private System.Windows.Forms.ToolStripMenuItem menuSaveAs;
+        private System.Windows.Forms.ToolStripMenuItem menuExport;
+        private System.Windows.Forms.ToolStripMenuItem menuCheckSyntax;
+        private System.Windows.Forms.ToolStripMenuItem menuExit;
+        private System.Windows.Forms.ToolStripMenuItem menuHelp;
+        private System.Windows.Forms.ToolStripMenuItem menuAbout;
+        private System.Windows.Forms.FlowLayoutPanel panelMenu;
+        private System.Windows.Forms.RadioButton chkSystem;
+        private System.Windows.Forms.RadioButton chkLandscape;
+        private System.Windows.Forms.RadioButton chkResults;
+        private System.Windows.Forms.RadioButton chkLog;
+        private System.Windows.Forms.Panel panelResults;
+        private System.Windows.Forms.Panel panelLandscape;
+        private System.Windows.Forms.Panel panelSystem;
+        private System.Windows.Forms.Panel panelLog;
+        private System.Windows.Forms.ToolStripMenuItem menuView;
+        private System.Windows.Forms.ToolStripMenuItem menuViewSystem;
+        private System.Windows.Forms.ToolStripMenuItem menuViewLandscape;
+        private System.Windows.Forms.ToolStripMenuItem menuViewResults;
+        private System.Windows.Forms.ToolStripMenuItem menuViewResultsChart;
+        private System.Windows.Forms.ToolStripMenuItem menuViewResultsPlot;
+        private System.Windows.Forms.ToolStripMenuItem menuViewLog;
+        private System.Windows.Forms.ToolStripMenuItem menuControl;
+        private System.Windows.Forms.ToolStripMenuItem menuControlStartStop;
     }
 }
 

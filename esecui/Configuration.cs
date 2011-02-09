@@ -10,6 +10,17 @@ namespace esecui
 {
     public class Configuration : IComparable
     {
+        public Configuration() { }
+
+        public Configuration(byte[] sourceData)
+            : this(new MemoryStream(sourceData))
+        { }
+
+        public Configuration(Stream source)
+        {
+            Read(source);
+        }
+        
         public string Name { get; set; }
         public string Source { get; set; }
 
@@ -186,7 +197,7 @@ config = {
             xml.WriteTo(destination);
         }
 
-        public void Read(string source)
+        public void Read(Stream source)
         {
             var xml = XElement.Load(source) as XElement;
             if (xml == null) return;
@@ -208,6 +219,14 @@ config = {
             FitnessLimit = (double?)limits.Attribute("fitness");
         }
 
+        public void Read(string source)
+        {
+            using (var file = File.Open(source, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                Read(file);
+            }
+        }
+
         public int CompareTo(object obj)
         {
             var other = obj as Configuration;
@@ -219,6 +238,7 @@ config = {
         {
             var other = obj as Configuration;
             if (other == null) return base.Equals(obj);
+            if (Source == null) return other.Source == null;
             return Source.Equals(other.Source, StringComparison.InvariantCultureIgnoreCase);
         }
 

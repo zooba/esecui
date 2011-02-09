@@ -26,6 +26,11 @@ namespace esecui
         {
             InitializeComponent();
 
+            chkSystem.Tag = panelSystem;
+            chkLandscape.Tag = panelLandscape;
+            chkResults.Tag = panelResults;
+            chkLog.Tag = panelLog;
+
             var codeFont = new Font("Consolas", 10.0f);
             if (codeFont.Name != codeFont.OriginalFontName)
             {
@@ -47,6 +52,11 @@ namespace esecui
             txtSystemVariables.SetHighlighting("ESDLVariables");
             txtLandscapeParameters.SetHighlighting("ESDLVariables");
             txtEvaluatorCode.SetHighlighting("Python");
+        }
+
+        private void menuExit_Click(object sender, EventArgs e)
+        {
+            Close();
         }
 
         #region Chart Styles
@@ -115,7 +125,7 @@ namespace esecui
 
         private void Editor_Load(object sender, EventArgs e)
         {
-            tabTabs.SelectedIndex = 0;
+            menuStrip.Left = ClientSize.Width - menuStrip.Width;
 
             lstErrors.ListViewItemSorter = new ErrorItemSorter();
             lstLandscapes.TreeViewNodeSorter = new LandscapeSorter();
@@ -123,8 +133,11 @@ namespace esecui
             Text = "esec Experiment Designer - Loading...";
 
             UseWaitCursor = true;
-            tabTabs.Enabled = false;
-            
+            foreach (var control in Controls.OfType<Control>())
+            {
+                control.Enabled = false;
+            }
+
             var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
             InitialisationTaskCTS = new CancellationTokenSource();
 
@@ -150,7 +163,7 @@ namespace esecui
 
         private void Task_Init_Completed(Task task)
         {
-            btnCheckSyntax.Enabled = true;
+            menuCheckSyntax.Enabled = true;
             btnStartStop.Enabled = true;
 
             FillLandscapeTree();
@@ -159,19 +172,16 @@ namespace esecui
             InitialisationTaskCTS.Dispose();
             InitialisationTaskCTS = null;
 
-            tabTabs.Enabled = true;
+            foreach (var control in Controls.OfType<Control>())
+            {
+                control.Enabled = true;
+            }
             UseWaitCursor = false;
 
-            ConfigurationList_Refresh();
+            ConfigurationList_Refresh("FirstRunDefault");
             lstConfigurations.Enabled = true;
-            btnSaveConfiguration.Enabled = true;
-            btnSaveAsConfiguration.Enabled = true;
-
-            // Select the GA template by default
-            var config = lstConfigurations.Items
-                .OfType<Configuration>()
-                .FirstOrDefault(c => c.Name == "Template: Genetic Algorithm");
-            if (config != null) lstConfigurations.SelectedItem = config;
+            menuSave.Enabled = true;
+            menuSaveAs.Enabled = true;
 
             Text = "esec Experiment Designer";
         }
@@ -190,7 +200,7 @@ namespace esecui
                 {
                     foreach (var ex in ae.InnerExceptions) Log(ex.ToString());
                 }
-                tabTabs.SelectedTab = tabLog;
+                chkLog.Checked = true;
             }
             InitialisationTask.Dispose();
             InitialisationTask = null;
@@ -400,7 +410,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 error.Source.ActiveTextAreaControl.Caret.Position = error.EndPosition;
                 error.Source.ActiveTextAreaControl.SelectionManager.SetSelection(error);
-                if (tabLandscape.Contains(error.Source)) tabTabs.SelectedTab = tabLandscape;
+                if (panelLandscape.Contains(error.Source)) chkLandscape.Checked = true;
                 error.Source.Focus();
             }
         }
@@ -410,7 +420,7 @@ class CustomEvaluator(esec.landscape.Landscape):
         #region System validation
 
 
-        private void btnCheckSyntax_Click(object sender, EventArgs e)
+        private void CheckSyntax()
         {
             UseWaitCursor = true;
 
@@ -567,22 +577,38 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void btnStartStop_Click(object sender, EventArgs e)
         {
-            if (CurrentMonitor != null && CurrentExperiment != null && !CurrentExperiment.IsCompleted)
+            if (IsExperimentRunning)
             {
-                CurrentMonitor.Cancel();
-                btnStartStop.Enabled = false;
-                return;
+                StopExperiment();
             }
+            else
+            {
+                StartExperiment();
+            }
+        }
 
+        private bool IsExperimentRunning
+        {
+            get { return CurrentMonitor != null && CurrentExperiment != null && !CurrentExperiment.IsCompleted; }
+        }
+
+        private void StopExperiment()
+        {
+            CurrentMonitor.Cancel();
+            btnStartStop.Enabled = false;
+        }
+
+        private void StartExperiment()
+        {
             if (txtSystem.Text.Length == 0)
             {
-                tabTabs.SelectedTab = tabSystem;
+                chkSystem.Checked = true;
                 return;
             }
             if (lstLandscapes.SelectedNode == null ||
                 (lstLandscapes.SelectedNode.Tag == null && lstLandscapes.SelectedNode.Name != "Custom"))
             {
-                tabTabs.SelectedTab = tabLandscape;
+                chkLandscape.Checked = true;
                 return;
             }
 
@@ -605,7 +631,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             if (errors.Any())
             {
                 foreach (var err in errors) lstErrors.Items.Add(err);
-                tabTabs.SelectedTab = tabSystem;
+                chkSystem.Checked = true;
                 return;
             }
 
@@ -613,7 +639,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             if (errors.Any())
             {
                 foreach (var err in errors) lstErrors.Items.Add(err);
-                tabTabs.SelectedTab = tabLandscape;
+                chkLandscape.Checked = true;
                 return;
             }
             if (lstLandscapes.SelectedNode.Name == "Custom")
@@ -632,8 +658,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             state["system"] = variables;
             state["random_seed"] = 12345;       // TODO: Settable random seed
 
-            CurrentExperiment = new Task(Task_RunExperiment, state);
-
+            CurrentExperiment = new Task(Task_RunExperiment, state,
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning);
             var noErrTask = CurrentExperiment.ContinueWith(Task_RunExperiment_Completed,
                 CancellationToken.None,
                 TaskContinuationOptions.OnlyOnRanToCompletion,
@@ -645,6 +672,7 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             btnStartStop.Text = "&Stop (F5)";
 
+            chkResults.Checked = true;
             CurrentExperiment.Start();
         }
 
@@ -683,6 +711,8 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
             catch (Exception ex)
             {
+                // If the debugger breaks here saying the exception is unhandled, continue (press F5).
+                // Alternatively, you can disable "Just My Code" in the debugging options.
                 throw new Exception("Experiment.__init__", ex);
             }
             exp.run();
@@ -713,8 +743,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
                 if (ex.Message == "ExceptionGroup")
                 {
-                    tabTabs.SelectedTab = tabSystem;
-                    btnCheckSyntax.PerformClick();
+                    chkSystem.Checked = true;
+                    CheckSyntax();
                 }
             }
             else
@@ -725,7 +755,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                     Log("Inner exception:\n" + ex.InnerException.ToString() + "\n");
                 }
 
-                tabTabs.SelectedTab = tabLog;
+                chkLog.Checked = true;
             }
             CurrentMonitor = null;
             CurrentExperiment.Dispose();
@@ -734,24 +764,6 @@ class CustomEvaluator(esec.landscape.Landscape):
         #endregion
 
         #region Fancy UI Tricks
-
-        private void Editor_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Modifiers == 0)
-            {
-                if (e.KeyCode == Keys.F1) tabTabs.SelectedTab = tabSystem;
-                else if (e.KeyCode == Keys.F2) tabTabs.SelectedTab = tabLandscape;
-                else if (e.KeyCode == Keys.F3) tabTabs.SelectedTab = tabResults;
-                else if (e.KeyCode == Keys.F4) { tabTabs.SelectedTab = tabSystem; btnCheckSyntax.PerformClick(); }
-                else if (e.KeyCode == Keys.F5) { tabTabs.SelectedTab = tabResults; btnStartStop.PerformClick(); }
-                else if (e.KeyCode == Keys.F12) tabTabs.SelectedTab = tabLog;
-            }
-            else if (e.Modifiers == Keys.Alt)
-            {
-                if (e.KeyCode == Keys.D1) tabResultView.SelectedTab = tabChart;
-                if (e.KeyCode == Keys.D2) tabResultView.SelectedTab = tab2DPlot;
-            }
-        }
 
         private void txtIterations_KeyDown(object sender, KeyEventArgs e)
         {
@@ -823,116 +835,66 @@ class CustomEvaluator(esec.landscape.Landscape):
             chk.ForeColor = SystemColors.WindowText;
         }
 
+        private void panelMenu_Layout(object sender, LayoutEventArgs e)
+        {
+            lstConfigurations.Width = panelMenu.ClientSize.Width
+                - lstConfigurations.Left
+                - lstConfigurations.Margin.Right - panelMenu.Padding.Right;
+            lstConfigurations.DropDownWidth = Math.Max(lstConfigurations.Width, 200);
+        }
+
         #endregion
 
         #region Configuration List/Load/Save
 
-        private void watcherConfigurationDirectory_Changed(object sender, FileSystemEventArgs e)
+        private Configuration CurrentConfiguration = null;
+        private int lstConfigurations_SuppressLoad = 0;
+
+        private void ConfigurationList_Refresh(string newSelection = null)
         {
-            ConfigurationList_Refresh();
-        }
-
-        private void watcherConfigurationDirectory_Created(object sender, FileSystemEventArgs e)
-        {
-            ConfigurationList_Refresh();
-        }
-
-        private void watcherConfigurationDirectory_Deleted(object sender, FileSystemEventArgs e)
-        {
-            ConfigurationList_Refresh();
-        }
-
-        private void watcherConfigurationDirectory_Renamed(object sender, RenamedEventArgs e)
-        {
-            ConfigurationList_Refresh();
-        }
-
-        private void menuConfigurationDirectory_Click(object sender, EventArgs e)
-        {
-            using (var fbd = new FolderBrowserDialog())
-            {
-                if (Directory.Exists(Properties.Settings.Default.ConfigurationDirectory))
-                {
-                    fbd.SelectedPath = Properties.Settings.Default.ConfigurationDirectory;
-                }
-                fbd.RootFolder = Environment.SpecialFolder.Desktop;
-                fbd.ShowNewFolderButton = true;
-
-                if (fbd.ShowDialog(this) != DialogResult.OK) return;
-
-                Properties.Settings.Default.ConfigurationDirectory = fbd.SelectedPath;
-                Properties.Settings.Default.Save();
-                watcherConfigurationDirectory.Path = fbd.SelectedPath;
-                watcherConfigurationDirectory.EnableRaisingEvents = true;
-                ConfigurationList_Refresh();
-            }
-        }
-
-        private void ConfigurationList_Refresh(string selectSource = null)
-        {
-            if (!Directory.Exists(Properties.Settings.Default.ConfigurationDirectory))
-            {
-                var defaultDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cfgs");
-                if (Directory.Exists(defaultDirectory))
-                {
-                    Properties.Settings.Default.ConfigurationDirectory = defaultDirectory;
-                    Properties.Settings.Default.Save();
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            if (watcherConfigurationDirectory.EnableRaisingEvents == false)
-            {
-                watcherConfigurationDirectory.Path = Properties.Settings.Default.ConfigurationDirectory;
-                watcherConfigurationDirectory.EnableRaisingEvents = true;
-            }
-
             lstConfigurations.BeginUpdate();
             try
             {
-                foreach (var file in Directory.EnumerateFiles(Properties.Settings.Default.ConfigurationDirectory, "*.xml"))
+                var selection = lstConfigurations.SelectedItem as FileInfo;
+                lstConfigurations.Items.Clear();
+                if (Properties.Settings.Default.MRU == null)
                 {
-                    try
-                    {
-                        var config = new Configuration();
-                        config.Source = file;
-                        config.Read(file);
-                        if (string.IsNullOrWhiteSpace(config.Name)) config.Name = Path.GetFileNameWithoutExtension(file);
-
-                        if (lstConfigurations.Items.Contains(config)) lstConfigurations.Items.Remove(config);
-                        lstConfigurations.Items.Add(config);
-                    }
-                    catch { }
+                    Properties.Settings.Default.MRU = new System.Collections.Specialized.StringCollection();
+                    Properties.Settings.Default.Save();
                 }
 
-
-                foreach (var file in Directory.EnumerateFiles(Properties.Settings.Default.ConfigurationDirectory, "*.py"))
+                var set = new HashSet<string>();
+                foreach (var path in Properties.Settings.Default.MRU)
                 {
-                    try
-                    {
-                        var config = new Configuration();
-                        config.Source = file;
-                        using (var stream = new FileStream(file, FileMode.Open, FileAccess.Read))
-                        {
-                            config.ReadPython(stream, Python);
-                        }
-                        if (string.IsNullOrWhiteSpace(config.Name)) config.Name = Path.GetFileNameWithoutExtension(file);
-
-                        if (lstConfigurations.Items.Contains(config)) lstConfigurations.Items.Remove(config);
-                        lstConfigurations.Items.Add(config);
-                    }
-                    catch { }
+                    if (set.Contains(path.ToUpperInvariant())) continue;
+                    set.Add(path.ToUpperInvariant());
+                    lstConfigurations.Items.Insert(0, new FileInfo(path));
                 }
 
-                if (selectSource != null)
+                // Add built-in configurations
+                int firstRunDefault = 
+                    lstConfigurations.Items.Add(new Configuration(Properties.Resources.GeneticAlgorithm));
+                lstConfigurations.Items.Add(new Configuration(Properties.Resources.EvolutionaryProgramming));
+                lstConfigurations.Items.Add(new Configuration(Properties.Resources.GeneticProgramming));
+                lstConfigurations.Items.Add(new Configuration(Properties.Resources.SteadyStateGA));
+
+                if (newSelection == "FirstRunDefault")
                 {
-                    var config = lstConfigurations.Items
-                        .OfType<Configuration>()
-                        .FirstOrDefault(c => c.Source == selectSource);
-                    if (config != null) lstConfigurations.SelectedItem = config;
+                    lstConfigurations.SelectedIndex = firstRunDefault;
+                }
+                else if (newSelection != null && set.Contains(newSelection.ToUpperInvariant()))
+                {
+                    lstConfigurations_SuppressLoad += 1;
+                    lstConfigurations.SelectedItem = lstConfigurations.Items
+                        .OfType<FileInfo>()
+                        .FirstOrDefault(i => i.FullName.Equals(newSelection, StringComparison.InvariantCultureIgnoreCase));
+                }
+                else if (selection != null && set.Contains(selection.FullName.ToUpperInvariant()))
+                {
+                    lstConfigurations_SuppressLoad += 1;
+                    lstConfigurations.SelectedItem = lstConfigurations.Items
+                        .OfType<FileInfo>()
+                        .FirstOrDefault(i => i.FullName.Equals(selection.FullName, StringComparison.InvariantCultureIgnoreCase));
                 }
             }
             finally
@@ -941,23 +903,104 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
         }
 
+        #region GetRelativePath
+
+        [System.Runtime.InteropServices.DllImport("shlwapi.dll",
+            CallingConvention = System.Runtime.InteropServices.CallingConvention.Winapi,
+            CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+        private static extern bool PathRelativePathTo(string pszPath,
+            string pszFrom, uint dwAttrFrom, string pszTo, uint dwAttrTo);
+
+        private const uint FILE_ATTRIBUTE_DIRECTORY = 0x10;
+        private const int MAX_PATH=260;
+
+        private static string GetRelativePath(string fromPath, string toPath)
+        {
+            string dest = new string(' ', MAX_PATH);
+            if (PathRelativePathTo(dest, fromPath, FILE_ATTRIBUTE_DIRECTORY, toPath, 0))
+            {
+                return dest.Trim(' ', '\0');
+            }
+            else
+            {
+                return toPath;
+            }
+        }
+
+        #endregion
+
         private void lstConfigurations_Format(object sender, ListControlConvertEventArgs e)
         {
+            var fi = e.ListItem as FileInfo;
             var config = e.ListItem as Configuration;
-            if (config == null)
-                e.Value = "(null)";
+            if (fi != null)
+            {
+                e.Value = GetRelativePath(Environment.CurrentDirectory, fi.FullName);
+            }
+            else if (config != null)
+            {
+                e.Value = config.Name + " (built in)";
+            }
             else
-                e.Value = config.Name + " (" + Path.GetFileName(config.Source) + ")";
+            {
+                e.Value = "(error)";
+            }
+
+
         }
 
         private void lstConfigurations_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (lstConfigurations_SuppressLoad > 0)
+            {
+                lstConfigurations_SuppressLoad -= 1;
+                return;
+            }
+
             var lst = sender as ComboBox;
             if (lst == null) return;
 
             var config = lst.SelectedItem as Configuration;
-            if (config == null) return;
+            if (config == null)
+            {
+                var path = lst.SelectedItem as FileInfo;
+                if (path == null || !path.Exists) return;
 
+                config = new Configuration();
+
+                if (path.Extension.Equals(".py", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    using (var stream = path.Open(FileMode.Open, FileAccess.Read))
+                    {
+                        config.ReadPython(stream, Python);
+                    }
+                }
+                else
+                {
+                    config.Read(path.FullName);
+                }
+            }
+
+            UpdateEditor(config);
+
+            CurrentConfiguration = config;
+        }
+
+        private void UpdateConfig()
+        {
+            CurrentConfiguration.Definition = txtSystem.Text;
+            CurrentConfiguration.SystemParameters = txtSystemVariables.Text;
+            CurrentConfiguration.Landscape = (lstLandscapes.SelectedNode ?? lstLandscapes.Nodes["Custom"]).Name;
+            CurrentConfiguration.LandscapeParameters = txtLandscapeParameters.Text;
+
+            CurrentConfiguration.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
+            CurrentConfiguration.EvaluationLimit = chkEvaluations.Checked ? int.Parse(txtEvaluations.Text) : (int?)null;
+            CurrentConfiguration.TimeLimit = chkSeconds.Checked ? TimeSpan.FromSeconds(double.Parse(txtSeconds.Text)) : (TimeSpan?)null;
+            CurrentConfiguration.FitnessLimit = chkFitness.Checked ? double.Parse(txtFitness.Text) : (double?)null;
+        }
+
+        private void UpdateEditor(Configuration config)
+        {
             txtSystem.Text = config.Definition;
             txtSystem.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystem.Refresh();
@@ -980,67 +1023,167 @@ class CustomEvaluator(esec.landscape.Landscape):
             this.ValidateChildren(ValidationConstraints.Enabled);
         }
 
-        private void UpdateConfig(Configuration config)
+        private void menuNew_Click(object sender, EventArgs e)
         {
-            config.Definition = txtSystem.Text;
-            config.SystemParameters = txtSystemVariables.Text;
-            config.Landscape = (lstLandscapes.SelectedNode ?? lstLandscapes.Nodes["Custom"]).Name;
-            config.LandscapeParameters = txtLandscapeParameters.Text;
+            CurrentConfiguration = null;
+            lstConfigurations.SelectedIndex = -1;
 
-            config.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
-            config.EvaluationLimit = chkEvaluations.Checked ? int.Parse(txtEvaluations.Text) : (int?)null;
-            config.TimeLimit = chkSeconds.Checked ? TimeSpan.FromSeconds(double.Parse(txtSeconds.Text)) : (TimeSpan?)null;
-            config.FitnessLimit = chkFitness.Checked ? double.Parse(txtFitness.Text) : (double?)null;
+            txtSystem.ResetText();
+            txtSystem.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtSystem.Refresh();
+
+            txtSystemVariables.ResetText();
+            txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtSystemVariables.Refresh();
+
+            lstLandscapes.SelectedNode = null;
+            lstLandscapes.Refresh();
+
+            txtLandscapeParameters.ResetText();
+            txtLandscapeParameters.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtLandscapeParameters.Refresh();
+
+            txtIterations.Text = "10";
+            txtEvaluations.ResetText();
+            txtSeconds.ResetText();
+            txtFitness.ResetText();
+            this.ValidateChildren(ValidationConstraints.Enabled);
         }
 
-        private void btnSaveConfiguration_Click(object sender, EventArgs e)
+        private void menuOpen_Click(object sender, EventArgs e)
         {
-            var config = lstConfigurations.SelectedItem as Configuration;
-            if (config == null) return;
+            FileInfo path;
 
-            if (config.Source == null || config.Source.EndsWith("py", StringComparison.InvariantCultureIgnoreCase))
+            using (var ofd = new OpenFileDialog())
             {
-                btnSaveAsConfiguration.PerformClick();
+                ofd.Filter = "esec File (*.esec;*.xml)|*.esec;*.xml|Python File (*.py)|*.py";
+                ofd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                ofd.RestoreDirectory = false;
+                ofd.SupportMultiDottedExtensions = true;
+                ofd.AutoUpgradeEnabled = true;
+                ofd.AddExtension = true;
+                if (ofd.ShowDialog(this) != System.Windows.Forms.DialogResult.OK) return;
+                path = new FileInfo(ofd.FileName);
+            }
+
+            Configuration config = new Configuration();
+
+            if (path.Extension.Equals(".py", StringComparison.InvariantCultureIgnoreCase))
+            {
+                using (var stream = path.Open(FileMode.Open, FileAccess.Read))
+                {
+                    config.ReadPython(stream, Python);
+                }
+            }
+            else
+            {
+                config.Read(path.FullName);
+            }
+
+            UpdateEditor(config);
+
+            CurrentConfiguration = config;
+
+            Properties.Settings.Default.MRU.Add(path.FullName);
+            Properties.Settings.Default.Save();
+            ConfigurationList_Refresh(path.FullName);
+        }
+
+
+        private void menuSave_Click(object sender, EventArgs e)
+        {
+            if (CurrentConfiguration == null || CurrentConfiguration.Source == null ||
+                CurrentConfiguration.Source.EndsWith("py", StringComparison.InvariantCultureIgnoreCase))
+            {
+                menuSaveAs.PerformClick();
                 return;
             }
 
-            watcherConfigurationDirectory.EnableRaisingEvents = false;
+            UpdateConfig();
+            CurrentConfiguration.Write(Python);
 
-            UpdateConfig(config);
-            config.Write(Python);
-
+            Properties.Settings.Default.MRU.Add(CurrentConfiguration.Source);
+            Properties.Settings.Default.Save();
             ConfigurationList_Refresh();
         }
 
-        private void btnSaveAsConfiguration_Click(object sender, EventArgs e)
+        private void menuSaveAs_Click(object sender, EventArgs e)
         {
-            var config = lstConfigurations.SelectedItem as Configuration;
-            if (config == null)
+            if (CurrentConfiguration == null)
             {
-                config = new Configuration();
+                CurrentConfiguration = new Configuration();
             }
 
             using (var sfd = new SaveFileDialog())
             {
-                sfd.Filter = "XML File (*.xml)|*.xml";
-                sfd.InitialDirectory = Properties.Settings.Default.ConfigurationDirectory;
-                sfd.RestoreDirectory = true;
+                sfd.Filter = "esec File (*.esec)|*.esec";
+                sfd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                sfd.RestoreDirectory = false;
                 sfd.SupportMultiDottedExtensions = true;
                 sfd.AutoUpgradeEnabled = true;
                 sfd.AddExtension = true;
-                sfd.DefaultExt = ".xml";
+                sfd.DefaultExt = ".esec";
                 if (sfd.ShowDialog(this) != System.Windows.Forms.DialogResult.OK) return;
-                config.Name = Path.GetFileNameWithoutExtension(sfd.FileName);
-                config.Source = sfd.FileName;
+                CurrentConfiguration.Name = Path.GetFileNameWithoutExtension(sfd.FileName);
+                CurrentConfiguration.Source = sfd.FileName;
             }
 
-            watcherConfigurationDirectory.EnableRaisingEvents = false;
+            UpdateConfig();
+            CurrentConfiguration.Write(Python);
 
-            UpdateConfig(config);
-            config.Write(Python);
-
-            ConfigurationList_Refresh(config.Source);
+            Properties.Settings.Default.MRU.Add(CurrentConfiguration.Source);
+            Properties.Settings.Default.Save();
+            ConfigurationList_Refresh(CurrentConfiguration.Source);
         }
+
+        #endregion
+
+        #region View Selection
+
+        private void menuViewSystem_Click(object sender, EventArgs e)
+        {
+            chkSystem.Checked = true;
+        }
+
+        private void menuViewLandscape_Click(object sender, EventArgs e)
+        {
+            chkLandscape.Checked = true;
+        }
+
+        private void menuViewResults_Click(object sender, EventArgs e)
+        {
+            chkResults.Checked = true;
+        }
+
+        private void menuViewResultsChart_Click(object sender, EventArgs e)
+        {
+            tabResultView.SelectTab(tabChart);
+        }
+
+        private void menuViewResultsPlot_Click(object sender, EventArgs e)
+        {
+            tabResultView.SelectTab(tab2DPlot);
+        }
+
+        private void menuViewLog_Click(object sender, EventArgs e)
+        {
+            chkLog.Checked = true;
+        }
+
+        private void chkTabs_CheckedChanged(object sender, EventArgs e)
+        {
+            var chk = sender as RadioButton;
+            Debug.Assert(chk != null);
+
+            var panel = chk.Tag as Panel;
+            Debug.Assert(panel != null);
+
+            panel.Visible = chk.Checked;
+
+            menuViewResultsChart.Enabled = (panel == panelResults);
+            menuViewResultsPlot.Enabled = (panel == panelResults);
+        }
+
 
         #endregion
 

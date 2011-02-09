@@ -25,13 +25,12 @@ namespace esecui.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ConfigurationDirectory {
+        public global::System.Collections.Specialized.StringCollection MRU {
             get {
-                return ((string)(this["ConfigurationDirectory"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["MRU"]));
             }
             set {
-                this["ConfigurationDirectory"] = value;
+                this["MRU"] = value;
             }
         }
     }

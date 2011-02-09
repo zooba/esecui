@@ -116,6 +116,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\EvolutionaryProgramming.esec" />
+    <None Include="Resources\GeneticAlgorithm.esec" />
+    <None Include="Resources\GeneticProgramming.esec" />
+    <None Include="Resources\SteadyStateGA.esec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.TextEditor\Project\ICSharpCode.TextEditor.csproj">

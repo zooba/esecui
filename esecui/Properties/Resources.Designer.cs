@@ -59,5 +59,33 @@ namespace esecui.Properties {
                 resourceCulture = value;
             }
         }
+        
+        internal static byte[] EvolutionaryProgramming {
+            get {
+                object obj = ResourceManager.GetObject("EvolutionaryProgramming", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] GeneticAlgorithm {
+            get {
+                object obj = ResourceManager.GetObject("GeneticAlgorithm", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] GeneticProgramming {
+            get {
+                object obj = ResourceManager.GetObject("GeneticProgramming", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] SteadyStateGA {
+            get {
+                object obj = ResourceManager.GetObject("SteadyStateGA", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
