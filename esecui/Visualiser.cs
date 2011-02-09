@@ -20,6 +20,12 @@ namespace esecui
                 ControlStyles.ResizeRedraw | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 
             InitializeComponent();
+
+            _Points = new Dictionary<int, List<VisualiserPoint>>();
+            _Points[0] = new List<VisualiserPoint>();
+
+            _Visible = new Dictionary<int, bool>();
+            _Visible[0] = true;
         }
 
         #region Begin/End Update
@@ -64,6 +70,16 @@ namespace esecui
                 return;
             }
 
+            if (_HorizontalOffset < _MinimumHorizontalOffset) _HorizontalOffset = _MinimumHorizontalOffset;
+            if (_HorizontalOffset > _MaximumHorizontalOffset) _HorizontalOffset = _MaximumHorizontalOffset;
+            if (_HorizontalRange < _MinimumHorizontalRange) _HorizontalRange = _MinimumHorizontalRange;
+            if (_HorizontalRange > _MaximumHorizontalRange) _HorizontalRange = _MaximumHorizontalRange;
+            if (_VerticalOffset < _MinimumVerticalOffset) _VerticalOffset = _MinimumVerticalOffset;
+            if (_VerticalOffset > _MaximumVerticalOffset) _VerticalOffset = _MaximumVerticalOffset;
+            if (_VerticalRange < _MinimumVerticalRange) _VerticalRange = _MinimumVerticalRange;
+            if (_VerticalRange > _MaximumVerticalRange) _VerticalRange = _MaximumVerticalRange;
+
+
             base.Refresh();
         }
 
@@ -75,10 +91,20 @@ namespace esecui
         const AutoSizeMode DefaultAutoRangeMode = AutoSizeMode.GrowOnly;
         const double DefaultHorizontalOffset = 0.0;
         const double DefaultHorizontalRange = 100.0;
+        const bool DefaultFlipHorizontal = false;
+        const double DefaultMinimumHorizontalOffset = -1.0e5;
+        const double DefaultMaximumHorizontalOffset = 1.0e5;
         const double DefaultMinimumHorizontalRange = 0.0;
+        const double DefaultMaximumHorizontalRange = 1.0e6;
         const double DefaultVerticalOffset = 0.0;
         const double DefaultVerticalRange = 100.0;
+        const bool DefaultFlipVertical = false;
+        const double DefaultMinimumVerticalOffset = -1.0e5;
+        const double DefaultMaximumVerticalOffset = 1.0e5;
         const double DefaultMinimumVerticalRange = 0.0;
+        const double DefaultMaximumVerticalRange = 1.0e6;
+        const bool DefaultMustIncludeHorizontalZero = false;
+        const bool DefaultMustIncludeVerticalZero = false;
 
         private bool _AutoRange = DefaultAutoRange;
         [Browsable(true), DefaultValue(DefaultAutoRange)]
@@ -130,8 +156,57 @@ namespace esecui
             get { return _HorizontalRange; }
             set
             {
+                if (value < _MinimumHorizontalRange) _HorizontalRange = _MinimumHorizontalRange;
+                else if (value > _MinimumHorizontalRange) _HorizontalRange = _MaximumHorizontalRange;
                 _HorizontalRange = value;
                 Refresh();
+            }
+        }
+
+        private bool _FlipHorizontal = DefaultFlipHorizontal;
+        [Browsable(true), DefaultValue(DefaultFlipHorizontal)]
+        [Description("True to invert values against the horizontal axis.")]
+        public bool FlipHorizontal
+        {
+            get { return _FlipHorizontal; }
+            set
+            {
+                _FlipHorizontal = value;
+                Refresh();
+            }
+        }
+
+        private double _MinimumHorizontalOffset = DefaultMinimumHorizontalOffset;
+        [Browsable(true), DefaultValue(DefaultMinimumHorizontalOffset)]
+        [Description("The minimum value to allow HorizontalOffset to take.")]
+        public double MinimumHorizontalOffset
+        {
+            get { return _MinimumHorizontalOffset; }
+            set
+            {
+                _MinimumHorizontalOffset = value;
+                if (HorizontalOffset < value)
+                {
+                    HorizontalOffset = value;
+                    Refresh();
+                }
+            }
+        }
+
+        private double _MaximumHorizontalOffset = DefaultMaximumHorizontalOffset;
+        [Browsable(true), DefaultValue(DefaultMaximumHorizontalOffset)]
+        [Description("The maximum value to allow HorizontalOffset to take.")]
+        public double MaximumHorizontalOffset
+        {
+            get { return _MaximumHorizontalOffset; }
+            set
+            {
+                _MaximumHorizontalOffset = value;
+                if (HorizontalOffset > value)
+                {
+                    HorizontalOffset = value;
+                    Refresh();
+                }
             }
         }
 
@@ -144,7 +219,28 @@ namespace esecui
             set
             {
                 _MinimumHorizontalRange = value;
-                if (HorizontalRange < value) HorizontalRange = value;
+                if (HorizontalRange < value)
+                {
+                    HorizontalRange = value;
+                    Refresh();
+                }
+            }
+        }
+
+        private double _MaximumHorizontalRange = DefaultMaximumHorizontalRange;
+        [Browsable(true), DefaultValue(DefaultMaximumHorizontalRange)]
+        [Description("The maximum value to allow HorizontalRange to take.")]
+        public double MaximumHorizontalRange
+        {
+            get { return _MaximumHorizontalRange; }
+            set
+            {
+                _MaximumHorizontalRange = value;
+                if (HorizontalRange > value)
+                {
+                    HorizontalRange = value;
+                    Refresh();
+                }
             }
         }
 
@@ -169,7 +265,22 @@ namespace esecui
             get { return _VerticalRange; }
             set
             {
-                _VerticalRange = value;
+                if (value < _MinimumVerticalRange) _VerticalRange = _MinimumVerticalRange;
+                else if (value > _MinimumVerticalRange) _VerticalRange = _MaximumVerticalRange;
+                else _VerticalRange = value;
+                Refresh();
+            }
+        }
+
+        private bool _FlipVertical = DefaultFlipVertical;
+        [Browsable(true), DefaultValue(DefaultFlipVertical)]
+        [Description("True to invert values against the vertical axis.")]
+        public bool FlipVertical
+        {
+            get { return _FlipVertical; }
+            set
+            {
+                _FlipVertical = value;
                 Refresh();
             }
         }
@@ -183,10 +294,110 @@ namespace esecui
             set
             {
                 _MinimumVerticalRange = value;
-                if (VerticalRange < value) VerticalRange = value;
+                if (VerticalRange < value)
+                {
+                    VerticalRange = value;
+                    Refresh();
+                }
             }
         }
 
+        private double _MaximumVerticalRange = DefaultMaximumVerticalRange;
+        [Browsable(true), DefaultValue(DefaultMaximumVerticalRange)]
+        [Description("The maximum value to allow VerticalRange to take.")]
+        public double MaximumVerticalRange
+        {
+            get { return _MaximumVerticalRange; }
+            set
+            {
+                _MaximumVerticalRange = value;
+                if (VerticalRange > value)
+                {
+                    VerticalRange = value;
+                    Refresh();
+                }
+            }
+        }
+
+        private double _MinimumVerticalOffset = DefaultMinimumVerticalOffset;
+        [Browsable(true), DefaultValue(DefaultMinimumVerticalOffset)]
+        [Description("The minimum value to allow VerticalOffset to take.")]
+        public double MinimumVerticalOffset
+        {
+            get { return _MinimumVerticalOffset; }
+            set
+            {
+                _MinimumVerticalOffset = value;
+                if (VerticalOffset < value)
+                {
+                    VerticalOffset = value;
+                    Refresh();
+                }
+            }
+        }
+
+        private double _MaximumVerticalOffset = DefaultMaximumVerticalOffset;
+        [Browsable(true), DefaultValue(DefaultMaximumVerticalOffset)]
+        [Description("The maximum value to allow VerticalOffset to take.")]
+        public double MaximumVerticalOffset
+        {
+            get { return _MaximumVerticalOffset; }
+            set
+            {
+                _MaximumVerticalOffset = value;
+                if (VerticalOffset > value)
+                {
+                    VerticalOffset = value;
+                    Refresh();
+                }
+            }
+        }
+
+        private bool _MustIncludeHorizontalZero = DefaultMustIncludeHorizontalZero;
+        [Browsable(true), DefaultValue(DefaultMustIncludeHorizontalZero)]
+        [Description("True to require that the horizontal zero is always visible.")]
+        public bool MustIncludeHorizontalZero
+        {
+            get { return _MustIncludeHorizontalZero; }
+            set
+            {
+                _MustIncludeHorizontalZero = value;
+                if (value && HorizontalOffset > 0.0)
+                {
+                    _HorizontalRange += HorizontalOffset;
+                    HorizontalOffset = 0.0;
+                    Refresh();
+                }
+                else if (value && HorizontalOffset + HorizontalRange < 0.0)
+                {
+                    HorizontalRange = -HorizontalOffset;
+                    Refresh();
+                }
+            }
+        }
+
+        private bool _MustIncludeVerticalZero = DefaultMustIncludeVerticalZero;
+        [Browsable(true), DefaultValue(DefaultMustIncludeVerticalZero)]
+        [Description("True to require that the vertical zero is always visible.")]
+        public bool MustIncludeVerticalZero
+        {
+            get { return _MustIncludeVerticalZero; }
+            set
+            {
+                _MustIncludeVerticalZero = value;
+                if (value && VerticalOffset > 0.0)
+                {
+                    _VerticalRange += VerticalOffset;
+                    VerticalOffset = 0.0;
+                    Refresh();
+                }
+                else if (value && VerticalOffset + VerticalRange < 0.0)
+                {
+                    VerticalRange = -VerticalOffset;
+                    Refresh();
+                }
+            }
+        }
 
         /// <summary>
         /// Determines the range based on the current set of points. The value
@@ -206,23 +417,18 @@ namespace esecui
                 return;
             }
 
-            if (_Points == null || _Points.Count == 0)
+            double horizontalMin = 0, horizontalMax = 0, verticalMin = 0, verticalMax = 0;
+
+            bool firstPoint = true;
+            foreach (var pt in _Points.Where((p, i) => !_Visible.ContainsKey(i) || _Visible[i]).SelectMany(kv => kv.Value))
             {
-                return;
+                horizontalMin = (firstPoint || pt.X < horizontalMin) ? pt.X : horizontalMin;
+                horizontalMax = (firstPoint || pt.X > horizontalMax) ? pt.X : horizontalMax;
+                verticalMin = (firstPoint || pt.Y < verticalMin) ? pt.Y : verticalMin;
+                verticalMax = (firstPoint || pt.Y > verticalMax) ? pt.Y : verticalMax;
+                firstPoint = false;
             }
-
-            double horizontalMin, horizontalMax, verticalMin, verticalMax;
-
-            horizontalMin = horizontalMax = _Points[0].X;
-            verticalMin = verticalMax = _Points[0].Y;
-
-            foreach (var pt in _Points.Skip(1))
-            {
-                horizontalMin = (pt.X < horizontalMin) ? pt.X : horizontalMin;
-                horizontalMax = (pt.X > horizontalMax) ? pt.X : horizontalMax;
-                verticalMin = (pt.Y < verticalMin) ? pt.Y : verticalMin;
-                verticalMax = (pt.Y > verticalMax) ? pt.Y : verticalMax;
-            }
+            if (firstPoint) return;
 
             bool adjusted = false;
             if (AutoRangeMode == System.Windows.Forms.AutoSizeMode.GrowOnly)
@@ -243,6 +449,36 @@ namespace esecui
             _VerticalOffset = verticalMin;
             _VerticalRange = verticalMax - verticalMin;
 
+            if (_MustIncludeHorizontalZero)
+            {
+                if (_HorizontalOffset > 0.0)
+                {
+                    _HorizontalRange += _HorizontalOffset;
+                    _HorizontalOffset = 0.0;
+                    adjusted = true;
+                }
+                else if (_HorizontalOffset + _HorizontalRange < 0.0)
+                {
+                    _HorizontalRange = -_HorizontalOffset;
+                    adjusted = true;
+                }
+            }
+
+            if (_MustIncludeVerticalZero)
+            {
+                if (_VerticalOffset > 0.0)
+                {
+                    _VerticalRange += _VerticalOffset;
+                    _VerticalOffset = 0.0;
+                    adjusted = true;
+                }
+                else if (_VerticalOffset + _VerticalRange < 0.0)
+                {
+                    _VerticalRange = -_VerticalOffset;
+                    adjusted = true;
+                }
+            }
+
             if (adjusted && !suppressRefresh) Refresh();
         }
 
@@ -250,28 +486,98 @@ namespace esecui
 
         #region Point Properties and Methods
 
-        private List<VisualiserPoint> _Points;
+        private Dictionary<int, List<VisualiserPoint>> _Points;
+        private Dictionary<int, bool> _Visible;
 
+        private List<VisualiserPoint> GetSeries(int series)
+        {
+            if (!_Points.ContainsKey(series)) _Points[series] = new List<VisualiserPoint>();
+            return _Points[series];
+        }
+
+        private void SetSeries(int series, List<VisualiserPoint> points)
+        {
+            _Points[series] = points;
+        }
+
+
+        /// <summary>
+        /// Gets the points for the default series (series zero).
+        /// </summary>
         [Browsable(false)]
         public ReadOnlyCollection<VisualiserPoint> Points
         {
-            get { return new ReadOnlyCollection<VisualiserPoint>(_Points); }
+            get { return new ReadOnlyCollection<VisualiserPoint>(GetSeries(0)); }
         }
 
-        public void Add(VisualiserPoint point)
+        /// <summary>
+        /// Adds a point to the visualiser.
+        /// </summary>
+        /// <param name="point">The point to add.</param>
+        /// <param name="series">The series to add the point to.</param>
+        public void Add(VisualiserPoint point, int series = 0)
         {
+            GetSeries(series).Add(point);
+            if (!_Visible.ContainsKey(series) || _Visible[series])
+            {
+                if (AutoRange) PerformAutoRange(true);
+                Refresh();
+            }
+        }
 
+        /// <summary>
+        /// Removes all points from the visualiser.
+        /// </summary>
+        public void ClearAll()
+        {
+            _Points = new Dictionary<int, List<VisualiserPoint>>();
+            _Points[0] = new List<VisualiserPoint>();
+            _Visible = new Dictionary<int, bool>();
+            _Visible[0] = true;
+            Refresh();
+        }
+
+        /// <summary>
+        /// Removes all points from the specified series.
+        /// </summary>
+        /// <param name="series">The series to clear.</param>
+        public void Clear(int series = 0)
+        {
+            GetSeries(series).Clear();
+            if (!_Visible.ContainsKey(series) || _Visible[series])
+            {
+                if (AutoRange) PerformAutoRange(true);
+                Refresh();
+            }
+        }
+
+        /// <summary>
+        /// Makes the specified series visible.
+        /// </summary>
+        /// <param name="series">The series to update.</param>
+        /// <param name="visible">
+        /// <c>true</c> to make the series visible.
+        /// </param>
+        public void ShowSeries(int series, bool visible = true)
+        {
+            _Visible[series] = visible;
+            if (AutoRange) PerformAutoRange(true);
+            Refresh();
         }
 
         /// <summary>
         /// Specifies all the points to be displayed.
         /// </summary>
-        /// <param name="points"></param>
-        public void SetPoints(IEnumerable<VisualiserPoint> points)
+        /// <param name="points">A sequence of points.</param>
+        /// <param name="series">The series to set.</param>
+        public void SetPoints(IEnumerable<VisualiserPoint> points, int series = 0)
         {
-            _Points = points.ToList();
-            if (AutoRange) PerformAutoRange(true);
-            Refresh();
+            SetSeries(series, points.ToList());
+            if (!_Visible.ContainsKey(series) || _Visible[series])
+            {
+                if (AutoRange) PerformAutoRange(true);
+                Refresh();
+            }
         }
 
         /// <summary>
@@ -280,143 +586,118 @@ namespace esecui
         /// <see cref="VisualiserPoint"/>.
         /// </summary>
         /// <param name="points">A sequence of points.</param>
-        /// <param name="color">The color of each point.</param>
-        /// <param name="size">The size of each point.</param>
-        /// <param name="shape">The shape of each point.</param>
-        /// <param name="scale">The scale mode for each point.</param>
-        public void SetPoints(IEnumerable<Point> points, Color? color = null, double? size = null,
-            VisualiserPointShape? shape = null,
-            VisualiserPointScaleMode? scale = null)
+        /// <param name="style">The style for every point.</param>
+        /// <param name="series">The series to set.</param>
+        public void SetPoints(IEnumerable<Point> points, VisualiserPointStyle style = null, int series = 0)
         {
-            var actualColor = color ?? VisualiserPoint.DefaultColor;
-            var actualSize = size ?? VisualiserPoint.DefaultSize;
-            var actualShape = shape ?? VisualiserPoint.DefaultShape;
-            var actualScale = scale ?? VisualiserPoint.DefaultScale;
-            SetPoints(points
-                .Select(p => new VisualiserPoint(p.X, p.Y, actualColor, actualSize, actualShape, actualScale))
-            );
+            SetPoints(points.Select(p => new VisualiserPoint(p.X, p.Y, style)), series);
         }
+
+
 
         #endregion
 
         #region Rendering
 
+        private RectangleF GetScaledRange()
+        {
+            double horizontalPadding = _HorizontalRange * 0.1;
+            double verticalPadding = _VerticalRange * 0.1;
+
+            float horizontalOffset = (float)(_HorizontalOffset - horizontalPadding);
+            float verticalOffset = (float)(_VerticalOffset - verticalPadding);
+            float horizontalScale = (float)(ClientSize.Width / (_HorizontalRange + horizontalPadding * 2));
+            float verticalScale = (float)(ClientSize.Height / (_VerticalRange + verticalPadding * 2));
+            if (float.IsInfinity(horizontalScale)) horizontalScale = 1.0f;
+            if (float.IsInfinity(verticalScale)) verticalScale = 1.0f;
+
+            return new RectangleF(horizontalOffset, verticalOffset, horizontalScale, verticalScale);
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             if (!AllowUpdate) return;
-
-            //base.OnPaint(e);
-            //e.Graphics.Clear(BackColor);
 
             if (_Points == null || _Points.Count == 0) return;
 
             e.Graphics.InterpolationMode = InterpolationMode.High;
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
 
-            float horizontalScale = (float)(ClientSize.Width / _HorizontalRange);
-            float verticalScale = (float)(ClientSize.Height / _VerticalRange);
-            if (float.IsInfinity(horizontalScale)) horizontalScale = 1.0f;
-            if (float.IsInfinity(verticalScale)) verticalScale = 1.0f;
-
-            using (var axisBrush = new SolidBrush(Color.Black))
+            if (FlipVertical)
             {
-                float x = (float)-_HorizontalOffset * horizontalScale;
-                float y = (float)-_VerticalOffset * verticalScale;
-
-                e.Graphics.FillRectangle(axisBrush, x - 0.5f, 0.0f, 1.0f, ClientSize.Height);
-                e.Graphics.FillRectangle(axisBrush, 0.0f, y - 0.5f, ClientSize.Width, 1.0f);
+                e.Graphics.TranslateTransform(0.0f, ClientSize.Height);
+                e.Graphics.ScaleTransform(1.0f, -1.0f);
             }
 
-            foreach (var pt in _Points)
+            var scale = GetScaledRange();
+
+            float axisThickness = 2.0f;
+            using (var axisPen = new Pen(Color.Black, axisThickness))
+                DrawAxes(e.Graphics, axisPen, scale);
+
+            var series = _Points
+                .Where((p, i) => !_Visible.ContainsKey(i) || _Visible[i])
+                .OrderBy(kv => kv.Key)
+                .Select(kv => kv.Value)
+                .ToList();
+
+            foreach (var pt in series.SelectMany(v => v))
             {
-                float x = (float)(pt.X - _HorizontalOffset) * horizontalScale;
-                float y = (float)(pt.Y - _VerticalOffset) * verticalScale;
+                pt.Style.BeginRender(scale.X, scale.Y, scale.Width, scale.Height);
+            }
 
-                float dx = (pt.Scale == VisualiserPointScaleMode.Pixels) ?
-                    (float)pt.Size :
-                    (float)(pt.Size) * Math.Min(horizontalScale, verticalScale);
-                float r = (float)Math.Sqrt(0.5 * dx);
-                var rect = new RectangleF(x - dx, y - dx, dx * 2, dx * 2);
-                var square = new RectangleF(x - r, y - r, r * 2, r * 2);
-                float thick = (pt.Scale == VisualiserPointScaleMode.Pixels) ?
-                    1.0f :
-                    r * 0.25f;
-                if (thick < 1.0f) thick = 1.0f;
-
-                if (rect.IntersectsWith(e.ClipRectangle))
+            foreach (var points in series)
+            {
+                if (points.Count > 1)
                 {
-                    Draw(e.Graphics, pt.Shape, rect, square, pt.Color, thick);
+                    var previous = points[0];
+                    foreach (var pt in points.Skip(1))
+                    {
+                        pt.Style.RenderLine(e.Graphics, previous, pt);
+                        previous = pt;
+                    }
+                    if (points[0].Style.LineLoop)
+                    {
+                        points[0].Style.RenderLine(e.Graphics, previous, points[0]);
+                    }
                 }
+
+                foreach (var pt in points)
+                {
+                    pt.Style.RenderPoint(e.Graphics, pt);
+                }
+            }
+
+            foreach (var pt in series.SelectMany(v => v))
+            {
+                pt.Style.EndRender();
             }
 
             DrawZoomRectangle(e.Graphics);
         }
 
-        private static void Draw(Graphics g, VisualiserPointShape shape,
-            RectangleF rect, RectangleF square, Color color, float thick)
+        private void DrawAxes(Graphics g, Pen axisPen, RectangleF scale)
         {
-            switch (shape)
+            float x = -scale.X * scale.Width;
+            float y = -scale.Y * scale.Height;
+            float tickSize = 5.0f;
+            int tickInterval = 1;
+            while (ClientSize.Height > 50 * (scale.Height * tickInterval * 0.1f) && tickInterval < 100000)
             {
-            case VisualiserPointShape.Circle:
-                using (var pen = new Pen(color, thick))
-                {
-                    g.DrawEllipse(pen, rect);
-                }
-                break;
-            case VisualiserPointShape.FilledCircle:
-                using (var brush = new SolidBrush(color))
-                {
-                    g.FillEllipse(brush, rect);
-                }
-                break;
-            case VisualiserPointShape.Square:
-                using (var pen = new Pen(color, thick))
-                {
-                    g.DrawRectangle(pen, square.X, square.Y, square.Width, square.Height);
-                }
-                break;
-            case VisualiserPointShape.FilledSquare:
-                using (var brush = new SolidBrush(color))
-                {
-                    g.FillRectangle(brush, rect);
-                }
-                break;
-            case VisualiserPointShape.Diamond:
-                using (var pen = new Pen(color, thick))
-                {
-                    g.RotateTransform(45.0f);
-                    g.DrawRectangle(pen, square.X, square.Y, square.Width, square.Height);
-                    g.ResetTransform();
-                }
-                break;
-            case VisualiserPointShape.FilledDiamond:
-                using (var brush = new SolidBrush(color))
-                {
-                    g.RotateTransform(45.0f);
-                    g.FillRectangle(brush, rect);
-                    g.ResetTransform();
-                }
-                break;
-            case VisualiserPointShape.Cross:
-                using (var pen = new Pen(color, thick))
-                {
-                    g.DrawLine(pen, square.Left, square.Top, square.Right, square.Bottom);
-                    g.DrawLine(pen, square.Right, square.Top, square.Left, square.Bottom);
-                }
-                break;
-            case VisualiserPointShape.Plus:
-                using (var pen = new Pen(color, thick))
-                {
-                    float centre = square.Left + square.Width * 0.5f;
-                    float middle = square.Top + square.Height * 0.5f;
-                    g.DrawLine(pen, centre, square.Top, centre, square.Bottom);
-                    g.DrawLine(pen, square.Left, middle, square.Right, middle);
-                }
-                break;
-            default:
-                System.Diagnostics.Debug.Assert(false, "Invalid Shape");
-                break;
+                tickInterval *= 10;
+                tickSize *= 2;
             }
+
+            if (x < ClientSize.Width) g.DrawLine(axisPen, x, 0.0f, x, ClientSize.Height);
+            if (y < ClientSize.Height) g.DrawLine(axisPen, 0.0f, y, ClientSize.Width, y);
+
+            if (tickInterval >= 100000) return;
+
+            float d = scale.Height * 0.1f;
+            for (int step = tickInterval; y - step * d > 0; step += tickInterval)
+                g.DrawLine(axisPen, x, y - step * d, x + tickSize, y - step * d);
+            for (int step = tickInterval; y + step * d < ClientSize.Height; step += tickInterval)
+                g.DrawLine(axisPen, x, y + step * d, x + tickSize, y + step * d);
         }
 
         #endregion
@@ -440,6 +721,14 @@ namespace esecui
                 int b = ZoomEndLocation.Value.Y;
                 if (r < l) l = Interlocked.Exchange(ref r, l);
                 if (b < t) t = Interlocked.Exchange(ref b, t);
+                if (FlipHorizontal)
+                {
+                    l = ClientSize.Width - Interlocked.Exchange(ref r, ClientSize.Width - l);
+                }
+                if (FlipVertical)
+                {
+                    t = ClientSize.Height - Interlocked.Exchange(ref b, ClientSize.Height - t);
+                }
                 return Rectangle.FromLTRB(l, t, r, b);
             }
             else
@@ -466,7 +755,7 @@ namespace esecui
         {
             base.OnMouseDown(e);
 
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right && !ZoomStartLocation.HasValue)
             {
                 if (CanUnzoom)
                 {
@@ -476,7 +765,7 @@ namespace esecui
                     _VerticalRange = UnzoomVerticalRange;
                     _AutoRange = UnzoomAutoRange;
                     CanUnzoom = false;
-                    Invalidate();
+                    Refresh();
                 }
                 else
                 {
@@ -521,21 +810,18 @@ namespace esecui
             {
                 Capture = false;
                 var zoomTo = GetZoomRect();
-                if (zoomTo.HasValue)
+                if (zoomTo.HasValue && zoomTo.Value.Width > 3 && zoomTo.Value.Height > 3)
                 {
-                    float horizontalScale = (float)(ClientSize.Width / _HorizontalRange);
-                    float verticalScale = (float)(ClientSize.Height / _VerticalRange);
-                    if (float.IsInfinity(horizontalScale)) horizontalScale = 1.0f;
-                    if (float.IsInfinity(verticalScale)) verticalScale = 1.0f;
+                    var scale = GetScaledRange();
 
-                    _HorizontalOffset += zoomTo.Value.Left / horizontalScale;
-                    _VerticalOffset += zoomTo.Value.Top / verticalScale;
-                    _HorizontalRange = zoomTo.Value.Width / horizontalScale;
-                    _VerticalRange = zoomTo.Value.Height / verticalScale;
+                    _HorizontalOffset = zoomTo.Value.Left / scale.Width + scale.X;
+                    _VerticalOffset = zoomTo.Value.Top / scale.Height + scale.Y;
+                    _HorizontalRange = Math.Abs(zoomTo.Value.Width / scale.Width);
+                    _VerticalRange = Math.Abs(zoomTo.Value.Height / scale.Height);
                 }
                 ZoomStartLocation = null;
                 ZoomEndLocation = null;
-                Invalidate();
+                Refresh();
             }
         }
 

@@ -90,7 +90,7 @@ namespace esecui
                 CurrentMean = sum.__div__(group.Count);
                 CurrentWorst = worst;
 
-                Owner.UpdateVisualisation(group);
+                Owner.UpdateVisualisation(group, Iterations <= 1);
             }
         }
 

@@ -89,6 +89,7 @@
       <DependentUpon>Visualiser.cs</DependentUpon>
     </Compile>
     <Compile Include="VisualiserPoint.cs" />
+    <Compile Include="VisualiserPointStyle.cs" />
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
     </EmbeddedResource>

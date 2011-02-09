@@ -26,13 +26,16 @@ namespace esecui
         {
             InitializeComponent();
 
-            chartResults.ChartAreas.Add("Results");
-
             var codeFont = new Font("Consolas", 10.0f);
             if (codeFont.Name != codeFont.OriginalFontName)
             {
                 codeFont = new Font(FontFamily.GenericMonospace, 10.0f);
             }
+
+            chkChartBestFitness.BackColor = ChartStyles[0].LineColor;
+            chkChartCurrentBest.BackColor = ChartStyles[1].LineColor;
+            chkChartCurrentMean.BackColor = ChartStyles[2].LineColor;
+            chkChartCurrentWorst.BackColor = ChartStyles[3].LineColor;
 
             txtSystem.Font = codeFont;
             txtSystemVariables.Font = codeFont;
@@ -45,6 +48,65 @@ namespace esecui
             txtLandscapeParameters.SetHighlighting("ESDLVariables");
             txtEvaluatorCode.SetHighlighting("Python");
         }
+
+        #region Chart Styles
+
+        private static readonly VisualiserPointStyle VisualiserStyle = new VisualiserPointStyle
+        {
+            BorderColor = Color.RoyalBlue,
+            BorderThickness = 1.0,
+            FillColor = Color.FromArgb(64, Color.Blue),
+            Size = 8.0,
+            ScaleMode = VisualiserPointScaleMode.Pixels,
+            Shape = VisualiserPointShape.Circle
+        };
+
+        private static readonly VisualiserPointStyle[] ChartStyles = new[]
+        {
+            new VisualiserPointStyle
+            {
+                LineColor = Color.Blue,
+                LineThickness = 2.0,
+            },
+            new VisualiserPointStyle
+            {
+                LineColor = Color.Red,
+                LineThickness = 1.0,
+            },
+            new VisualiserPointStyle
+            {
+                LineColor = Color.Green,
+                LineThickness = 1.0,
+            },
+            new VisualiserPointStyle
+            {
+                LineColor = Color.Gold,
+                LineThickness = 1.0,
+            },
+        };
+
+        private void chkChartBestFitness_CheckedChanged(object sender, EventArgs e)
+        {
+            chartResults.ShowSeries(0, ((CheckBox)sender).Checked);
+        }
+
+        private void chkChartCurrentBest_CheckedChanged(object sender, EventArgs e)
+        {
+            chartResults.ShowSeries(1, ((CheckBox)sender).Checked);
+        }
+
+        private void chkChartCurrentMean_CheckedChanged(object sender, EventArgs e)
+        {
+            chartResults.ShowSeries(2, ((CheckBox)sender).Checked);
+        }
+
+        private void chkChartCurrentWorst_CheckedChanged(object sender, EventArgs e)
+        {
+            chartResults.ShowSeries(3, ((CheckBox)sender).Checked);
+        }
+
+
+        #endregion
 
         #region Startup and early termination
 
@@ -418,6 +480,7 @@ class CustomEvaluator(esec.landscape.Landscape):
         public void UpdateStats(int iterations, int evaluations, int births, TimeSpan time,
             dynamic bestFitness, dynamic currentBest, dynamic currentMean, dynamic currentWorst)
         {
+            if (IsDisposed) return;
             if (InvokeRequired)
             {
                 Invoke((Action)(() => UpdateStats(iterations, evaluations, births, time,
@@ -435,39 +498,45 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtStatsCurrentMean.Text = currentMean;
             txtStatsCurrentWorst.Text = currentWorst;
 
-            bool noPoints = (!chartResults.Series[0].Points.Any());
+            double min = chartResults.MinimumVerticalOffset;
+            double max = chartResults.MaximumVerticalOffset + chartResults.MaximumVerticalRange;
+
             if (bestFitness != null)
             {
                 double value = (double)bestFitness.simple;
-                if (noPoints || value > chartResults.ChartAreas[0].AxisY.Minimum * 2.0)
-                    chartResults.Series[0].Points.Add(new DataPoint(iterations, value));
+                value = (value < min) ? min : (value > max) ? max : value;
+                chartResults.Add(new VisualiserPoint(iterations, value, ChartStyles[0]), 0);
             }
             if (currentBest != null)
             {
                 double value = (double)currentBest.simple;
-                if (noPoints || value > chartResults.ChartAreas[0].AxisY.Minimum * 2.0)
-                    chartResults.Series[1].Points.Add(new DataPoint(iterations, value));
+                value = (value < min) ? min : (value > max) ? max : value;
+                chartResults.Add(new VisualiserPoint(iterations, value, ChartStyles[1]), 1);
             }
             if (currentMean != null)
             {
                 double value = (double)currentMean.simple;
-                if (noPoints || value > chartResults.ChartAreas[0].AxisY.Minimum * 2.0)
-                    chartResults.Series[2].Points.Add(new DataPoint(iterations, value));
+                value = (value < min) ? min : (value > max) ? max : value;
+                chartResults.Add(new VisualiserPoint(iterations, value, ChartStyles[2]), 2);
             }
-
-            if (chartResults.Series[0].Points.Count > chartResults.ChartAreas[0].AxisX.Maximum)
+            if (currentWorst != null)
             {
-                chartResults.ChartAreas[0].AxisX.Maximum += chartResults.Series[0].Points.Count / 2;
+                double value = (double)currentWorst.simple;
+                value = (value < min) ? min : (value > max) ? max : value;
+                chartResults.Add(new VisualiserPoint(iterations, value, ChartStyles[3]), 3);
             }
         }
 
-        public void UpdateVisualisation(IEnumerable<dynamic> population)
+        private bool DisableVisualisation;
+
+        public void UpdateVisualisation(IEnumerable<dynamic> population, bool firstRun = false)
         {
             if (population == null) return;
+            if (DisableVisualisation) return;
 
             if (InvokeRequired)
             {
-                BeginInvoke((Action)(() => UpdateVisualisation(population)));
+                BeginInvoke((Action)(() => UpdateVisualisation(population, firstRun)));
                 return;
             }
 
@@ -475,12 +544,16 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             try
             {
-                points = population.Select(indiv => new VisualiserPoint((double)indiv[0], (double)indiv[1])).ToList();
+                points = population.Select(indiv => new VisualiserPoint((double)indiv[0], (double)indiv[1], VisualiserStyle)).ToList();
             }
             catch
             {
+                DisableVisualisation = true;
                 return;
             }
+
+            if (firstRun) visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            else visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowOnly;
 
             visPopulation.SetPoints(points);
         }
@@ -513,19 +586,19 @@ class CustomEvaluator(esec.landscape.Landscape):
                 return;
             }
 
-            chartResults.Series.Clear();
-            chartResults.Series.Add("Best Fitness").ChartType = SeriesChartType.FastLine;
-            chartResults.Series.Add("Current Best").ChartType = SeriesChartType.FastLine;
-            chartResults.Series.Add("Current Mean").ChartType = SeriesChartType.FastLine;
+            chartResults.ClearAll();
+            chartResults.ShowSeries(0, chkChartBestFitness.Checked);
+            chartResults.ShowSeries(1, chkChartCurrentBest.Checked);
+            chartResults.ShowSeries(2, chkChartCurrentMean.Checked);
+            chartResults.ShowSeries(3, chkChartCurrentWorst.Checked);
+
+            DisableVisualisation = false;
 
             CurrentMonitor = new Monitor(this);
             CurrentMonitor.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
             CurrentMonitor.EvaluationLimit = chkEvaluations.Checked ? int.Parse(txtEvaluations.Text) : (int?)null;
             CurrentMonitor.TimeLimit = chkSeconds.Checked ? TimeSpan.FromSeconds(double.Parse(txtSeconds.Text)) : (TimeSpan?)null;
             CurrentMonitor.FitnessLimit = chkFitness.Checked ? double.Parse(txtFitness.Text) : (double?)null;
-
-            chartResults.ChartAreas[0].AxisX.Minimum = 0;
-            chartResults.ChartAreas[0].AxisX.Maximum = CurrentMonitor.IterationLimit ?? 10;
 
             IList<ErrorItem> errors = null;
             var variables = Python.ConfigDict(txtSystemVariables, out errors);
@@ -622,8 +695,6 @@ class CustomEvaluator(esec.landscape.Landscape):
             CurrentMonitor = null;
             CurrentExperiment.Dispose();
             CurrentExperiment = null;
-
-            chartResults.ChartAreas[0].AxisX.Maximum = chartResults.Series[0].Points.Count;
         }
 
         private void Task_RunExperiment_NotCompleted(Task task)

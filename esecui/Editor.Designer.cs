@@ -76,10 +76,12 @@
             this.lblOr1 = new System.Windows.Forms.Label();
             this.lblOr3 = new System.Windows.Forms.Label();
             this.lblOr2 = new System.Windows.Forms.Label();
+            this.tabLog = new System.Windows.Forms.TabPage();
+            this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
+            this.watcherConfigurationDirectory = new System.IO.FileSystemWatcher();
             this.splitGraphStats = new System.Windows.Forms.SplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
-            this.chartResults = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tab2DPlot = new System.Windows.Forms.TabPage();
             this.tableStats = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
@@ -98,9 +100,11 @@
             this.txtStatsCurrentBest = new System.Windows.Forms.TextBox();
             this.txtStatsCurrentMean = new System.Windows.Forms.TextBox();
             this.txtStatsCurrentWorst = new System.Windows.Forms.TextBox();
-            this.tabLog = new System.Windows.Forms.TabPage();
-            this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
-            this.watcherConfigurationDirectory = new System.IO.FileSystemWatcher();
+            this.chkChartCurrentWorst = new System.Windows.Forms.CheckBox();
+            this.chkChartCurrentMean = new System.Windows.Forms.CheckBox();
+            this.chkChartCurrentBest = new System.Windows.Forms.CheckBox();
+            this.chkChartBestFitness = new System.Windows.Forms.CheckBox();
+            this.chartResults = new esecui.Visualiser();
             this.visPopulation = new esecui.Visualiser();
             this.tabTabs.SuspendLayout();
             this.tabSystem.SuspendLayout();
@@ -127,17 +131,16 @@
             this.splitLimitsGraph.SuspendLayout();
             this.tableResults.SuspendLayout();
             this.tableControls.SuspendLayout();
+            this.tabLog.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).BeginInit();
             this.splitGraphStats.Panel1.SuspendLayout();
             this.splitGraphStats.Panel2.SuspendLayout();
             this.splitGraphStats.SuspendLayout();
             this.tabResultView.SuspendLayout();
             this.tabChart.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chartResults)).BeginInit();
             this.tab2DPlot.SuspendLayout();
             this.tableStats.SuspendLayout();
-            this.tabLog.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).BeginInit();
             this.SuspendLayout();
             // 
             // tabTabs
@@ -532,7 +535,7 @@
             // splitLimitsGraph.Panel2
             // 
             this.splitLimitsGraph.Panel2.Controls.Add(this.splitGraphStats);
-            this.splitLimitsGraph.Size = new System.Drawing.Size(949, 614);
+            this.splitLimitsGraph.Size = new System.Drawing.Size(949, 613);
             this.splitLimitsGraph.SplitterDistance = 316;
             this.splitLimitsGraph.TabIndex = 0;
             // 
@@ -553,7 +556,7 @@
             this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableResults.Size = new System.Drawing.Size(316, 614);
+            this.tableResults.Size = new System.Drawing.Size(316, 613);
             this.tableResults.TabIndex = 0;
             // 
             // tableControls
@@ -743,6 +746,40 @@
             this.lblOr2.TabIndex = 6;
             this.lblOr2.Text = "or";
             // 
+            // tabLog
+            // 
+            this.tabLog.Controls.Add(this.txtLog);
+            this.tabLog.Location = new System.Drawing.Point(4, 23);
+            this.tabLog.Name = "tabLog";
+            this.tabLog.Padding = new System.Windows.Forms.Padding(3);
+            this.tabLog.Size = new System.Drawing.Size(955, 619);
+            this.tabLog.TabIndex = 3;
+            this.tabLog.Text = "Log Messages (F12)";
+            this.tabLog.UseVisualStyleBackColor = true;
+            // 
+            // txtLog
+            // 
+            this.txtLog.ConvertTabsToSpaces = true;
+            this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLog.EnableFolding = false;
+            this.txtLog.IsReadOnly = false;
+            this.txtLog.Location = new System.Drawing.Point(3, 3);
+            this.txtLog.Name = "txtLog";
+            this.txtLog.ShowLineNumbers = false;
+            this.txtLog.ShowVRuler = false;
+            this.txtLog.Size = new System.Drawing.Size(949, 614);
+            this.txtLog.TabIndex = 0;
+            // 
+            // watcherConfigurationDirectory
+            // 
+            this.watcherConfigurationDirectory.EnableRaisingEvents = true;
+            this.watcherConfigurationDirectory.Filter = "*.py;*.xml";
+            this.watcherConfigurationDirectory.SynchronizingObject = this;
+            this.watcherConfigurationDirectory.Changed += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Changed);
+            this.watcherConfigurationDirectory.Created += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Created);
+            this.watcherConfigurationDirectory.Deleted += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Deleted);
+            this.watcherConfigurationDirectory.Renamed += new System.IO.RenamedEventHandler(this.watcherConfigurationDirectory_Renamed);
+            // 
             // splitGraphStats
             // 
             this.splitGraphStats.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -757,8 +794,8 @@
             // splitGraphStats.Panel2
             // 
             this.splitGraphStats.Panel2.Controls.Add(this.tableStats);
-            this.splitGraphStats.Size = new System.Drawing.Size(629, 614);
-            this.splitGraphStats.SplitterDistance = 459;
+            this.splitGraphStats.Size = new System.Drawing.Size(629, 613);
+            this.splitGraphStats.SplitterDistance = 458;
             this.splitGraphStats.TabIndex = 0;
             // 
             // tabResultView
@@ -769,7 +806,7 @@
             this.tabResultView.Location = new System.Drawing.Point(0, 0);
             this.tabResultView.Name = "tabResultView";
             this.tabResultView.SelectedIndex = 0;
-            this.tabResultView.Size = new System.Drawing.Size(629, 459);
+            this.tabResultView.Size = new System.Drawing.Size(629, 458);
             this.tabResultView.TabIndex = 0;
             // 
             // tabChart
@@ -778,18 +815,10 @@
             this.tabChart.Location = new System.Drawing.Point(4, 23);
             this.tabChart.Name = "tabChart";
             this.tabChart.Padding = new System.Windows.Forms.Padding(3);
-            this.tabChart.Size = new System.Drawing.Size(621, 432);
+            this.tabChart.Size = new System.Drawing.Size(621, 431);
             this.tabChart.TabIndex = 0;
             this.tabChart.Text = "Chart (Alt+1)";
             this.tabChart.UseVisualStyleBackColor = true;
-            // 
-            // chartResults
-            // 
-            this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chartResults.Location = new System.Drawing.Point(3, 3);
-            this.chartResults.Name = "chartResults";
-            this.chartResults.Size = new System.Drawing.Size(615, 426);
-            this.chartResults.TabIndex = 0;
             // 
             // tab2DPlot
             // 
@@ -797,18 +826,19 @@
             this.tab2DPlot.Location = new System.Drawing.Point(4, 23);
             this.tab2DPlot.Name = "tab2DPlot";
             this.tab2DPlot.Padding = new System.Windows.Forms.Padding(3);
-            this.tab2DPlot.Size = new System.Drawing.Size(621, 432);
+            this.tab2DPlot.Size = new System.Drawing.Size(621, 431);
             this.tab2DPlot.TabIndex = 1;
             this.tab2DPlot.Text = "2D Plot (Alt+2)";
             this.tab2DPlot.UseVisualStyleBackColor = true;
             // 
             // tableStats
             // 
-            this.tableStats.ColumnCount = 4;
+            this.tableStats.ColumnCount = 5;
             this.tableStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
             this.tableStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
             this.tableStats.Controls.Add(this.label1, 0, 0);
             this.tableStats.Controls.Add(this.label2, 0, 1);
             this.tableStats.Controls.Add(this.label4, 0, 2);
@@ -821,18 +851,22 @@
             this.tableStats.Controls.Add(this.txtStatsEvaluations, 1, 1);
             this.tableStats.Controls.Add(this.txtStatsBirths, 1, 2);
             this.tableStats.Controls.Add(this.txtStatsTime, 1, 3);
-            this.tableStats.Controls.Add(this.txtStatsBestFitness, 3, 0);
-            this.tableStats.Controls.Add(this.txtStatsCurrentBest, 3, 1);
-            this.tableStats.Controls.Add(this.txtStatsCurrentMean, 3, 2);
-            this.tableStats.Controls.Add(this.txtStatsCurrentWorst, 3, 3);
+            this.tableStats.Controls.Add(this.txtStatsBestFitness, 4, 0);
+            this.tableStats.Controls.Add(this.txtStatsCurrentBest, 4, 1);
+            this.tableStats.Controls.Add(this.txtStatsCurrentMean, 4, 2);
+            this.tableStats.Controls.Add(this.txtStatsCurrentWorst, 4, 3);
+            this.tableStats.Controls.Add(this.chkChartCurrentWorst, 3, 3);
+            this.tableStats.Controls.Add(this.chkChartCurrentMean, 3, 2);
+            this.tableStats.Controls.Add(this.chkChartCurrentBest, 3, 1);
+            this.tableStats.Controls.Add(this.chkChartBestFitness, 3, 0);
             this.tableStats.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableStats.Location = new System.Drawing.Point(0, 0);
             this.tableStats.Name = "tableStats";
             this.tableStats.RowCount = 4;
-            this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableStats.Size = new System.Drawing.Size(629, 151);
             this.tableStats.TabIndex = 0;
             // 
@@ -880,7 +914,7 @@
             // 
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(308, 11);
+            this.label5.Location = new System.Drawing.Point(285, 11);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(76, 14);
             this.label5.TabIndex = 8;
@@ -890,7 +924,7 @@
             // 
             this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(308, 48);
+            this.label6.Location = new System.Drawing.Point(285, 48);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(80, 14);
             this.label6.TabIndex = 10;
@@ -900,7 +934,7 @@
             // 
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(308, 85);
+            this.label7.Location = new System.Drawing.Point(285, 85);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(85, 14);
             this.label7.TabIndex = 12;
@@ -910,7 +944,7 @@
             // 
             this.label8.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(308, 124);
+            this.label8.Location = new System.Drawing.Point(285, 124);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(89, 14);
             this.label8.TabIndex = 14;
@@ -923,7 +957,7 @@
             this.txtStatsIterations.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsIterations.Name = "txtStatsIterations";
             this.txtStatsIterations.ReadOnly = true;
-            this.txtStatsIterations.Size = new System.Drawing.Size(210, 22);
+            this.txtStatsIterations.Size = new System.Drawing.Size(187, 22);
             this.txtStatsIterations.TabIndex = 1;
             this.txtStatsIterations.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -934,7 +968,7 @@
             this.txtStatsEvaluations.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsEvaluations.Name = "txtStatsEvaluations";
             this.txtStatsEvaluations.ReadOnly = true;
-            this.txtStatsEvaluations.Size = new System.Drawing.Size(210, 22);
+            this.txtStatsEvaluations.Size = new System.Drawing.Size(187, 22);
             this.txtStatsEvaluations.TabIndex = 3;
             this.txtStatsEvaluations.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -945,7 +979,7 @@
             this.txtStatsBirths.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsBirths.Name = "txtStatsBirths";
             this.txtStatsBirths.ReadOnly = true;
-            this.txtStatsBirths.Size = new System.Drawing.Size(210, 22);
+            this.txtStatsBirths.Size = new System.Drawing.Size(187, 22);
             this.txtStatsBirths.TabIndex = 5;
             this.txtStatsBirths.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -956,96 +990,128 @@
             this.txtStatsTime.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsTime.Name = "txtStatsTime";
             this.txtStatsTime.ReadOnly = true;
-            this.txtStatsTime.Size = new System.Drawing.Size(210, 22);
+            this.txtStatsTime.Size = new System.Drawing.Size(187, 22);
             this.txtStatsTime.TabIndex = 7;
             this.txtStatsTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsBestFitness
             // 
             this.txtStatsBestFitness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsBestFitness.Location = new System.Drawing.Point(409, 7);
+            this.txtStatsBestFitness.Location = new System.Drawing.Point(431, 7);
             this.txtStatsBestFitness.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsBestFitness.Name = "txtStatsBestFitness";
             this.txtStatsBestFitness.ReadOnly = true;
-            this.txtStatsBestFitness.Size = new System.Drawing.Size(211, 22);
+            this.txtStatsBestFitness.Size = new System.Drawing.Size(189, 22);
             this.txtStatsBestFitness.TabIndex = 9;
             this.txtStatsBestFitness.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsCurrentBest
             // 
             this.txtStatsCurrentBest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsCurrentBest.Location = new System.Drawing.Point(409, 44);
+            this.txtStatsCurrentBest.Location = new System.Drawing.Point(431, 44);
             this.txtStatsCurrentBest.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsCurrentBest.Name = "txtStatsCurrentBest";
             this.txtStatsCurrentBest.ReadOnly = true;
-            this.txtStatsCurrentBest.Size = new System.Drawing.Size(211, 22);
+            this.txtStatsCurrentBest.Size = new System.Drawing.Size(189, 22);
             this.txtStatsCurrentBest.TabIndex = 11;
             this.txtStatsCurrentBest.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsCurrentMean
             // 
             this.txtStatsCurrentMean.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsCurrentMean.Location = new System.Drawing.Point(409, 81);
+            this.txtStatsCurrentMean.Location = new System.Drawing.Point(431, 81);
             this.txtStatsCurrentMean.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsCurrentMean.Name = "txtStatsCurrentMean";
             this.txtStatsCurrentMean.ReadOnly = true;
-            this.txtStatsCurrentMean.Size = new System.Drawing.Size(211, 22);
+            this.txtStatsCurrentMean.Size = new System.Drawing.Size(189, 22);
             this.txtStatsCurrentMean.TabIndex = 13;
             this.txtStatsCurrentMean.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // txtStatsCurrentWorst
             // 
             this.txtStatsCurrentWorst.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatsCurrentWorst.Location = new System.Drawing.Point(409, 120);
+            this.txtStatsCurrentWorst.Location = new System.Drawing.Point(431, 120);
             this.txtStatsCurrentWorst.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this.txtStatsCurrentWorst.Name = "txtStatsCurrentWorst";
             this.txtStatsCurrentWorst.ReadOnly = true;
-            this.txtStatsCurrentWorst.Size = new System.Drawing.Size(211, 22);
+            this.txtStatsCurrentWorst.Size = new System.Drawing.Size(189, 22);
             this.txtStatsCurrentWorst.TabIndex = 15;
             this.txtStatsCurrentWorst.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // tabLog
+            // chkChartCurrentWorst
             // 
-            this.tabLog.Controls.Add(this.txtLog);
-            this.tabLog.Location = new System.Drawing.Point(4, 23);
-            this.tabLog.Name = "tabLog";
-            this.tabLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLog.Size = new System.Drawing.Size(955, 619);
-            this.tabLog.TabIndex = 3;
-            this.tabLog.Text = "Log Messages (F12)";
-            this.tabLog.UseVisualStyleBackColor = true;
+            this.chkChartCurrentWorst.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkChartCurrentWorst.AutoSize = true;
+            this.chkChartCurrentWorst.BackColor = System.Drawing.Color.Blue;
+            this.chkChartCurrentWorst.Location = new System.Drawing.Point(380, 124);
+            this.chkChartCurrentWorst.Name = "chkChartCurrentWorst";
+            this.chkChartCurrentWorst.Size = new System.Drawing.Size(39, 14);
+            this.chkChartCurrentWorst.TabIndex = 17;
+            this.chkChartCurrentWorst.UseVisualStyleBackColor = false;
+            this.chkChartCurrentWorst.CheckedChanged += new System.EventHandler(this.chkChartCurrentWorst_CheckedChanged);
             // 
-            // txtLog
+            // chkChartCurrentMean
             // 
-            this.txtLog.ConvertTabsToSpaces = true;
-            this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtLog.EnableFolding = false;
-            this.txtLog.IsReadOnly = false;
-            this.txtLog.Location = new System.Drawing.Point(3, 3);
-            this.txtLog.Name = "txtLog";
-            this.txtLog.ShowLineNumbers = false;
-            this.txtLog.ShowVRuler = false;
-            this.txtLog.Size = new System.Drawing.Size(949, 614);
-            this.txtLog.TabIndex = 0;
+            this.chkChartCurrentMean.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkChartCurrentMean.AutoSize = true;
+            this.chkChartCurrentMean.BackColor = System.Drawing.Color.Blue;
+            this.chkChartCurrentMean.Location = new System.Drawing.Point(380, 85);
+            this.chkChartCurrentMean.Name = "chkChartCurrentMean";
+            this.chkChartCurrentMean.Size = new System.Drawing.Size(39, 14);
+            this.chkChartCurrentMean.TabIndex = 17;
+            this.chkChartCurrentMean.UseVisualStyleBackColor = false;
+            this.chkChartCurrentMean.CheckedChanged += new System.EventHandler(this.chkChartCurrentMean_CheckedChanged);
             // 
-            // watcherConfigurationDirectory
+            // chkChartCurrentBest
             // 
-            this.watcherConfigurationDirectory.EnableRaisingEvents = true;
-            this.watcherConfigurationDirectory.Filter = "*.py;*.xml";
-            this.watcherConfigurationDirectory.SynchronizingObject = this;
-            this.watcherConfigurationDirectory.Changed += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Changed);
-            this.watcherConfigurationDirectory.Created += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Created);
-            this.watcherConfigurationDirectory.Deleted += new System.IO.FileSystemEventHandler(this.watcherConfigurationDirectory_Deleted);
-            this.watcherConfigurationDirectory.Renamed += new System.IO.RenamedEventHandler(this.watcherConfigurationDirectory_Renamed);
+            this.chkChartCurrentBest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkChartCurrentBest.AutoSize = true;
+            this.chkChartCurrentBest.BackColor = System.Drawing.Color.Blue;
+            this.chkChartCurrentBest.Checked = true;
+            this.chkChartCurrentBest.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkChartCurrentBest.Location = new System.Drawing.Point(380, 48);
+            this.chkChartCurrentBest.Name = "chkChartCurrentBest";
+            this.chkChartCurrentBest.Size = new System.Drawing.Size(39, 14);
+            this.chkChartCurrentBest.TabIndex = 17;
+            this.chkChartCurrentBest.UseVisualStyleBackColor = false;
+            this.chkChartCurrentBest.CheckedChanged += new System.EventHandler(this.chkChartCurrentBest_CheckedChanged);
+            // 
+            // chkChartBestFitness
+            // 
+            this.chkChartBestFitness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkChartBestFitness.AutoSize = true;
+            this.chkChartBestFitness.BackColor = System.Drawing.Color.Blue;
+            this.chkChartBestFitness.Checked = true;
+            this.chkChartBestFitness.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkChartBestFitness.Location = new System.Drawing.Point(380, 11);
+            this.chkChartBestFitness.Name = "chkChartBestFitness";
+            this.chkChartBestFitness.Size = new System.Drawing.Size(39, 14);
+            this.chkChartBestFitness.TabIndex = 17;
+            this.chkChartBestFitness.UseVisualStyleBackColor = false;
+            this.chkChartBestFitness.CheckedChanged += new System.EventHandler(this.chkChartBestFitness_CheckedChanged);
+            // 
+            // chartResults
+            // 
+            this.chartResults.AutoRange = true;
+            this.chartResults.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chartResults.FlipVertical = true;
+            this.chartResults.Location = new System.Drawing.Point(3, 3);
+            this.chartResults.MustIncludeHorizontalZero = true;
+            this.chartResults.MustIncludeVerticalZero = true;
+            this.chartResults.Name = "chartResults";
+            this.chartResults.Size = new System.Drawing.Size(615, 425);
+            this.chartResults.TabIndex = 0;
             // 
             // visPopulation
             // 
             this.visPopulation.AutoRange = true;
+            this.visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.visPopulation.BackColor = System.Drawing.Color.White;
             this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.visPopulation.Location = new System.Drawing.Point(3, 3);
             this.visPopulation.Name = "visPopulation";
-            this.visPopulation.Size = new System.Drawing.Size(615, 427);
+            this.visPopulation.Size = new System.Drawing.Size(615, 426);
             this.visPopulation.TabIndex = 1;
             // 
             // Editor
@@ -1092,18 +1158,17 @@
             this.tableResults.PerformLayout();
             this.tableControls.ResumeLayout(false);
             this.tableControls.PerformLayout();
+            this.tabLog.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).EndInit();
             this.splitGraphStats.Panel1.ResumeLayout(false);
             this.splitGraphStats.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).EndInit();
             this.splitGraphStats.ResumeLayout(false);
             this.tabResultView.ResumeLayout(false);
             this.tabChart.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chartResults)).EndInit();
             this.tab2DPlot.ResumeLayout(false);
             this.tableStats.ResumeLayout(false);
             this.tableStats.PerformLayout();
-            this.tabLog.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.watcherConfigurationDirectory)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1134,7 +1199,6 @@
         private System.Windows.Forms.SplitContainer splitLimitsGraph;
         private System.Windows.Forms.TableLayoutPanel tableResults;
         private System.Windows.Forms.SplitContainer splitGraphStats;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chartResults;
         private System.Windows.Forms.TableLayoutPanel tableStats;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
@@ -1182,6 +1246,11 @@
         private Visualiser visPopulation;
         private ICSharpCode.TextEditor.TextEditorControl txtEvaluatorCode;
         private System.Windows.Forms.Label lblEvaluatorCode;
+        private Visualiser chartResults;
+        private System.Windows.Forms.CheckBox chkChartCurrentWorst;
+        private System.Windows.Forms.CheckBox chkChartCurrentMean;
+        private System.Windows.Forms.CheckBox chkChartCurrentBest;
+        private System.Windows.Forms.CheckBox chkChartBestFitness;
     }
 }
 
