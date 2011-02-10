@@ -16,12 +16,12 @@
 
     <RuleSets>
         <RuleSet ignorecase="false">
-            <Delimiters>^*()-+=\/[]{}"' ,:;	.</Delimiters>
+            <Delimiters>@@^*()-+=\/[]{}"' ,:;	.</Delimiters>
 
-            <Span name = "LineComment" bold = "false" italic = "false" color = "Green" stopateol = "true">
+            <Span name="LineComment" bold="false" italic="false" color="Green" stopateol="true">
                 <Begin>#</Begin>
             </Span>
-            
+
             <Span name="StringDouble" bold="false" italic="false" color="Blue" stopateol="true">
                 <Begin>"</Begin>
                 <End>"</End>
@@ -38,7 +38,11 @@
                 <Begin>&apos;&apos;&apos;</Begin>
                 <End>&apos;&apos;&apos;</End>
             </Span>
-            
+
+            <Span name="Decorator" bold="true" italic="false" color="MidnightBlue" stopateol="true">
+                <Begin>@@</Begin>
+            </Span>
+
             <MarkPrevious bold="true" italic="false" color="MidnightBlue">(</MarkPrevious>
 
             <KeyWords name="KnownValues" bold="true" italic="false" color="DarkCyan">
@@ -48,21 +52,34 @@
             </KeyWords>
 
             <KeyWords name="Keywords" bold="true" italic="false" color="Blue">
-                <Key word="for" />
-                <Key word="in" />
-                <Key word="if" />
-                <Key word="else" />
-                <Key word="return" />
-                <Key word="while" />
                 <Key word="and" />
-                <Key word="or" />
-                <Key word="not" />
+                <Key word="assert" />
+                <Key word="break" />
                 <Key word="class" />
+                <Key word="continue" />
                 <Key word="def" />
+                <Key word="del" />
+                <Key word="elif" />
+                <Key word="else" />
+                <Key word="except" />
+                <Key word="exec" />
+                <Key word="finally" />
+                <Key word="for" />
+                <Key word="from" />
+                <Key word="global" />
+                <Key word="if" />
+                <Key word="import" />
+                <Key word="in" />
+                <Key word="lambda" />
+                <Key word="not" />
+                <Key word="or" />
                 <Key word="pass" />
                 <Key word="print" />
-                <Key word="from" />
-                <Key word="import" />
+                <Key word="return" />
+                <Key word="try" />
+                <Key word="while" />
+                <Key word="with" />
+                <Key word="yield" />
             </KeyWords>
 
         </RuleSet>
