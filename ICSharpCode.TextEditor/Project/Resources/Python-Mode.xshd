@@ -57,6 +57,10 @@
                 <Key word="and" />
                 <Key word="or" />
                 <Key word="not" />
+                <Key word="class" />
+                <Key word="def" />
+                <Key word="pass" />
+                <Key word="print" />
             </KeyWords>
 
         </RuleSet>
