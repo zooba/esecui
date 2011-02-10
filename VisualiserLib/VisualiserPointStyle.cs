@@ -201,8 +201,8 @@ namespace VisualiserLib
             public Pen BorderPen { get; private set; }
             public Brush FillBrush { get; private set; }
 
-            public float Radius { get; private set; }
-            public float EdgeLength { get; private set; }
+            public double Size { get; private set; }
+            public VisualiserPointScaleMode ScaleMode { get; private set; }
             public double XOffset { get; private set; }
             public double YOffset { get; private set; }
             public double XScale { get; private set; }
@@ -269,41 +269,41 @@ namespace VisualiserLib
                 }
 
                 // Initialise scaling values
+                Size = source.Size;
+                ScaleMode = source.ScaleMode;
                 XOffset = xOffset;
                 YOffset = yOffset;
                 XScale = xScale;
                 YScale = yScale;
-
-                if (source.ScaleMode == VisualiserPointScaleMode.Pixels)
-                    EdgeLength = (float)source.Size;
-                else if (source.ScaleMode == VisualiserPointScaleMode.Real)
-                    EdgeLength = (float)Math.Min(source.Size * minScale, 1);
-                Radius = 2.0f * (float)Math.Sqrt(0.5 * EdgeLength);
+                //if (source.ScaleMode == VisualiserPointScaleMode.Pixels)
+                //    EdgeLength = (float)source.Size;
+                //else if (source.ScaleMode == VisualiserPointScaleMode.Real)
+                //    EdgeLength = (float)Math.Min(source.Size * minScale, 1);
+                //Radius = 2.0f * (float)Math.Sqrt(0.5 * EdgeLength);
             }
 
-            public PointF GetCenterPoint(double x, double y)
+            public PointF GetCenterPoint(VisualiserPoint point)
             {
                 return new PointF(
-                    (float)((x - XOffset) * XScale),
-                    (float)((y - YOffset) * YScale));
+                    (float)((point.X - XOffset) * XScale),
+                    (float)((point.Y - YOffset) * YScale));
             }
 
-            public RectangleF GetSquareRectangle(double x, double y)
+            public RectangleF GetRectangle(VisualiserPoint point)
             {
-                return new RectangleF(
-                    (float)((x - XOffset) * XScale) - EdgeLength * 0.5f,
-                    (float)((y - YOffset) * YScale) - EdgeLength * 0.5f,
-                    EdgeLength,
-                    EdgeLength);
-            }
+                var sx = (point.Z > 0.0) ? point.Z : Size;
+                var sy = sx;
+                if (ScaleMode == VisualiserPointScaleMode.Real)
+                {
+                    sx = Math.Max(1.0, sx * XScale);
+                    sy = Math.Max(1.0, sy * YScale);
+                }
 
-            public RectangleF GetEllipseRectangle(double x, double y)
-            {
                 return new RectangleF(
-                    (float)((x - XOffset) * XScale) - Radius,
-                    (float)((y - YOffset) * YScale) - Radius,
-                    Radius * 2,
-                    Radius * 2);
+                    (float)((point.X - XOffset) * XScale - sx * 0.5f),
+                    (float)((point.Y - YOffset) * YScale - sy * 0.5f),
+                    (float)sx,
+                    (float)sy);
             }
 
             public void Dispose()
@@ -323,8 +323,8 @@ namespace VisualiserLib
         public void RenderLine(Graphics g, VisualiserPoint from, VisualiserPoint to)
         {
             if (RenderObjects.LinePen == null) return;
-            var pt1 = RenderObjects.GetCenterPoint(from.X, from.Y);
-            var pt2 = RenderObjects.GetCenterPoint(to.X, to.Y);
+            var pt1 = RenderObjects.GetCenterPoint(from);
+            var pt2 = RenderObjects.GetCenterPoint(to);
             g.DrawLine(RenderObjects.LinePen, pt1, pt2);
         }
 
@@ -332,7 +332,7 @@ namespace VisualiserLib
         {
             if (Shape == VisualiserPointShape.Circle)
             {
-                var rect = RenderObjects.GetEllipseRectangle(point.X, point.Y);
+                var rect = RenderObjects.GetRectangle(point);
                 if (rect.IntersectsWith(g.ClipBounds))
                 {
                     if (RenderObjects.FillBrush != null) g.FillEllipse(RenderObjects.FillBrush, rect);
@@ -341,7 +341,7 @@ namespace VisualiserLib
             }
             else if (Shape == VisualiserPointShape.Square)
             {
-                var rect = RenderObjects.GetSquareRectangle(point.X, point.Y);
+                var rect = RenderObjects.GetRectangle(point);
                 if (rect.IntersectsWith(g.ClipBounds))
                 {
                     if (RenderObjects.FillBrush != null) g.FillRectangle(RenderObjects.FillBrush, rect);
@@ -350,11 +350,14 @@ namespace VisualiserLib
             }
             else if (Shape == VisualiserPointShape.Diamond)
             {
-                var rect = RenderObjects.GetSquareRectangle(point.X, point.Y);
+                var rect = RenderObjects.GetRectangle(point);
                 if (rect.IntersectsWith(g.ClipBounds))
                 {
+                    var p = RenderObjects.GetCenterPoint(point);
                     var oldTransform = g.Transform.Clone();
+                    g.TranslateTransform(p.X, p.Y);
                     g.RotateTransform(45.0f);
+                    rect = new RectangleF(rect.Width * -0.5f, rect.Height * -0.5f, rect.Width, rect.Height);
                     if (RenderObjects.FillBrush != null) g.FillRectangle(RenderObjects.FillBrush, rect);
                     if (RenderObjects.BorderPen != null) g.DrawRectangle(RenderObjects.BorderPen, rect.X, rect.Y, rect.Width, rect.Height);
                     g.Transform = oldTransform;
@@ -363,23 +366,23 @@ namespace VisualiserLib
             else if (Shape == VisualiserPointShape.Plus)
             {
                 if (RenderObjects.BorderPen == null) throw new InvalidOperationException("Require BorderPen to draw Plus");
-                var rect = RenderObjects.GetSquareRectangle(point.X, point.Y);
-                if (rect.IntersectsWith(g.ClipBounds))
-                {
-                    g.DrawLine(RenderObjects.BorderPen, rect.Left, rect.Top, rect.Right, rect.Bottom);
-                    g.DrawLine(RenderObjects.BorderPen, rect.Right, rect.Top, rect.Left, rect.Bottom);
-                }
-            }
-            else if (Shape == VisualiserPointShape.Cross)
-            {
-                if (RenderObjects.BorderPen == null) throw new InvalidOperationException("Require BorderPen to draw Cross");
-                var rect = RenderObjects.GetSquareRectangle(point.X, point.Y);
+                var rect = RenderObjects.GetRectangle(point);
                 if (rect.IntersectsWith(g.ClipBounds))
                 {
                     float centre = rect.Left + rect.Width * 0.5f;
                     float middle = rect.Top + rect.Height * 0.5f;
                     g.DrawLine(RenderObjects.BorderPen, centre, rect.Top, centre, rect.Bottom);
                     g.DrawLine(RenderObjects.BorderPen, rect.Left, middle, rect.Right, middle);
+                }
+            }
+            else if (Shape == VisualiserPointShape.Cross)
+            {
+                if (RenderObjects.BorderPen == null) throw new InvalidOperationException("Require BorderPen to draw Cross");
+                var rect = RenderObjects.GetRectangle(point);
+                if (rect.IntersectsWith(g.ClipBounds))
+                {
+                    g.DrawLine(RenderObjects.BorderPen, rect.Left, rect.Top, rect.Right, rect.Bottom);
+                    g.DrawLine(RenderObjects.BorderPen, rect.Right, rect.Top, rect.Left, rect.Bottom);
                 }
             }
             else

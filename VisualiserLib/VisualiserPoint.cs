@@ -15,6 +15,9 @@ namespace VisualiserLib
         public double X;
         /// <summary>The unmapped vertical location of the point.</summary>
         public double Y;
+        /// <summary>The unmapped size of the point. If this is zero, the size
+        /// specified by the style is used.</summary>
+        public double Z;
         /// <summary>The style to render the point with.</summary>
         public VisualiserPointStyle Style;
 
@@ -36,12 +39,14 @@ namespace VisualiserLib
         /// </summary>
         /// <param name="x">The horizonal position.</param>
         /// <param name="y">The vertical position.</param>
+        /// <param name="z">The size.</param>
         /// <param name="style">The style to render the point with. If
         /// <c>null</c>, <see cref="DefaultStyle"/> is used.</param>
-        public VisualiserPoint(double x, double y, VisualiserPointStyle style = null)
+        public VisualiserPoint(double x, double y, double z = 0.0, VisualiserPointStyle style = null)
         {
             X = x;
             Y = y;
+            Z = z;
             Style = style ?? DefaultStyle;
         }
 

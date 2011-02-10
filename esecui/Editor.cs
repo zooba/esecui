@@ -40,6 +40,10 @@ namespace esecui
                 codeFont = new Font(FontFamily.GenericMonospace, 10.0f);
             }
 
+            chkChartBestFitness.Tag = 0;
+            chkChartCurrentBest.Tag = 1;
+            chkChartCurrentMean.Tag = 2;
+            chkChartCurrentWorst.Tag = 3;
             chkChartBestFitness.BackColor = ChartStyles[0].LineColor;
             chkChartCurrentBest.BackColor = ChartStyles[1].LineColor;
             chkChartCurrentMean.BackColor = ChartStyles[2].LineColor;
@@ -80,9 +84,9 @@ namespace esecui
             BorderColor = Color.RoyalBlue,
             BorderThickness = 1.0,
             FillColor = Color.FromArgb(64, Color.Blue),
-            Size = 8.0,
+            Size = 9.0,
             ScaleMode = VisualiserPointScaleMode.Pixels,
-            Shape = VisualiserPointShape.Circle
+            Shape = VisualiserPointShape.Diamond
         };
 
         private static readonly VisualiserPointStyle[] ChartStyles = new[]
@@ -109,26 +113,17 @@ namespace esecui
             },
         };
 
-        private void chkChartBestFitness_CheckedChanged(object sender, EventArgs e)
+        private void chkChartSeries_CheckedChanged(object sender, EventArgs e)
         {
-            chartResults.ShowSeries(0, ((CheckBox)sender).Checked);
+            var checkbox = (CheckBox)sender;
+            chartResults.ShowSeries((int)checkbox.Tag, checkbox.Checked);
         }
 
-        private void chkChartCurrentBest_CheckedChanged(object sender, EventArgs e)
+        private void chkChartSeries_VisibleChanged(object sender, EventArgs e)
         {
-            chartResults.ShowSeries(1, ((CheckBox)sender).Checked);
+            var checkbox = (CheckBox)sender;
+            checkbox.BackColor = ChartStyles[(int)checkbox.Tag].LineColor;
         }
-
-        private void chkChartCurrentMean_CheckedChanged(object sender, EventArgs e)
-        {
-            chartResults.ShowSeries(2, ((CheckBox)sender).Checked);
-        }
-
-        private void chkChartCurrentWorst_CheckedChanged(object sender, EventArgs e)
-        {
-            chartResults.ShowSeries(3, ((CheckBox)sender).Checked);
-        }
-
 
         #endregion
 
@@ -542,25 +537,25 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 double value = (double)bestFitness.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, ChartStyles[0]), 0);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ChartStyles[0]), 0);
             }
             if (currentBest != null)
             {
                 double value = (double)currentBest.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, ChartStyles[1]), 1);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ChartStyles[1]), 1);
             }
             if (currentMean != null)
             {
                 double value = (double)currentMean.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, ChartStyles[2]), 2);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ChartStyles[2]), 2);
             }
             if (currentWorst != null)
             {
                 double value = (double)currentWorst.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, ChartStyles[3]), 3);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ChartStyles[3]), 3);
             }
         }
 
@@ -581,7 +576,7 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             try
             {
-                points = population.Select(indiv => new VisualiserPoint((double)indiv[0], (double)indiv[1], VisualiserStyle)).ToList();
+                points = population.Select(indiv => new VisualiserPoint((double)indiv[0], (double)indiv[1], 0.0, VisualiserStyle)).ToList();
             }
             catch
             {

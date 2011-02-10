@@ -70,6 +70,20 @@ namespace VisualiserLib
                 return;
             }
 
+            if (MaintainSquareAspect)
+            {
+                var xscale = ClientSize.Width / _HorizontalRange;
+                var yscale = ClientSize.Height / _VerticalRange;
+                var scale = Math.Min(xscale, yscale);
+                if (scale <= 0.0) scale = 1.0;  // should never happen, but we don't want to crash if it does
+                var xcentre = _HorizontalOffset + 0.5 * _HorizontalRange;
+                var ycentre = _VerticalOffset + 0.5 * _VerticalRange;
+                _HorizontalRange = ClientSize.Width / scale;
+                _VerticalRange = ClientSize.Height / scale;
+                _HorizontalOffset = xcentre - 0.5 * _HorizontalRange;
+                _VerticalOffset = ycentre - 0.5 * _VerticalRange;
+            }
+
             if (_HorizontalOffset < _MinimumHorizontalOffset) _HorizontalOffset = _MinimumHorizontalOffset;
             if (_HorizontalOffset > _MaximumHorizontalOffset) _HorizontalOffset = _MaximumHorizontalOffset;
             if (_HorizontalRange < _MinimumHorizontalRange) _HorizontalRange = _MinimumHorizontalRange;
@@ -105,6 +119,7 @@ namespace VisualiserLib
         const double DefaultMaximumVerticalRange = 1.0e6;
         const bool DefaultMustIncludeHorizontalZero = false;
         const bool DefaultMustIncludeVerticalZero = false;
+        const bool DefaultMaintainSquareAspect = false;
 
         private bool _AutoRange = DefaultAutoRange;
         [Browsable(true), DefaultValue(DefaultAutoRange)]
@@ -399,6 +414,19 @@ namespace VisualiserLib
             }
         }
 
+        private bool _MaintainSquareAspect = DefaultMaintainSquareAspect;
+        [Browsable(true), DefaultValue(DefaultMaintainSquareAspect)]
+        [Description("True to automatically ensure that the vertical and horizontal ranges always match.")]
+        public bool MaintainSquareAspect
+        {
+            get { return _MaintainSquareAspect; }
+            set
+            {
+                _MaintainSquareAspect = value;
+                if (value) Refresh();
+            }
+        }
+
         /// <summary>
         /// Determines the range based on the current set of points. The value
         /// of <see cref="AutoRangeMode"/> is used; the value of
@@ -590,7 +618,7 @@ namespace VisualiserLib
         /// <param name="series">The series to set.</param>
         public void SetPoints(IEnumerable<Point> points, VisualiserPointStyle style = null, int series = 0)
         {
-            SetPoints(points.Select(p => new VisualiserPoint(p.X, p.Y, style)), series);
+            SetPoints(points.Select(p => new VisualiserPoint(p.X, p.Y, 0.0, style)), series);
         }
 
 

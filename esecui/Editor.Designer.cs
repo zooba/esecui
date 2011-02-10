@@ -36,16 +36,19 @@
             System.Windows.Forms.ToolStripSeparator menuViewSeparator2;
             System.Windows.Forms.ToolStripSeparator menuViewSeparator3;
             System.Windows.Forms.ToolStripSeparator menuViewSeparator4;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Example assignment", "VSObject_Constant.bmp");
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Example class", "VSObject_Class.bmp");
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Example function", "VSObject_Method.bmp");
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
             this.splitSystemErrors = new System.Windows.Forms.SplitContainer();
             this.tabSourceView = new System.Windows.Forms.TabControl();
             this.tabSourceESDL = new System.Windows.Forms.TabPage();
             this.splitSystemVariables = new System.Windows.Forms.SplitContainer();
+            this.txtSystemESDL = new ICSharpCode.TextEditor.TextEditorControl();
+            this.txtSystemVariables = new ICSharpCode.TextEditor.TextEditorControl();
             this.tabSourcePython = new System.Windows.Forms.TabPage();
             this.splitPythonDefinitions = new System.Windows.Forms.SplitContainer();
+            this.txtSystemPython = new ICSharpCode.TextEditor.TextEditorControl();
             this.lstPythonDefinitions = new System.Windows.Forms.ListView();
             this.imlPythonDefinitions = new System.Windows.Forms.ImageList(this.components);
             this.lstErrors = new System.Windows.Forms.ListView();
@@ -56,11 +59,13 @@
             this.splitLandscape = new System.Windows.Forms.SplitContainer();
             this.lstLandscapes = new System.Windows.Forms.TreeView();
             this.tableLandscape = new System.Windows.Forms.TableLayoutPanel();
+            this.txtEvaluatorCode = new ICSharpCode.TextEditor.TextEditorControl();
             this.lblLandscapeInternalName = new System.Windows.Forms.Label();
             this.txtLandscapeInternalName = new System.Windows.Forms.TextBox();
             this.lblLandscapeDescription = new System.Windows.Forms.Label();
             this.txtLandscapeDescription = new System.Windows.Forms.TextBox();
             this.lblLandscapeParameters = new System.Windows.Forms.Label();
+            this.txtLandscapeParameters = new ICSharpCode.TextEditor.TextEditorControl();
             this.lblEvaluatorCode = new System.Windows.Forms.Label();
             this.splitLimitsGraph = new System.Windows.Forms.SplitContainer();
             this.tableResults = new System.Windows.Forms.TableLayoutPanel();
@@ -134,13 +139,8 @@
             this.panelLandscape = new System.Windows.Forms.Panel();
             this.panelResults = new System.Windows.Forms.Panel();
             this.panelLog = new System.Windows.Forms.Panel();
-            this.picDimmer = new System.Windows.Forms.PictureBox();
-            this.txtSystemESDL = new ICSharpCode.TextEditor.TextEditorControl();
-            this.txtSystemVariables = new ICSharpCode.TextEditor.TextEditorControl();
-            this.txtSystemPython = new ICSharpCode.TextEditor.TextEditorControl();
             this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
-            this.txtEvaluatorCode = new ICSharpCode.TextEditor.TextEditorControl();
-            this.txtLandscapeParameters = new ICSharpCode.TextEditor.TextEditorControl();
+            this.picDimmer = new System.Windows.Forms.PictureBox();
             menuConfigurationSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -284,13 +284,41 @@
             this.splitSystemVariables.SplitterDistance = 652;
             this.splitSystemVariables.TabIndex = 0;
             // 
+            // txtSystemESDL
+            // 
+            this.txtSystemESDL.ConvertTabsToSpaces = true;
+            this.txtSystemESDL.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemESDL.EnableFolding = false;
+            this.txtSystemESDL.IsReadOnly = false;
+            this.txtSystemESDL.Location = new System.Drawing.Point(0, 0);
+            this.txtSystemESDL.Name = "txtSystemESDL";
+            this.txtSystemESDL.ShowVRuler = false;
+            this.txtSystemESDL.Size = new System.Drawing.Size(652, 463);
+            this.txtSystemESDL.TabIndex = 0;
+            this.txtSystemESDL.Text = resources.GetString("txtSystemESDL.Text");
+            // 
+            // txtSystemVariables
+            // 
+            this.txtSystemVariables.ConvertTabsToSpaces = true;
+            this.txtSystemVariables.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemVariables.EnableFolding = false;
+            this.txtSystemVariables.IndentStyle = ICSharpCode.TextEditor.Document.IndentStyle.None;
+            this.txtSystemVariables.IsReadOnly = false;
+            this.txtSystemVariables.Location = new System.Drawing.Point(0, 0);
+            this.txtSystemVariables.Name = "txtSystemVariables";
+            this.txtSystemVariables.ShowLineNumbers = false;
+            this.txtSystemVariables.ShowVRuler = false;
+            this.txtSystemVariables.Size = new System.Drawing.Size(293, 463);
+            this.txtSystemVariables.TabIndex = 0;
+            this.txtSystemVariables.Text = "size: 50";
+            // 
             // tabSourcePython
             // 
             this.tabSourcePython.Controls.Add(this.splitPythonDefinitions);
-            this.tabSourcePython.Location = new System.Drawing.Point(4, 23);
+            this.tabSourcePython.Location = new System.Drawing.Point(4, 22);
             this.tabSourcePython.Name = "tabSourcePython";
             this.tabSourcePython.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSourcePython.Size = new System.Drawing.Size(955, 469);
+            this.tabSourcePython.Size = new System.Drawing.Size(955, 470);
             this.tabSourcePython.TabIndex = 1;
             this.tabSourcePython.Text = "Python (Alt+2)";
             this.tabSourcePython.UseVisualStyleBackColor = true;
@@ -308,9 +336,21 @@
             // splitPythonDefinitions.Panel2
             // 
             this.splitPythonDefinitions.Panel2.Controls.Add(this.lstPythonDefinitions);
-            this.splitPythonDefinitions.Size = new System.Drawing.Size(949, 463);
+            this.splitPythonDefinitions.Size = new System.Drawing.Size(949, 464);
             this.splitPythonDefinitions.SplitterDistance = 726;
             this.splitPythonDefinitions.TabIndex = 2;
+            // 
+            // txtSystemPython
+            // 
+            this.txtSystemPython.ConvertTabsToSpaces = true;
+            this.txtSystemPython.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemPython.EnableFolding = false;
+            this.txtSystemPython.IsReadOnly = false;
+            this.txtSystemPython.Location = new System.Drawing.Point(0, 0);
+            this.txtSystemPython.Name = "txtSystemPython";
+            this.txtSystemPython.ShowVRuler = false;
+            this.txtSystemPython.Size = new System.Drawing.Size(726, 464);
+            this.txtSystemPython.TabIndex = 1;
             // 
             // lstPythonDefinitions
             // 
@@ -324,7 +364,7 @@
             this.lstPythonDefinitions.Location = new System.Drawing.Point(0, 0);
             this.lstPythonDefinitions.MultiSelect = false;
             this.lstPythonDefinitions.Name = "lstPythonDefinitions";
-            this.lstPythonDefinitions.Size = new System.Drawing.Size(219, 463);
+            this.lstPythonDefinitions.Size = new System.Drawing.Size(219, 464);
             this.lstPythonDefinitions.SmallImageList = this.imlPythonDefinitions;
             this.lstPythonDefinitions.TabIndex = 0;
             this.lstPythonDefinitions.UseCompatibleStateImageBehavior = false;
@@ -433,6 +473,23 @@
             this.tableLandscape.Size = new System.Drawing.Size(639, 616);
             this.tableLandscape.TabIndex = 0;
             // 
+            // txtEvaluatorCode
+            // 
+            this.txtEvaluatorCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtEvaluatorCode.ConvertTabsToSpaces = true;
+            this.txtEvaluatorCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtEvaluatorCode.EnableFolding = false;
+            this.txtEvaluatorCode.IsReadOnly = false;
+            this.txtEvaluatorCode.Location = new System.Drawing.Point(96, 442);
+            this.txtEvaluatorCode.Name = "txtEvaluatorCode";
+            this.txtEvaluatorCode.ShowLineNumbers = false;
+            this.txtEvaluatorCode.ShowVRuler = false;
+            this.txtEvaluatorCode.Size = new System.Drawing.Size(540, 171);
+            this.txtEvaluatorCode.TabIndex = 6;
+            this.txtEvaluatorCode.Text = "fitness = 0.0\r\nfor x in indiv:\r\n    fitness += x**2\r\n\r\nreturn FitnessMinimise(fit" +
+                "ness)";
+            this.txtEvaluatorCode.Visible = false;
+            // 
             // lblLandscapeInternalName
             // 
             this.lblLandscapeInternalName.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -485,6 +542,19 @@
             this.lblLandscapeParameters.Size = new System.Drawing.Size(72, 14);
             this.lblLandscapeParameters.TabIndex = 4;
             this.lblLandscapeParameters.Text = "Parameters:";
+            // 
+            // txtLandscapeParameters
+            // 
+            this.txtLandscapeParameters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLandscapeParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLandscapeParameters.EnableFolding = false;
+            this.txtLandscapeParameters.IsReadOnly = false;
+            this.txtLandscapeParameters.Location = new System.Drawing.Point(96, 207);
+            this.txtLandscapeParameters.Name = "txtLandscapeParameters";
+            this.txtLandscapeParameters.ShowLineNumbers = false;
+            this.txtLandscapeParameters.ShowVRuler = false;
+            this.txtLandscapeParameters.Size = new System.Drawing.Size(540, 229);
+            this.txtLandscapeParameters.TabIndex = 5;
             // 
             // lblEvaluatorCode
             // 
@@ -790,9 +860,11 @@
             this.visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.visPopulation.BackColor = System.Drawing.Color.White;
             this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.visPopulation.HorizontalRange = 146.71361502347418D;
             this.visPopulation.Location = new System.Drawing.Point(3, 3);
+            this.visPopulation.MaintainSquareAspect = true;
             this.visPopulation.Name = "visPopulation";
-            this.visPopulation.Size = new System.Drawing.Size(625, 427);
+            this.visPopulation.Size = new System.Drawing.Size(625, 426);
             this.visPopulation.TabIndex = 1;
             // 
             // tableStats
@@ -1011,8 +1083,10 @@
             this.chkChartCurrentWorst.Name = "chkChartCurrentWorst";
             this.chkChartCurrentWorst.Size = new System.Drawing.Size(40, 14);
             this.chkChartCurrentWorst.TabIndex = 17;
+            this.chkChartCurrentWorst.Tag = "3";
             this.chkChartCurrentWorst.UseVisualStyleBackColor = false;
-            this.chkChartCurrentWorst.CheckedChanged += new System.EventHandler(this.chkChartCurrentWorst_CheckedChanged);
+            this.chkChartCurrentWorst.CheckedChanged += new System.EventHandler(this.chkChartSeries_CheckedChanged);
+            this.chkChartCurrentWorst.VisibleChanged += new System.EventHandler(this.chkChartSeries_VisibleChanged);
             // 
             // chkChartCurrentMean
             // 
@@ -1023,8 +1097,10 @@
             this.chkChartCurrentMean.Name = "chkChartCurrentMean";
             this.chkChartCurrentMean.Size = new System.Drawing.Size(40, 14);
             this.chkChartCurrentMean.TabIndex = 17;
+            this.chkChartCurrentMean.Tag = "2";
             this.chkChartCurrentMean.UseVisualStyleBackColor = false;
-            this.chkChartCurrentMean.CheckedChanged += new System.EventHandler(this.chkChartCurrentMean_CheckedChanged);
+            this.chkChartCurrentMean.CheckedChanged += new System.EventHandler(this.chkChartSeries_CheckedChanged);
+            this.chkChartCurrentMean.VisibleChanged += new System.EventHandler(this.chkChartSeries_VisibleChanged);
             // 
             // chkChartCurrentBest
             // 
@@ -1037,8 +1113,10 @@
             this.chkChartCurrentBest.Name = "chkChartCurrentBest";
             this.chkChartCurrentBest.Size = new System.Drawing.Size(40, 14);
             this.chkChartCurrentBest.TabIndex = 17;
+            this.chkChartCurrentBest.Tag = "1";
             this.chkChartCurrentBest.UseVisualStyleBackColor = false;
-            this.chkChartCurrentBest.CheckedChanged += new System.EventHandler(this.chkChartCurrentBest_CheckedChanged);
+            this.chkChartCurrentBest.CheckedChanged += new System.EventHandler(this.chkChartSeries_CheckedChanged);
+            this.chkChartCurrentBest.VisibleChanged += new System.EventHandler(this.chkChartSeries_VisibleChanged);
             // 
             // chkChartBestFitness
             // 
@@ -1051,8 +1129,10 @@
             this.chkChartBestFitness.Name = "chkChartBestFitness";
             this.chkChartBestFitness.Size = new System.Drawing.Size(40, 14);
             this.chkChartBestFitness.TabIndex = 17;
+            this.chkChartBestFitness.Tag = "0";
             this.chkChartBestFitness.UseVisualStyleBackColor = false;
-            this.chkChartBestFitness.CheckedChanged += new System.EventHandler(this.chkChartBestFitness_CheckedChanged);
+            this.chkChartBestFitness.CheckedChanged += new System.EventHandler(this.chkChartSeries_CheckedChanged);
+            this.chkChartBestFitness.VisibleChanged += new System.EventHandler(this.chkChartSeries_VisibleChanged);
             // 
             // menuStrip
             // 
@@ -1353,55 +1433,6 @@
             this.panelLog.TabIndex = 7;
             this.panelLog.Visible = false;
             // 
-            // picDimmer
-            // 
-            this.picDimmer.Location = new System.Drawing.Point(0, 0);
-            this.picDimmer.Name = "picDimmer";
-            this.picDimmer.Size = new System.Drawing.Size(100, 50);
-            this.picDimmer.TabIndex = 8;
-            this.picDimmer.TabStop = false;
-            this.picDimmer.Visible = false;
-            // 
-            // txtSystemESDL
-            // 
-            this.txtSystemESDL.ConvertTabsToSpaces = true;
-            this.txtSystemESDL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystemESDL.EnableFolding = false;
-            this.txtSystemESDL.IsReadOnly = false;
-            this.txtSystemESDL.Location = new System.Drawing.Point(0, 0);
-            this.txtSystemESDL.Name = "txtSystemESDL";
-            this.txtSystemESDL.ShowVRuler = false;
-            this.txtSystemESDL.Size = new System.Drawing.Size(652, 463);
-            this.txtSystemESDL.TabIndex = 0;
-            this.txtSystemESDL.Text = resources.GetString("txtSystemESDL.Text");
-            // 
-            // txtSystemVariables
-            // 
-            this.txtSystemVariables.ConvertTabsToSpaces = true;
-            this.txtSystemVariables.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystemVariables.EnableFolding = false;
-            this.txtSystemVariables.IndentStyle = ICSharpCode.TextEditor.Document.IndentStyle.None;
-            this.txtSystemVariables.IsReadOnly = false;
-            this.txtSystemVariables.Location = new System.Drawing.Point(0, 0);
-            this.txtSystemVariables.Name = "txtSystemVariables";
-            this.txtSystemVariables.ShowLineNumbers = false;
-            this.txtSystemVariables.ShowVRuler = false;
-            this.txtSystemVariables.Size = new System.Drawing.Size(293, 463);
-            this.txtSystemVariables.TabIndex = 0;
-            this.txtSystemVariables.Text = "size: 50";
-            // 
-            // txtSystemPython
-            // 
-            this.txtSystemPython.ConvertTabsToSpaces = true;
-            this.txtSystemPython.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystemPython.EnableFolding = false;
-            this.txtSystemPython.IsReadOnly = false;
-            this.txtSystemPython.Location = new System.Drawing.Point(0, 0);
-            this.txtSystemPython.Name = "txtSystemPython";
-            this.txtSystemPython.ShowVRuler = false;
-            this.txtSystemPython.Size = new System.Drawing.Size(726, 463);
-            this.txtSystemPython.TabIndex = 1;
-            // 
             // txtLog
             // 
             this.txtLog.ConvertTabsToSpaces = true;
@@ -1415,44 +1446,23 @@
             this.txtLog.Size = new System.Drawing.Size(963, 616);
             this.txtLog.TabIndex = 0;
             // 
-            // txtEvaluatorCode
+            // picDimmer
             // 
-            this.txtEvaluatorCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtEvaluatorCode.ConvertTabsToSpaces = true;
-            this.txtEvaluatorCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtEvaluatorCode.EnableFolding = false;
-            this.txtEvaluatorCode.IsReadOnly = false;
-            this.txtEvaluatorCode.Location = new System.Drawing.Point(96, 442);
-            this.txtEvaluatorCode.Name = "txtEvaluatorCode";
-            this.txtEvaluatorCode.ShowLineNumbers = false;
-            this.txtEvaluatorCode.ShowVRuler = false;
-            this.txtEvaluatorCode.Size = new System.Drawing.Size(540, 171);
-            this.txtEvaluatorCode.TabIndex = 6;
-            this.txtEvaluatorCode.Text = "fitness = 0.0\r\nfor x in indiv:\r\n    fitness += x**2\r\n\r\nreturn FitnessMinimise(fit" +
-                "ness)";
-            this.txtEvaluatorCode.Visible = false;
-            // 
-            // txtLandscapeParameters
-            // 
-            this.txtLandscapeParameters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtLandscapeParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtLandscapeParameters.EnableFolding = false;
-            this.txtLandscapeParameters.IsReadOnly = false;
-            this.txtLandscapeParameters.Location = new System.Drawing.Point(96, 207);
-            this.txtLandscapeParameters.Name = "txtLandscapeParameters";
-            this.txtLandscapeParameters.ShowLineNumbers = false;
-            this.txtLandscapeParameters.ShowVRuler = false;
-            this.txtLandscapeParameters.Size = new System.Drawing.Size(540, 229);
-            this.txtLandscapeParameters.TabIndex = 5;
+            this.picDimmer.Location = new System.Drawing.Point(0, 0);
+            this.picDimmer.Name = "picDimmer";
+            this.picDimmer.Size = new System.Drawing.Size(100, 50);
+            this.picDimmer.TabIndex = 8;
+            this.picDimmer.TabStop = false;
+            this.picDimmer.Visible = false;
             // 
             // Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(963, 646);
+            this.Controls.Add(this.panelResults);
             this.Controls.Add(this.panelSystem);
             this.Controls.Add(this.panelLog);
-            this.Controls.Add(this.panelResults);
             this.Controls.Add(this.panelLandscape);
             this.Controls.Add(this.panelMenu);
             this.Controls.Add(this.picDimmer);
