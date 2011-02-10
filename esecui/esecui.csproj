@@ -78,7 +78,6 @@
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration.cs" />
-    <Compile Include="DefaultStringScope.cs" />
     <Compile Include="Editor.cs">
       <SubType>Form</SubType>
     </Compile>
