@@ -86,9 +86,7 @@
             this.splitGraphStats = new System.Windows.Forms.SplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
-            this.chartResults = new VisualiserLib.Visualiser();
             this.tab2DPlot = new System.Windows.Forms.TabPage();
-            this.visPopulation = new VisualiserLib.Visualiser();
             this.tableStats = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -141,6 +139,8 @@
             this.panelLog = new System.Windows.Forms.Panel();
             this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
             this.picDimmer = new System.Windows.Forms.PictureBox();
+            this.chartResults = new VisualiserLib.Visualiser();
+            this.visPopulation = new VisualiserLib.Visualiser();
             menuConfigurationSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -315,10 +315,10 @@
             // tabSourcePython
             // 
             this.tabSourcePython.Controls.Add(this.splitPythonDefinitions);
-            this.tabSourcePython.Location = new System.Drawing.Point(4, 22);
+            this.tabSourcePython.Location = new System.Drawing.Point(4, 23);
             this.tabSourcePython.Name = "tabSourcePython";
             this.tabSourcePython.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSourcePython.Size = new System.Drawing.Size(955, 470);
+            this.tabSourcePython.Size = new System.Drawing.Size(955, 469);
             this.tabSourcePython.TabIndex = 1;
             this.tabSourcePython.Text = "Python (Alt+2)";
             this.tabSourcePython.UseVisualStyleBackColor = true;
@@ -830,19 +830,6 @@
             this.tabChart.Text = "Chart (Alt+1)";
             this.tabChart.UseVisualStyleBackColor = true;
             // 
-            // chartResults
-            // 
-            this.chartResults.AutoRange = true;
-            this.chartResults.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chartResults.FlipVertical = true;
-            this.chartResults.Location = new System.Drawing.Point(3, 3);
-            this.chartResults.MustIncludeHorizontalZero = true;
-            this.chartResults.MustIncludeVerticalZero = true;
-            this.chartResults.Name = "chartResults";
-            this.chartResults.Size = new System.Drawing.Size(625, 426);
-            this.chartResults.TabIndex = 0;
-            // 
             // tab2DPlot
             // 
             this.tab2DPlot.Controls.Add(this.visPopulation);
@@ -853,19 +840,6 @@
             this.tab2DPlot.TabIndex = 1;
             this.tab2DPlot.Text = "2D Plot (Alt+2)";
             this.tab2DPlot.UseVisualStyleBackColor = true;
-            // 
-            // visPopulation
-            // 
-            this.visPopulation.AutoRange = true;
-            this.visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.visPopulation.BackColor = System.Drawing.Color.White;
-            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.visPopulation.HorizontalRange = 146.71361502347418D;
-            this.visPopulation.Location = new System.Drawing.Point(3, 3);
-            this.visPopulation.MaintainSquareAspect = true;
-            this.visPopulation.Name = "visPopulation";
-            this.visPopulation.Size = new System.Drawing.Size(625, 426);
-            this.visPopulation.TabIndex = 1;
             // 
             // tableStats
             // 
@@ -1454,6 +1428,36 @@
             this.picDimmer.TabIndex = 8;
             this.picDimmer.TabStop = false;
             this.picDimmer.Visible = false;
+            // 
+            // chartResults
+            // 
+            this.chartResults.AutoRange = true;
+            this.chartResults.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chartResults.FlipVertical = true;
+            this.chartResults.Location = new System.Drawing.Point(3, 3);
+            this.chartResults.MustIncludeHorizontalZero = true;
+            this.chartResults.MustIncludeVerticalZero = true;
+            this.chartResults.Name = "chartResults";
+            this.chartResults.ShowMouseCoordinates = true;
+            this.chartResults.Size = new System.Drawing.Size(625, 426);
+            this.chartResults.TabIndex = 0;
+            // 
+            // visPopulation
+            // 
+            this.visPopulation.AutoRange = true;
+            this.visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.visPopulation.BackColor = System.Drawing.Color.White;
+            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.visPopulation.HorizontalOffset = -100000D;
+            this.visPopulation.HorizontalRange = 1000000D;
+            this.visPopulation.Location = new System.Drawing.Point(3, 3);
+            this.visPopulation.MaintainSquareAspect = true;
+            this.visPopulation.Name = "visPopulation";
+            this.visPopulation.Size = new System.Drawing.Size(625, 427);
+            this.visPopulation.TabIndex = 1;
+            this.visPopulation.VerticalOffset = -7.2505224290653132D;
+            this.visPopulation.VerticalRange = 999999.99999999988D;
             // 
             // Editor
             // 

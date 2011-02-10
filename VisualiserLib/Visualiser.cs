@@ -512,6 +512,153 @@ namespace VisualiserLib
 
         #endregion
 
+        #region Display Properties and Methods
+
+
+        const bool DefaultHorizontalAxis = true;
+        private bool _HorizontalAxis = DefaultHorizontalAxis;
+        [Browsable(true), DefaultValue(DefaultHorizontalAxis)]
+        [Description("True to display the horizontal axis.")]
+        public bool HorizontalAxis
+        {
+            get { return _HorizontalAxis; }
+            set
+            {
+                _HorizontalAxis = value;
+                if (!value) _HorizontalAxisTicks = false;
+                Refresh();
+            }
+        }
+
+        const bool DefaultVerticalAxis = true;
+        private bool _VerticalAxis = DefaultVerticalAxis;
+        [Browsable(true), DefaultValue(DefaultVerticalAxis)]
+        [Description("True to display the vertical axis.")]
+        public bool VerticalAxis
+        {
+            get { return _VerticalAxis; }
+            set
+            {
+                _VerticalAxis = value;
+                if (!value) _VerticalAxisTicks = false;
+                Refresh();
+            }
+        }
+
+        const bool DefaultHorizontalAxisTicks = true;
+        private bool _HorizontalAxisTicks = DefaultHorizontalAxisTicks;
+        [Browsable(true), DefaultValue(DefaultHorizontalAxisTicks)]
+        [Description("True to display ticks on the horizontal axis.")]
+        public bool HorizontalAxisTicks
+        {
+            get { return _HorizontalAxisTicks; }
+            set
+            {
+                _HorizontalAxisTicks = value;
+                if (value) _HorizontalAxis = true;
+                Refresh();
+            }
+        }
+
+        const int DefaultHorizontalAxisTickSize = 0;
+        private int _HorizontalAxisTickSize = DefaultHorizontalAxisTickSize;
+        [Browsable(true), DefaultValue(DefaultHorizontalAxisTickSize)]
+        [Description("The number of pixels tall to make ticks on the horizontal axis. Zero indicates automatic scaling.")]
+        public int HorizontalAxisTickSize
+        {
+            get { return _HorizontalAxisTickSize; }
+            set
+            {
+                _HorizontalAxisTickSize = value;
+                Refresh();
+            }
+        }
+
+        const double DefaultHorizontalAxisTickInterval = 0.0;
+        private double _HorizontalAxisTickInterval = DefaultHorizontalAxisTickInterval;
+        [Browsable(true), DefaultValue(DefaultHorizontalAxisTickInterval)]
+        [Description("The spacing of ticks on the horizontal axis. Zero indicates automatic scaling (recommended).")]
+        public double HorizontalAxisTickInterval
+        {
+            get { return _HorizontalAxisTickInterval; }
+            set
+            {
+                _HorizontalAxisTickInterval = value;
+                Refresh();
+            }
+        }
+
+        const bool DefaultVerticalAxisTicks = true;
+        private bool _VerticalAxisTicks = DefaultVerticalAxisTicks;
+        [Browsable(true), DefaultValue(DefaultVerticalAxisTicks)]
+        [Description("True to display ticks on the vertical axis.")]
+        public bool VerticalAxisTicks
+        {
+            get { return _VerticalAxisTicks; }
+            set
+            {
+                _VerticalAxisTicks = value;
+                if (value) _VerticalAxis = true;
+                Refresh();
+            }
+        }
+
+        const int DefaultVerticalAxisTickSize = 0;
+        private int _VerticalAxisTickSize = DefaultVerticalAxisTickSize;
+        [Browsable(true), DefaultValue(DefaultVerticalAxisTickSize)]
+        [Description("The number of pixels tall to make ticks on the vertical axis. Zero indicates automatic scaling.")]
+        public int VerticalAxisTickSize
+        {
+            get { return _VerticalAxisTickSize; }
+            set
+            {
+                _VerticalAxisTickSize = value;
+                Refresh();
+            }
+        }
+
+        const double DefaultVerticalAxisTickInterval = 0.0;
+        private double _VerticalAxisTickInterval = DefaultVerticalAxisTickInterval;
+        [Browsable(true), DefaultValue(DefaultVerticalAxisTickInterval)]
+        [Description("The spacing of ticks on the vertical axis. Zero indicates automatic scaling (recommended).")]
+        public double VerticalAxisTickInterval
+        {
+            get { return _VerticalAxisTickInterval; }
+            set
+            {
+                _VerticalAxisTickInterval = value;
+                Refresh();
+            }
+        }
+
+        const bool DefaultShowMouseCoordinates = false;
+        private bool _ShowMouseCoordinates = DefaultShowMouseCoordinates;
+        [Browsable(true), DefaultValue(DefaultShowMouseCoordinates)]
+        [Description("True to display the real location of the mouse.")]
+        public bool ShowMouseCoordinates
+        {
+            get { return _ShowMouseCoordinates; }
+            set
+            {
+                _ShowMouseCoordinates = value;
+            }
+        }
+
+        const ContentAlignment DefaultMouseCoordinatesAlign = ContentAlignment.TopLeft;
+        private ContentAlignment _MouseCoordinatesAlign = DefaultMouseCoordinatesAlign;
+        [Browsable(true), DefaultValue(DefaultMouseCoordinatesAlign)]
+        [Description("The alignment of the mouse coordinate display text.")]
+        public ContentAlignment MouseCoordinatesAlign
+        {
+            get { return _MouseCoordinatesAlign; }
+            set
+            {
+                _MouseCoordinatesAlign = value;
+            }
+        }
+
+        #endregion
+
         #region Point Properties and Methods
 
         private Dictionary<int, List<VisualiserPoint>> _Points;
@@ -625,6 +772,55 @@ namespace VisualiserLib
 
         #endregion
 
+        #region Mouse Tracking
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            Zoom_MouseDown(e);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            Zoom_MouseMove(e);
+            CurrentMouseLocation = e.Location;
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+            Zoom_MouseUp(e);
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            CurrentMouseLocation = null;
+        }
+
+        private Point? _CurrentMouseLocation;
+        private Point? CurrentMouseLocation
+        {
+            get { return _CurrentMouseLocation; }
+            set
+            {
+                _CurrentMouseLocation = value;
+                if (ShowMouseCoordinates)
+                {
+                    Invalidate();
+                }
+            }
+        }
+
+
+        #endregion
+
         #region Rendering
 
         private RectangleF GetScaledRange()
@@ -702,30 +898,139 @@ namespace VisualiserLib
             }
 
             DrawZoomRectangle(e.Graphics);
+
+            e.Graphics.ResetTransform();
+            using (var textBrush = new SolidBrush(ForeColor))
+            {
+                DrawMouseLocation(e.Graphics, textBrush, scale);
+            }
+        }
+
+        private void DrawMouseLocation(Graphics g, Brush textBrush, RectangleF scale)
+        {
+            if (_ShowMouseCoordinates && CurrentMouseLocation.HasValue)
+            {
+                var cml = CurrentMouseLocation.Value;
+
+                int precisionX = (int)Math.Floor(Math.Log10(scale.Width));
+                int precisionY = (int)Math.Floor(Math.Log10(scale.Height));
+
+                double x = ((_FlipHorizontal) ? (ClientSize.Width - cml.X) : cml.X) / scale.Width + scale.X;
+                double y = ((_FlipVertical) ? (ClientSize.Height - cml.Y) : cml.Y) / scale.Height + scale.Y;
+
+                string formatX = (precisionX > 0) ? "." + new string('0', precisionX) : "";
+                string formatY = (precisionY > 0) ? "." + new string('0', precisionY) : "";
+                
+                var formatString = "{0:0" + formatX + "}, {1:0" + formatY + "}";
+                var display = string.Format(formatString, x, y);
+
+                var sf = new StringFormat();
+                switch (MouseCoordinatesAlign)
+                {
+                    case ContentAlignment.BottomCenter:
+                        sf.Alignment = StringAlignment.Center;
+                        sf.LineAlignment = StringAlignment.Far;
+                        break;
+                    case ContentAlignment.BottomLeft:
+                        sf.Alignment = StringAlignment.Near;
+                        sf.LineAlignment = StringAlignment.Far;
+                        break;
+                    case ContentAlignment.BottomRight:
+                        sf.Alignment = StringAlignment.Far;
+                        sf.LineAlignment = StringAlignment.Far;
+                        break;
+                    case ContentAlignment.MiddleCenter:
+                        sf.Alignment = StringAlignment.Center;
+                        sf.LineAlignment = StringAlignment.Center;
+                        break;
+                    case ContentAlignment.MiddleLeft:
+                        sf.Alignment = StringAlignment.Near;
+                        sf.LineAlignment = StringAlignment.Center;
+                        break;
+                    case ContentAlignment.MiddleRight:
+                        sf.Alignment = StringAlignment.Far;
+                        sf.LineAlignment = StringAlignment.Center;
+                        break;
+                    case ContentAlignment.TopCenter:
+                        sf.Alignment = StringAlignment.Center;
+                        sf.LineAlignment = StringAlignment.Near;
+                        break;
+                    case ContentAlignment.TopLeft:
+                        sf.Alignment = StringAlignment.Near;
+                        sf.LineAlignment = StringAlignment.Near;
+                        break;
+                    case ContentAlignment.TopRight:
+                        sf.Alignment = StringAlignment.Far;
+                        sf.LineAlignment = StringAlignment.Near;
+                        break;
+                    default:
+                        break;
+                }
+
+                g.DrawString(display, Font, textBrush, (RectangleF)ClientRectangle, sf);
+            }
         }
 
         private void DrawAxes(Graphics g, Pen axisPen, RectangleF scale)
         {
+            if (!_HorizontalAxis && !_VerticalAxis) return;
+
             float x = -scale.X * scale.Width;
             float y = -scale.Y * scale.Height;
-            float tickSize = 5.0f;
-            int tickInterval = 1;
-            while (ClientSize.Height > 50 * (scale.Height * tickInterval * 0.1f) && tickInterval < 100000)
+
+            if (_HorizontalAxis && y < ClientSize.Height) g.DrawLine(axisPen, 0.0f, y, ClientSize.Width, y);
+            if (_VerticalAxis && x < ClientSize.Width) g.DrawLine(axisPen, x, 0.0f, x, ClientSize.Height);
+
+            if (_HorizontalAxisTicks)
             {
-                tickInterval *= 10;
-                tickSize *= 2;
+                double tickInterval = _HorizontalAxisTickInterval;
+                int tickSize = _HorizontalAxisTickSize;
+                double autoTickInterval = 0.01;
+                int autoTickSize = 2;
+                if (tickInterval <= 0.0 || tickSize == 0)
+                {
+                    while (ClientSize.Width > 50 * (scale.Width * autoTickInterval) && autoTickInterval < 100000)
+                    {
+                        autoTickInterval *= 10;
+                        autoTickSize *= 2;
+                    }
+                    if (tickInterval <= 0.0) tickInterval = autoTickInterval;
+                    if (tickSize == 0) tickSize = autoTickSize;
+                }
+                if (tickInterval < 100000)
+                {
+                    float d = (float)(tickInterval * scale.Width);
+                    for (int step = 1; x - step * d > 0; step += 1)
+                        g.DrawLine(axisPen, x - step * d, y, x - step * d, y + tickSize);
+                    for (int step = 1; x + step * d < ClientSize.Width; step += 1)
+                        g.DrawLine(axisPen, x + step * d, y, x + step * d, y + tickSize);
+                }
             }
-
-            if (x < ClientSize.Width) g.DrawLine(axisPen, x, 0.0f, x, ClientSize.Height);
-            if (y < ClientSize.Height) g.DrawLine(axisPen, 0.0f, y, ClientSize.Width, y);
-
-            if (tickInterval >= 100000) return;
-
-            float d = scale.Height * 0.1f;
-            for (int step = tickInterval; y - step * d > 0; step += tickInterval)
-                g.DrawLine(axisPen, x, y - step * d, x + tickSize, y - step * d);
-            for (int step = tickInterval; y + step * d < ClientSize.Height; step += tickInterval)
-                g.DrawLine(axisPen, x, y + step * d, x + tickSize, y + step * d);
+            if (_VerticalAxisTicks)
+            {
+                double tickInterval = _VerticalAxisTickInterval;
+                int tickSize = _VerticalAxisTickSize;
+                double autoTickInterval = 0.01;
+                int autoTickSize = 2;
+                if (tickInterval <= 0.0 || tickSize == 0)
+                {
+                    while (ClientSize.Height > 50 * (scale.Height * autoTickInterval) && autoTickInterval < 100000)
+                    {
+                        autoTickInterval *= 10;
+                        autoTickSize *= 2;
+                    }
+                    if (tickInterval <= 0.0) tickInterval = autoTickInterval;
+                    if (tickSize == 0) tickSize = autoTickSize;
+                }
+                if (tickInterval < 100000)
+                {
+                    float d = (float)(tickInterval * scale.Height);
+                    for (int step = 1; y - step * d > 0; step += 1)
+                        g.DrawLine(axisPen, x, y - step * d, x + tickSize, y - step * d);
+                    for (int step = 1; y + step * d < ClientSize.Height; step += 1)
+                        g.DrawLine(axisPen, x, y + step * d, x + tickSize, y + step * d);
+                }
+            }
         }
 
         #endregion
@@ -779,10 +1084,8 @@ namespace VisualiserLib
             }
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
+        private void Zoom_MouseDown(MouseEventArgs e)
         {
-            base.OnMouseDown(e);
-
             if (e.Button == MouseButtons.Right && !ZoomStartLocation.HasValue)
             {
                 if (CanUnzoom)
@@ -819,10 +1122,8 @@ namespace VisualiserLib
             }
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
+        private void Zoom_MouseMove(MouseEventArgs e)
         {
-            base.OnMouseMove(e);
-
             if (ZoomStartLocation.HasValue && ZoomEndLocation.HasValue)
             {
                 ZoomEndLocation = e.Location;
@@ -830,10 +1131,8 @@ namespace VisualiserLib
             }
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
+        private void Zoom_MouseUp(MouseEventArgs e)
         {
-            base.OnMouseUp(e);
-
             if (e.Button == MouseButtons.Left)
             {
                 Capture = false;
