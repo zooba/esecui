@@ -1348,7 +1348,7 @@
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip;
             this.Name = "Editor";
-            this.Text = "esec Experiment Designer";
+            this.Text = "esecui Prototyping Tool";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Editor_FormClosed);
             this.Load += new System.EventHandler(this.Editor_Load);
             this.splitSystemErrors.Panel1.ResumeLayout(false);
