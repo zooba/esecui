@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace esecui
+namespace VisualiserLib
 {
     /// <summary>
     /// The details of a point to draw.

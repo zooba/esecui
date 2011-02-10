@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 using System.Drawing.Drawing2D;
 using System.Threading;
 
-namespace esecui
+namespace VisualiserLib
 {
     public partial class Visualiser : UserControl
     {

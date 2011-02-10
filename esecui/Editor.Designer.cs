@@ -37,7 +37,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
             this.splitSystemErrors = new System.Windows.Forms.SplitContainer();
             this.splitSystemVariables = new System.Windows.Forms.SplitContainer();
-            this.txtSystem = new ICSharpCode.TextEditor.TextEditorControl();
+            this.tabSourceView = new System.Windows.Forms.TabControl();
+            this.tabSourceESDL = new System.Windows.Forms.TabPage();
+            this.txtSystemESDL = new ICSharpCode.TextEditor.TextEditorControl();
+            this.tabSourcePython = new System.Windows.Forms.TabPage();
+            this.txtSystemPython = new ICSharpCode.TextEditor.TextEditorControl();
             this.txtSystemVariables = new ICSharpCode.TextEditor.TextEditorControl();
             this.lstErrors = new System.Windows.Forms.ListView();
             this.colLocation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -74,9 +78,9 @@
             this.splitGraphStats = new System.Windows.Forms.SplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
-            this.chartResults = new esecui.Visualiser();
+            this.chartResults = new VisualiserLib.Visualiser();
             this.tab2DPlot = new System.Windows.Forms.TabPage();
-            this.visPopulation = new esecui.Visualiser();
+            this.visPopulation = new VisualiserLib.Visualiser();
             this.tableStats = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -143,6 +147,9 @@
             this.splitSystemVariables.Panel1.SuspendLayout();
             this.splitSystemVariables.Panel2.SuspendLayout();
             this.splitSystemVariables.SuspendLayout();
+            this.tabSourceView.SuspendLayout();
+            this.tabSourceESDL.SuspendLayout();
+            this.tabSourcePython.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLandscape)).BeginInit();
             this.splitLandscape.Panel1.SuspendLayout();
             this.splitLandscape.Panel2.SuspendLayout();
@@ -216,7 +223,7 @@
             // 
             this.splitSystemErrors.Panel2.Controls.Add(this.lstErrors);
             this.splitSystemErrors.Size = new System.Drawing.Size(963, 616);
-            this.splitSystemErrors.SplitterDistance = 439;
+            this.splitSystemErrors.SplitterDistance = 496;
             this.splitSystemErrors.TabIndex = 0;
             // 
             // splitSystemVariables
@@ -227,27 +234,73 @@
             // 
             // splitSystemVariables.Panel1
             // 
-            this.splitSystemVariables.Panel1.Controls.Add(this.txtSystem);
+            this.splitSystemVariables.Panel1.Controls.Add(this.tabSourceView);
             // 
             // splitSystemVariables.Panel2
             // 
             this.splitSystemVariables.Panel2.Controls.Add(this.txtSystemVariables);
-            this.splitSystemVariables.Size = new System.Drawing.Size(963, 439);
+            this.splitSystemVariables.Size = new System.Drawing.Size(963, 496);
             this.splitSystemVariables.SplitterDistance = 662;
             this.splitSystemVariables.TabIndex = 0;
             // 
-            // txtSystem
+            // tabSourceView
             // 
-            this.txtSystem.ConvertTabsToSpaces = true;
-            this.txtSystem.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystem.EnableFolding = false;
-            this.txtSystem.IsReadOnly = false;
-            this.txtSystem.Location = new System.Drawing.Point(0, 0);
-            this.txtSystem.Name = "txtSystem";
-            this.txtSystem.ShowVRuler = false;
-            this.txtSystem.Size = new System.Drawing.Size(662, 439);
-            this.txtSystem.TabIndex = 0;
-            this.txtSystem.Text = resources.GetString("txtSystem.Text");
+            this.tabSourceView.Controls.Add(this.tabSourceESDL);
+            this.tabSourceView.Controls.Add(this.tabSourcePython);
+            this.tabSourceView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabSourceView.Location = new System.Drawing.Point(0, 0);
+            this.tabSourceView.Multiline = true;
+            this.tabSourceView.Name = "tabSourceView";
+            this.tabSourceView.SelectedIndex = 0;
+            this.tabSourceView.Size = new System.Drawing.Size(662, 496);
+            this.tabSourceView.TabIndex = 9;
+            // 
+            // tabSourceESDL
+            // 
+            this.tabSourceESDL.Controls.Add(this.txtSystemESDL);
+            this.tabSourceESDL.Location = new System.Drawing.Point(4, 23);
+            this.tabSourceESDL.Name = "tabSourceESDL";
+            this.tabSourceESDL.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSourceESDL.Size = new System.Drawing.Size(654, 469);
+            this.tabSourceESDL.TabIndex = 0;
+            this.tabSourceESDL.Text = "ESDL (Alt+1)";
+            this.tabSourceESDL.UseVisualStyleBackColor = true;
+            // 
+            // txtSystemESDL
+            // 
+            this.txtSystemESDL.ConvertTabsToSpaces = true;
+            this.txtSystemESDL.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemESDL.EnableFolding = false;
+            this.txtSystemESDL.IsReadOnly = false;
+            this.txtSystemESDL.Location = new System.Drawing.Point(3, 3);
+            this.txtSystemESDL.Name = "txtSystemESDL";
+            this.txtSystemESDL.ShowVRuler = false;
+            this.txtSystemESDL.Size = new System.Drawing.Size(648, 463);
+            this.txtSystemESDL.TabIndex = 0;
+            this.txtSystemESDL.Text = resources.GetString("txtSystemESDL.Text");
+            // 
+            // tabSourcePython
+            // 
+            this.tabSourcePython.Controls.Add(this.txtSystemPython);
+            this.tabSourcePython.Location = new System.Drawing.Point(4, 22);
+            this.tabSourcePython.Name = "tabSourcePython";
+            this.tabSourcePython.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSourcePython.Size = new System.Drawing.Size(654, 590);
+            this.tabSourcePython.TabIndex = 1;
+            this.tabSourcePython.Text = "Python (Alt+2)";
+            this.tabSourcePython.UseVisualStyleBackColor = true;
+            // 
+            // txtSystemPython
+            // 
+            this.txtSystemPython.ConvertTabsToSpaces = true;
+            this.txtSystemPython.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemPython.EnableFolding = false;
+            this.txtSystemPython.IsReadOnly = false;
+            this.txtSystemPython.Location = new System.Drawing.Point(3, 3);
+            this.txtSystemPython.Name = "txtSystemPython";
+            this.txtSystemPython.ShowVRuler = false;
+            this.txtSystemPython.Size = new System.Drawing.Size(648, 584);
+            this.txtSystemPython.TabIndex = 1;
             // 
             // txtSystemVariables
             // 
@@ -260,7 +313,7 @@
             this.txtSystemVariables.Name = "txtSystemVariables";
             this.txtSystemVariables.ShowLineNumbers = false;
             this.txtSystemVariables.ShowVRuler = false;
-            this.txtSystemVariables.Size = new System.Drawing.Size(297, 439);
+            this.txtSystemVariables.Size = new System.Drawing.Size(297, 496);
             this.txtSystemVariables.TabIndex = 0;
             this.txtSystemVariables.Text = "size: 50";
             // 
@@ -274,7 +327,7 @@
             this.lstErrors.FullRowSelect = true;
             this.lstErrors.Location = new System.Drawing.Point(0, 0);
             this.lstErrors.Name = "lstErrors";
-            this.lstErrors.Size = new System.Drawing.Size(963, 173);
+            this.lstErrors.Size = new System.Drawing.Size(963, 116);
             this.lstErrors.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lstErrors.TabIndex = 1;
             this.lstErrors.UseCompatibleStateImageBehavior = false;
@@ -1359,6 +1412,9 @@
             this.splitSystemVariables.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitSystemVariables)).EndInit();
             this.splitSystemVariables.ResumeLayout(false);
+            this.tabSourceView.ResumeLayout(false);
+            this.tabSourceESDL.ResumeLayout(false);
+            this.tabSourcePython.ResumeLayout(false);
             this.splitLandscape.Panel1.ResumeLayout(false);
             this.splitLandscape.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitLandscape)).EndInit();
@@ -1432,7 +1488,7 @@
         private System.Windows.Forms.TextBox txtStatsCurrentBest;
         private System.Windows.Forms.TextBox txtStatsCurrentMean;
         private System.Windows.Forms.TextBox txtStatsCurrentWorst;
-        private ICSharpCode.TextEditor.TextEditorControl txtSystem;
+        private ICSharpCode.TextEditor.TextEditorControl txtSystemESDL;
         private ICSharpCode.TextEditor.TextEditorControl txtSystemVariables;
         private ICSharpCode.TextEditor.TextEditorControl txtLog;
         private ICSharpCode.TextEditor.TextEditorControl txtLandscapeParameters;
@@ -1454,10 +1510,10 @@
         private System.Windows.Forms.TabControl tabResultView;
         private System.Windows.Forms.TabPage tabChart;
         private System.Windows.Forms.TabPage tab2DPlot;
-        private Visualiser visPopulation;
+        private VisualiserLib.Visualiser visPopulation;
         private ICSharpCode.TextEditor.TextEditorControl txtEvaluatorCode;
         private System.Windows.Forms.Label lblEvaluatorCode;
-        private Visualiser chartResults;
+        private VisualiserLib.Visualiser chartResults;
         private System.Windows.Forms.CheckBox chkChartCurrentWorst;
         private System.Windows.Forms.CheckBox chkChartCurrentMean;
         private System.Windows.Forms.CheckBox chkChartCurrentBest;
@@ -1492,6 +1548,10 @@
         private System.Windows.Forms.ToolStripMenuItem menuControl;
         private System.Windows.Forms.ToolStripMenuItem menuControlStartStop;
         private System.Windows.Forms.PictureBox picDimmer;
+        private System.Windows.Forms.TabControl tabSourceView;
+        private System.Windows.Forms.TabPage tabSourceESDL;
+        private System.Windows.Forms.TabPage tabSourcePython;
+        private ICSharpCode.TextEditor.TextEditorControl txtSystemPython;
     }
 }
 

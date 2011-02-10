@@ -91,14 +91,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PythonHost.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="Visualiser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Visualiser.Designer.cs">
-      <DependentUpon>Visualiser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VisualiserPoint.cs" />
-    <Compile Include="VisualiserPointStyle.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
@@ -115,9 +107,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Visualiser.resx">
-      <DependentUpon>Visualiser.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -137,6 +126,10 @@
     <ProjectReference Include="..\ICSharpCode.TextEditor\Project\ICSharpCode.TextEditor.csproj">
       <Project>{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}</Project>
       <Name>ICSharpCode.TextEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualiserLib\VisualiserLib.csproj">
+      <Project>{F1B2706E-C413-4B39-884E-6762A08432C7}</Project>
+      <Name>VisualiserLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

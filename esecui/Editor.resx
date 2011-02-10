@@ -135,7 +135,7 @@
   <metadata name="menuViewSeparator3.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <data name="txtSystem.Text" xml:space="preserve">
+  <data name="txtSystemESDL.Text" xml:space="preserve">
     <value># Genetic Algorithm
 #
 # Uses binary individuals, fitness proportional selection,

@@ -1,4 +1,4 @@
-﻿namespace esecui
+﻿namespace VisualiserLib
 {
     partial class Visualiser
     {

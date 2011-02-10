@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
 
-namespace esecui
+namespace VisualiserLib
 {
     /// <summary>
     /// The shape to draw the point as. The size value is treated as a bounding

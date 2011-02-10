@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Scripting.Hosting;
-using IronPython.Runtime;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using IronPython.Runtime;
+using Microsoft.Scripting.Hosting;
+using VisualiserLib;
 
 namespace esecui
 {
@@ -44,13 +45,15 @@ namespace esecui
             chkChartCurrentMean.BackColor = ChartStyles[2].LineColor;
             chkChartCurrentWorst.BackColor = ChartStyles[3].LineColor;
 
-            txtSystem.Font = codeFont;
+            txtSystemESDL.Font = codeFont;
+            txtSystemPython.Font = codeFont;
             txtSystemVariables.Font = codeFont;
             txtLandscapeParameters.Font = codeFont;
             txtEvaluatorCode.Font = codeFont;
             txtLog.Font = codeFont;
 
-            txtSystem.SetHighlighting("ESDL");
+            txtSystemESDL.SetHighlighting("ESDL");
+            txtSystemPython.SetHighlighting("Python");
             txtSystemVariables.SetHighlighting("ESDLVariables");
             txtLandscapeParameters.SetHighlighting("ESDLVariables");
             txtEvaluatorCode.SetHighlighting("Python");
@@ -424,9 +427,9 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             // Reset everything
             lstErrors.Items.Clear();
-            txtSystem.BeginUpdate();
+            txtSystemESDL.BeginUpdate();
             txtSystemVariables.BeginUpdate();
-            txtSystem.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtSystemESDL.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
 
             var variables = Python.ConfigDict(txtSystemVariables);
@@ -445,13 +448,13 @@ class CustomEvaluator(esec.landscape.Landscape):
                 dynamic compile = esdlc.compileESDL;
                 dynamic ast = compile((string)state[0], (List<string>)state[1]);
                 return ast;
-            }), new object[] { txtSystem.Text, externs })
+            }), new object[] { txtSystemESDL.Text, externs })
             .ContinueWith((Action<Task<dynamic>>)(task =>
             {
                 dynamic ast = task.Result;
                 foreach (var error in ast._errors)
                 {
-                    lstErrors.Items.Add(ErrorItem.FromPython(txtSystem, error));
+                    lstErrors.Items.Add(ErrorItem.FromPython(txtSystemESDL, error));
                 }
 
                 foreach (var uninit in ast.warnings)
@@ -474,8 +477,8 @@ class CustomEvaluator(esec.landscape.Landscape):
                 }
 
                 UseWaitCursor = false;
-                txtSystem.EndUpdate();
-                txtSystem.Refresh();
+                txtSystemESDL.EndUpdate();
+                txtSystemESDL.Refresh();
                 txtSystemVariables.EndUpdate();
                 txtSystemVariables.Refresh();
             }), guiScheduler);
@@ -598,7 +601,7 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void StartExperiment()
         {
-            if (txtSystem.Text.Length == 0)
+            if (txtSystemESDL.Text.Length == 0)
             {
                 chkSystem.Checked = true;
                 return;
@@ -652,7 +655,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             var state = new Dictionary<string, object>();
             state["landscape"] = landscape;
             state["monitor"] = CurrentMonitor;
-            state["system.description"] = txtSystem.Text;
+            state["system.description"] = txtSystemESDL.Text;
             state["system"] = variables;
             state["random_seed"] = 12345;       // TODO: Settable random seed
 
@@ -1019,7 +1022,7 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void UpdateConfig()
         {
-            CurrentConfiguration.Definition = txtSystem.Text;
+            CurrentConfiguration.Definition = txtSystemESDL.Text;
             CurrentConfiguration.SystemParameters = txtSystemVariables.Text;
             CurrentConfiguration.Landscape = (lstLandscapes.SelectedNode ?? lstLandscapes.Nodes["Custom"]).Name;
             CurrentConfiguration.LandscapeParameters = txtLandscapeParameters.Text;
@@ -1032,9 +1035,9 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void UpdateEditor(Configuration config)
         {
-            txtSystem.Text = config.Definition;
-            txtSystem.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtSystem.Refresh();
+            txtSystemESDL.Text = config.Definition;
+            txtSystemESDL.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtSystemESDL.Refresh();
 
             txtSystemVariables.Text = config.SystemParameters;
             txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
@@ -1059,9 +1062,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             CurrentConfiguration = null;
             lstConfigurations.SelectedIndex = -1;
 
-            txtSystem.ResetText();
-            txtSystem.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtSystem.Refresh();
+            txtSystemESDL.ResetText();
+            txtSystemESDL.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtSystemESDL.Refresh();
 
             txtSystemVariables.ResetText();
             txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
@@ -1227,7 +1230,6 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
             LookEnabled();
         }
-
 
     }
 }
