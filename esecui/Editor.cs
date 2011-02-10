@@ -26,6 +26,8 @@ namespace esecui
         {
             InitializeComponent();
 
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
             chkSystem.Tag = panelSystem;
             chkLandscape.Tag = panelLandscape;
             chkResults.Tag = panelResults;
@@ -132,11 +134,9 @@ namespace esecui
 
             Text = "esec Experiment Designer - Loading...";
 
+            LookDisabled();
             UseWaitCursor = true;
-            foreach (var control in Controls.OfType<Control>())
-            {
-                control.Enabled = false;
-            }
+            menuStrip.Enabled = false;
 
             var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
             InitialisationTaskCTS = new CancellationTokenSource();
@@ -163,19 +163,14 @@ namespace esecui
 
         private void Task_Init_Completed(Task task)
         {
-            menuCheckSyntax.Enabled = true;
-            btnStartStop.Enabled = true;
-
             FillLandscapeTree();
             InitialisationTask.Dispose();
             InitialisationTask = null;
             InitialisationTaskCTS.Dispose();
             InitialisationTaskCTS = null;
 
-            foreach (var control in Controls.OfType<Control>())
-            {
-                control.Enabled = true;
-            }
+            LookEnabled();
+            menuStrip.Enabled = true;
             UseWaitCursor = false;
 
             ConfigurationList_Refresh("FirstRunDefault");
@@ -188,6 +183,9 @@ namespace esecui
 
         private void Task_Init_NotCompleted(Task task)
         {
+            menuStrip.Enabled = true;
+            LookEnabled();
+
             if (!task.IsCanceled)
             {
                 Log("An error occurred while initialising IronPython.\n");
@@ -843,6 +841,39 @@ class CustomEvaluator(esec.landscape.Landscape):
             lstConfigurations.DropDownWidth = Math.Max(lstConfigurations.Width, 200);
         }
 
+        private void DrawPanelToBitmap(Panel panel, Bitmap bitmap)
+        {
+            if (panel.Visible) panel.DrawToBitmap(bitmap, new Rectangle(panel.Location, panel.Size));
+        }
+
+        private void LookDisabled()
+        {
+            var dimmed = new Bitmap(ClientSize.Width, ClientSize.Height);
+            DrawPanelToBitmap(panelMenu, dimmed);
+            DrawPanelToBitmap(panelSystem, dimmed);
+            DrawPanelToBitmap(panelLandscape, dimmed);
+            DrawPanelToBitmap(panelResults, dimmed);
+            DrawPanelToBitmap(panelLog, dimmed);
+            using (var g = Graphics.FromImage(dimmed))
+            using (var brush = new SolidBrush(Color.FromArgb(64, 128, 128, 128)))
+            {
+                g.FillRectangle(brush, ClientRectangle);
+            }
+            picDimmer.Image = dimmed;
+            picDimmer.BringToFront();
+            picDimmer.SetBounds(0, 0, ClientSize.Width, ClientSize.Height);
+            picDimmer.Visible = true;
+
+        }
+
+        private void LookEnabled()
+        {
+            var dimmed = picDimmer.Image;
+            picDimmer.Image = null;
+            picDimmer.Visible = false;
+            dimmed.Dispose();
+        }
+
         #endregion
 
         #region Configuration List/Load/Save
@@ -1186,6 +1217,16 @@ class CustomEvaluator(esec.landscape.Landscape):
 
 
         #endregion
+
+        private void menuAbout_Click(object sender, EventArgs e)
+        {
+            LookDisabled();
+            using (var about = new About())
+            {
+                about.ShowDialog(this);
+            }
+            LookEnabled();
+        }
 
 
     }

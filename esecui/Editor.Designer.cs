@@ -74,7 +74,9 @@
             this.splitGraphStats = new System.Windows.Forms.SplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
+            this.chartResults = new esecui.Visualiser();
             this.tab2DPlot = new System.Windows.Forms.TabPage();
+            this.visPopulation = new esecui.Visualiser();
             this.tableStats = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -126,8 +128,7 @@
             this.panelResults = new System.Windows.Forms.Panel();
             this.panelLog = new System.Windows.Forms.Panel();
             this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
-            this.chartResults = new esecui.Visualiser();
-            this.visPopulation = new esecui.Visualiser();
+            this.picDimmer = new System.Windows.Forms.PictureBox();
             menuConfigurationSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -167,6 +168,7 @@
             this.panelLandscape.SuspendLayout();
             this.panelResults.SuspendLayout();
             this.panelLog.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picDimmer)).BeginInit();
             this.SuspendLayout();
             // 
             // menuConfigurationSeparator1
@@ -297,7 +299,7 @@
             this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lstConfigurations.Enabled = false;
             this.lstConfigurations.FormattingEnabled = true;
-            this.lstConfigurations.Location = new System.Drawing.Point(769, 4);
+            this.lstConfigurations.Location = new System.Drawing.Point(574, 4);
             this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
             this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
             this.lstConfigurations.Name = "lstConfigurations";
@@ -714,16 +716,40 @@
             this.tabChart.Text = "Chart (Alt+1)";
             this.tabChart.UseVisualStyleBackColor = true;
             // 
+            // chartResults
+            // 
+            this.chartResults.AutoRange = true;
+            this.chartResults.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chartResults.FlipVertical = true;
+            this.chartResults.Location = new System.Drawing.Point(3, 3);
+            this.chartResults.MustIncludeHorizontalZero = true;
+            this.chartResults.MustIncludeVerticalZero = true;
+            this.chartResults.Name = "chartResults";
+            this.chartResults.Size = new System.Drawing.Size(625, 426);
+            this.chartResults.TabIndex = 0;
+            // 
             // tab2DPlot
             // 
             this.tab2DPlot.Controls.Add(this.visPopulation);
-            this.tab2DPlot.Location = new System.Drawing.Point(4, 23);
+            this.tab2DPlot.Location = new System.Drawing.Point(4, 22);
             this.tab2DPlot.Name = "tab2DPlot";
             this.tab2DPlot.Padding = new System.Windows.Forms.Padding(3);
-            this.tab2DPlot.Size = new System.Drawing.Size(631, 432);
+            this.tab2DPlot.Size = new System.Drawing.Size(631, 433);
             this.tab2DPlot.TabIndex = 1;
             this.tab2DPlot.Text = "2D Plot (Alt+2)";
             this.tab2DPlot.UseVisualStyleBackColor = true;
+            // 
+            // visPopulation
+            // 
+            this.visPopulation.AutoRange = true;
+            this.visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.visPopulation.BackColor = System.Drawing.Color.White;
+            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.visPopulation.Location = new System.Drawing.Point(3, 3);
+            this.visPopulation.Name = "visPopulation";
+            this.visPopulation.Size = new System.Drawing.Size(625, 427);
+            this.visPopulation.TabIndex = 1;
             // 
             // tableStats
             // 
@@ -996,7 +1022,7 @@
             this.menuStrip.Location = new System.Drawing.Point(0, 3);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new System.Windows.Forms.Padding(6, 2, 6, 2);
-            this.menuStrip.Size = new System.Drawing.Size(346, 24);
+            this.menuStrip.Size = new System.Drawing.Size(151, 24);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "Main Menu";
             // 
@@ -1080,10 +1106,10 @@
             // 
             // menuAbout
             // 
-            this.menuAbout.Enabled = false;
             this.menuAbout.Name = "menuAbout";
             this.menuAbout.Size = new System.Drawing.Size(107, 22);
             this.menuAbout.Text = "&About";
+            this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
             // 
             // menuView
             // 
@@ -1194,7 +1220,7 @@
             this.chkSystem.AutoSize = true;
             this.chkSystem.Checked = true;
             this.chkSystem.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.chkSystem.Location = new System.Drawing.Point(349, 3);
+            this.chkSystem.Location = new System.Drawing.Point(154, 3);
             this.chkSystem.Name = "chkSystem";
             this.chkSystem.Size = new System.Drawing.Size(84, 24);
             this.chkSystem.TabIndex = 2;
@@ -1209,7 +1235,7 @@
             this.chkLandscape.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkLandscape.AutoSize = true;
             this.chkLandscape.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.chkLandscape.Location = new System.Drawing.Point(439, 3);
+            this.chkLandscape.Location = new System.Drawing.Point(244, 3);
             this.chkLandscape.Name = "chkLandscape";
             this.chkLandscape.Size = new System.Drawing.Size(101, 24);
             this.chkLandscape.TabIndex = 2;
@@ -1223,7 +1249,7 @@
             this.chkResults.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkResults.AutoSize = true;
             this.chkResults.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.chkResults.Location = new System.Drawing.Point(546, 3);
+            this.chkResults.Location = new System.Drawing.Point(351, 3);
             this.chkResults.Name = "chkResults";
             this.chkResults.Size = new System.Drawing.Size(82, 24);
             this.chkResults.TabIndex = 2;
@@ -1237,7 +1263,7 @@
             this.chkLog.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkLog.AutoSize = true;
             this.chkLog.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.chkLog.Location = new System.Drawing.Point(634, 3);
+            this.chkLog.Location = new System.Drawing.Point(439, 3);
             this.chkLog.Name = "chkLog";
             this.chkLog.Size = new System.Drawing.Size(126, 24);
             this.chkLog.TabIndex = 2;
@@ -1297,29 +1323,14 @@
             this.txtLog.Size = new System.Drawing.Size(963, 616);
             this.txtLog.TabIndex = 0;
             // 
-            // chartResults
+            // picDimmer
             // 
-            this.chartResults.AutoRange = true;
-            this.chartResults.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chartResults.FlipVertical = true;
-            this.chartResults.Location = new System.Drawing.Point(3, 3);
-            this.chartResults.MustIncludeHorizontalZero = true;
-            this.chartResults.MustIncludeVerticalZero = true;
-            this.chartResults.Name = "chartResults";
-            this.chartResults.Size = new System.Drawing.Size(625, 426);
-            this.chartResults.TabIndex = 0;
-            // 
-            // visPopulation
-            // 
-            this.visPopulation.AutoRange = true;
-            this.visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.visPopulation.BackColor = System.Drawing.Color.White;
-            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.visPopulation.Location = new System.Drawing.Point(3, 3);
-            this.visPopulation.Name = "visPopulation";
-            this.visPopulation.Size = new System.Drawing.Size(625, 427);
-            this.visPopulation.TabIndex = 1;
+            this.picDimmer.Location = new System.Drawing.Point(0, 0);
+            this.picDimmer.Name = "picDimmer";
+            this.picDimmer.Size = new System.Drawing.Size(100, 50);
+            this.picDimmer.TabIndex = 8;
+            this.picDimmer.TabStop = false;
+            this.picDimmer.Visible = false;
             // 
             // Editor
             // 
@@ -1331,6 +1342,7 @@
             this.Controls.Add(this.panelResults);
             this.Controls.Add(this.panelLandscape);
             this.Controls.Add(this.panelMenu);
+            this.Controls.Add(this.picDimmer);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Tahoma", 9F);
             this.KeyPreview = true;
@@ -1378,6 +1390,7 @@
             this.panelLandscape.ResumeLayout(false);
             this.panelResults.ResumeLayout(false);
             this.panelLog.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picDimmer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1478,6 +1491,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuViewLog;
         private System.Windows.Forms.ToolStripMenuItem menuControl;
         private System.Windows.Forms.ToolStripMenuItem menuControlStartStop;
+        private System.Windows.Forms.PictureBox picDimmer;
     }
 }
 
