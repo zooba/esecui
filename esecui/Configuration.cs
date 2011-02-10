@@ -25,10 +25,12 @@ namespace esecui
         public string Source { get; set; }
 
         public string Definition { get; set; }
+        public string Support { get; set; }
         public string SystemParameters { get; set; }
 
         public string Landscape { get; set; }
         public string LandscapeParameters { get; set; }
+        public string CustomEvaluator { get; set; }
 
         public int? IterationLimit { get; set; }
         public int? EvaluationLimit { get; set; }
@@ -105,6 +107,7 @@ namespace esecui
                 int i = Landscape.LastIndexOf('.');
                 if (i > 0) { s.WriteLine("import " + Landscape.Substring(0, i)); s.WriteLine(); }
 
+                s.WriteLine(Support);
                 s.Write(@"name = '" + Name + @"'
 
 config = {
@@ -184,10 +187,12 @@ config = {
                 new XAttribute("name", Name),
                 new XElement("system",
                     new XElement("definition", Definition),
+                    new XElement("support", Support),
                     new XElement("parameters", SystemParameters)),
                 new XElement("landscape",
                     new XElement("class", Landscape),
-                    new XElement("parameters", LandscapeParameters)),
+                    new XElement("parameters", LandscapeParameters),
+                    new XElement("evaluator", CustomEvaluator)),
                 new XElement("monitor",
                     new XElement("limits",
                         IterationLimit.HasValue ? new XAttribute("iterations", IterationLimit.Value) : null,
@@ -207,9 +212,12 @@ config = {
             SystemParameters = xml.Element("system").Element("parameters").Value;
             Definition = (string)xml.Element("system").Element("definition");
             if (Definition != null) Definition = Definition.Trim().Trim('\n', '\r');
+            Support = (string)xml.Element("system").Element("support");
+            if (Support != null) Support = Support.Trim().Trim('\n', '\r');
 
             LandscapeParameters = xml.Element("landscape").Element("parameters").Value;
             Landscape = (string)xml.Element("landscape").Element("class");
+            CustomEvaluator = (string)xml.Element("landscape").Element("evaluator") ?? "";
 
             var limits = xml.Element("monitor").Element("limits");
             IterationLimit = (int?)limits.Attribute("iterations");

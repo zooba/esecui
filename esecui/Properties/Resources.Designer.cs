@@ -87,5 +87,26 @@ namespace esecui.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        internal static System.Drawing.Bitmap VSObject_Class {
+            get {
+                object obj = ResourceManager.GetObject("VSObject_Class", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap VSObject_Constant {
+            get {
+                object obj = ResourceManager.GetObject("VSObject_Constant", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap VSObject_Method {
+            get {
+                object obj = ResourceManager.GetObject("VSObject_Method", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

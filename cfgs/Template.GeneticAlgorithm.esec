@@ -14,4 +14,4 @@ BEGIN generation
               mutate_bitflip(per_indiv_rate=(1.0/size))
     YIELD population
 END generation
-</definition><parameters>size: 50</parameters></system><landscape><class>esec.landscape.binary.OneMax</class><parameters>parameters = 12</parameters></landscape><monitor><limits iterations="50" fitness="12" /></monitor></configuration>
+</definition><support></support><parameters>size: 50</parameters></system><landscape><class>esec.landscape.binary.OneMax</class><parameters>parameters = 12</parameters></landscape><monitor><limits iterations="50" fitness="12" /></monitor></configuration>

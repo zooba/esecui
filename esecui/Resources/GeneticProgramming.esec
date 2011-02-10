@@ -22,6 +22,6 @@ BEGIN generation
     
     YIELD population
 END generation
-</definition><parameters>size: 300
+</definition><support></support><parameters>size: 300
 deepest_result: 15</parameters></system><landscape><class>esec.landscape.tgp.SymbolicRegression</class><parameters>expr: 'X**4 + X**3 + X**2 + X'
 </parameters></landscape><monitor><limits iterations="51" fitness="-0.1" /></monitor></configuration>

@@ -61,6 +61,8 @@
                 <Key word="def" />
                 <Key word="pass" />
                 <Key word="print" />
+                <Key word="from" />
+                <Key word="import" />
             </KeyWords>
 
         </RuleSet>

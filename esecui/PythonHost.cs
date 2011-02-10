@@ -79,12 +79,20 @@ namespace esecui
 
         public ScriptScope CreateScope()
         {
-            return Engine.CreateScope();
+            var scope = Engine.CreateScope();
+            Engine.Execute("import clr", scope);
+            Engine.Execute("clr.AddReference('System')", scope);
+            Engine.Execute("from System import *", scope);
+            return scope;
         }
 
         public ScriptScope CreateScope(IDictionary<string, object> dictionary)
         {
-            return Engine.CreateScope(dictionary);
+            var scope = Engine.CreateScope(dictionary);
+            Engine.Execute("import clr", scope);
+            Engine.Execute("clr.AddReference('System')", scope);
+            Engine.Execute("from System import *", scope);
+            return scope;
         }
 
         public void Exec(string code)

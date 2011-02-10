@@ -20,7 +20,7 @@ BEGIN generation
 
     YIELD population
 END
-</definition><parameters>size: 50
+</definition><support></support><parameters>size: 50
 step_size: 1
 k = 2 # binary tournament</parameters></system><landscape><class>esec.landscape.binary.Multimodal</class><parameters>N = 100
 P = 100</parameters></landscape><monitor><limits iterations="100" fitness="1" /></monitor></configuration>

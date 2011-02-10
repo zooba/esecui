@@ -57,6 +57,15 @@ namespace esecui
             txtSystemVariables.SetHighlighting("ESDLVariables");
             txtLandscapeParameters.SetHighlighting("ESDLVariables");
             txtEvaluatorCode.SetHighlighting("Python");
+
+            txtSystemPython.Document.DocumentChanged += new ICSharpCode.TextEditor.Document.DocumentEventHandler(UpdatePythonDefinitions);
+        }
+
+        private void menuAbout_Click(object sender, EventArgs e)
+        {
+            LookDisabled();
+            using (var about = new About()) about.ShowDialog(this);
+            LookEnabled();
         }
 
         private void menuExit_Click(object sender, EventArgs e)
@@ -290,6 +299,12 @@ an integer or floating-point number, or an instance of FitnessMaximise or
 FitnessMinimise, each of which takes a list of values in its initialiser.
 ";
 
+        const string DefaultCustomEvaluator = @"fitness = 0.0
+for x in indiv:
+    fitness += x**2
+
+return FitnessMinimise(fitness)";
+
         private void lstLandscapes_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node.Name == "Custom")
@@ -339,18 +354,22 @@ class CustomEvaluator(esec.landscape.Landscape):
         
 ";
 
-        private dynamic GetCustomEvaluator()
+        private string GetCustomEvaluator()
         {
-            var scope = Python.CreateScope();
+            if (lstLandscapes.SelectedNode.Name == "Custom")
+            {
+                var codeLines = txtEvaluatorCode.Text.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => "        " + s)
+                    .Aggregate((sum, s) => sum + "\r\n" + s);
 
-            var codeLines = txtEvaluatorCode.Text.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => "        " + s)
-                .Aggregate((sum, s) => sum + "\r\n" + s);
+                var code = EvaluatorTemplate + codeLines;
 
-            var code = EvaluatorTemplate + codeLines;
-
-            Python.Exec(code, scope);
-            return scope.GetVariable("CustomEvaluator");
+                return code;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         #endregion
@@ -420,6 +439,10 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         #region System validation
 
+        private void menuCheckSyntax_Click(object sender, EventArgs e)
+        {
+            CheckSyntax();
+        }
 
         private void CheckSyntax()
         {
@@ -444,11 +467,14 @@ class CustomEvaluator(esec.landscape.Landscape):
             Task.Factory.StartNew((Func<object, dynamic>)(state_obj =>
             {
                 var state = (object[])state_obj;
+                dynamic scope = Python.CreateScope();
+                scope.esec = esec;
+                scope.esdlc = esdlc;
+                Python.Exec((string)state[1], scope);
 
-                dynamic compile = esdlc.compileESDL;
-                dynamic ast = compile((string)state[0], (List<string>)state[1]);
+                dynamic ast = scope.esdlc.compileESDL((string)state[0], (List<string>)state[2]);
                 return ast;
-            }), new object[] { txtSystemESDL.Text, externs })
+            }), new object[] { txtSystemESDL.Text, txtSystemPython.Text, externs })
             .ContinueWith((Action<Task<dynamic>>)(task =>
             {
                 dynamic ast = task.Result;
@@ -643,21 +669,19 @@ class CustomEvaluator(esec.landscape.Landscape):
                 chkLandscape.Checked = true;
                 return;
             }
-            if (lstLandscapes.SelectedNode.Name == "Custom")
-            {
-                landscape["instance"] = GetCustomEvaluator();
-            }
-            else
+            if (lstLandscapes.SelectedNode.Name != "Custom")
             {
                 landscape["class"] = lstLandscapes.SelectedNode.Tag;
             }
 
             var state = new Dictionary<string, object>();
             state["landscape"] = landscape;
+            state["landscape.evaluator"] = GetCustomEvaluator();
             state["monitor"] = CurrentMonitor;
             state["system.description"] = txtSystemESDL.Text;
             state["system"] = variables;
             state["random_seed"] = 12345;       // TODO: Settable random seed
+            state["preamble"] = txtSystemPython.Text;
 
             CurrentExperiment = new Task(Task_RunExperiment, state,
                 CancellationToken.None,
@@ -680,11 +704,22 @@ class CustomEvaluator(esec.landscape.Landscape):
         private void Task_RunExperiment(object state_obj)
         {
             var state = (Dictionary<string, object>)state_obj;
+            var scopeObj = Python.CreateScope();
+            dynamic scope = scopeObj;
+            scope.esec = esec;
+            scope.esdlc = esdlc;
+            Python.Exec((string)state["preamble"], scope);
 
             var config = Python.Dict();
 
             config["monitor"] = state["monitor"];
             config["landscape"] = Python.Dict(state["landscape"]);
+            var evaluator = state["landscape.evaluator"] as string;
+            if (!string.IsNullOrEmpty(evaluator))
+            {
+                Python.Exec(evaluator, scope);
+                ((dynamic)config["landscape"])["instance"] = scope.CustomEvaluator;
+            }
 
             var systemDict = Python.Dict();
             config["system"] = systemDict;
@@ -697,18 +732,21 @@ class CustomEvaluator(esec.landscape.Landscape):
                 {
                     systemDict[item.Key] = item.Value;
                 }
+                foreach (var name in scopeObj.GetVariableNames())
+                {
+                    if (!Python.Scope.ContainsVariable(name))
+                    {
+                        systemDict[name] = scopeObj.GetVariable(name);
+                    }
+                }
             }
 
             config["random_seed"] = state["random_seed"];
 
-            Python["Experiment"] = esec.Experiment;
-            Python["config"] = config;
-
             dynamic exp;
-
             try
             {
-                exp = Python.Eval("Experiment(config)");
+                exp = scope.esec.Experiment(config);
             }
             catch (Exception ex)
             {
@@ -903,6 +941,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                     if (set.Contains(path.ToUpperInvariant())) continue;
                     set.Add(path.ToUpperInvariant());
                     lstConfigurations.Items.Insert(0, new FileInfo(path));
+                    if (lstConfigurations.Items.Count == 10) break;
                 }
 
                 // Add built-in configurations
@@ -1023,9 +1062,11 @@ class CustomEvaluator(esec.landscape.Landscape):
         private void UpdateConfig()
         {
             CurrentConfiguration.Definition = txtSystemESDL.Text;
+            CurrentConfiguration.Support = txtSystemPython.Text;
             CurrentConfiguration.SystemParameters = txtSystemVariables.Text;
             CurrentConfiguration.Landscape = (lstLandscapes.SelectedNode ?? lstLandscapes.Nodes["Custom"]).Name;
             CurrentConfiguration.LandscapeParameters = txtLandscapeParameters.Text;
+            CurrentConfiguration.CustomEvaluator = txtEvaluatorCode.Text;
 
             CurrentConfiguration.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
             CurrentConfiguration.EvaluationLimit = chkEvaluations.Checked ? int.Parse(txtEvaluations.Text) : (int?)null;
@@ -1039,6 +1080,10 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtSystemESDL.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystemESDL.Refresh();
 
+            txtSystemPython.Text = config.Support;
+            txtSystemPython.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtSystemPython.Refresh();
+
             txtSystemVariables.Text = config.SystemParameters;
             txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystemVariables.Refresh();
@@ -1049,6 +1094,10 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtLandscapeParameters.Text = config.LandscapeParameters;
             txtLandscapeParameters.Document.MarkerStrategy.RemoveAll(_ => true);
             txtLandscapeParameters.Refresh();
+
+            txtEvaluatorCode.Text = config.CustomEvaluator;
+            txtEvaluatorCode.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtEvaluatorCode.Refresh();
 
             txtIterations.Text = config.IterationLimit.HasValue ? config.IterationLimit.Value.ToString() : "";
             txtEvaluations.Text = config.EvaluationLimit.HasValue ? config.EvaluationLimit.Value.ToString() : "";
@@ -1066,16 +1115,24 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtSystemESDL.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystemESDL.Refresh();
 
+            txtSystemPython.ResetText();
+            txtSystemPython.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtSystemPython.Refresh();
+
             txtSystemVariables.ResetText();
             txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystemVariables.Refresh();
 
-            lstLandscapes.SelectedNode = null;
+            lstLandscapes.SelectedNode = lstLandscapes.Nodes["Custom"];
             lstLandscapes.Refresh();
 
             txtLandscapeParameters.ResetText();
             txtLandscapeParameters.Document.MarkerStrategy.RemoveAll(_ => true);
             txtLandscapeParameters.Refresh();
+
+            txtEvaluatorCode.Text = DefaultCustomEvaluator;
+            txtEvaluatorCode.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtEvaluatorCode.Refresh();
 
             txtIterations.Text = "10";
             txtEvaluations.ResetText();
@@ -1113,6 +1170,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 config.Read(path.FullName);
             }
+            config.Source = path.FullName;
 
             UpdateEditor(config);
 
@@ -1189,14 +1247,20 @@ class CustomEvaluator(esec.landscape.Landscape):
             chkResults.Checked = true;
         }
 
-        private void menuViewResultsChart_Click(object sender, EventArgs e)
+        private void menuViewSubview1_Click(object sender, EventArgs e)
         {
-            tabResultView.SelectTab(tabChart);
+            if (chkSystem.Checked)
+                tabSourceView.SelectTab(tabSourceESDL);
+            else if (chkResults.Checked)
+                tabResultView.SelectTab(tabChart);
         }
 
-        private void menuViewResultsPlot_Click(object sender, EventArgs e)
+        private void menuViewSubview2_Click(object sender, EventArgs e)
         {
-            tabResultView.SelectTab(tab2DPlot);
+            if (chkSystem.Checked)
+                tabSourceView.SelectTab(tabSourcePython);
+            else if (chkResults.Checked)
+                tabResultView.SelectTab(tab2DPlot);
         }
 
         private void menuViewLog_Click(object sender, EventArgs e)
@@ -1213,23 +1277,92 @@ class CustomEvaluator(esec.landscape.Landscape):
             Debug.Assert(panel != null);
 
             panel.Visible = chk.Checked;
-
-            menuViewResultsChart.Enabled = (panel == panelResults);
-            menuViewResultsPlot.Enabled = (panel == panelResults);
         }
 
 
         #endregion
 
-        private void menuAbout_Click(object sender, EventArgs e)
+        #region Python Support Definitions
+
+        void UpdatePythonDefinitions(object sender, ICSharpCode.TextEditor.Document.DocumentEventArgs e)
         {
-            LookDisabled();
-            using (var about = new About())
+            lstPythonDefinitions.BeginUpdate();
+            try
             {
-                about.ShowDialog(this);
+                lstPythonDefinitions.Items.Clear();
+
+                var sr = new StringReader(e.Document.TextContent);
+                int lineNo = 0;
+                for (var line = sr.ReadLine(); line != null; line = sr.ReadLine(), lineNo += 1)
+                {
+                    if (line.Length == 0) continue;
+                    if (char.IsWhiteSpace(line[0])) continue;
+
+                    if (line.StartsWith("def ") || line.StartsWith("class "))
+                    {
+                        var text = line;
+                        int i = text.IndexOf('(');
+                        if (i > 0) text = text.Substring(0, i).Trim();
+                        i = text.IndexOf(':');
+                        if (i > 0) text = text.Substring(0, i).Trim();
+                        i = text.IndexOf(' ');
+                        if (i > 0) text = text.Substring(i + 1).Trim();
+
+                        lstPythonDefinitions.Items.Add(new ListViewItem
+                        {
+                            Name = line,
+                            Text = text,
+                            ImageKey = line.StartsWith("def ") ? "VSObject_Method.bmp" : "VSObject_Class.bmp",
+                            Tag = lineNo
+                        });
+                    }
+                    else if (line.StartsWith("#"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        int i = line.IndexOf('=');
+                        if (i < 0) continue;
+
+                        line = line.Substring(0, i).Trim();
+
+                        lstPythonDefinitions.Items.Add(new ListViewItem
+                        {
+                            Name = line,
+                            Text = line,
+                            ImageKey = "VSObject_Constant.bmp",
+                            Tag = lineNo
+                        });
+                    }
+                }
             }
-            LookEnabled();
+            finally
+            {
+                lstPythonDefinitions.EndUpdate();
+            }
         }
+
+        private void lstPythonDefinitions_ItemActivate(object sender, EventArgs e)
+        {
+            try
+            {
+                int line = (int)lstPythonDefinitions.SelectedItems[0].Tag;
+                var lineLength = txtSystemPython.Document.GetLineSegment(line).Length;
+                var pos = new ICSharpCode.TextEditor.TextLocation(0, line);
+                txtSystemPython.ActiveTextAreaControl.Caret.Position = pos;
+                txtSystemPython.ActiveTextAreaControl.SelectionManager.SetSelection(
+                    pos, new ICSharpCode.TextEditor.TextLocation(lineLength, line));
+                txtSystemPython.ActiveTextAreaControl.CenterViewOn(line, 5);
+                txtSystemPython.Focus();
+            }
+            catch (Exception ex)
+            {
+                Log("Error selecting definition:\r\n{0}", ex.ToString());
+            }
+        }
+
+        #endregion
 
     }
 }
