@@ -82,11 +82,13 @@ namespace esecui
                 UIFont = new Font(FontFamily.GenericSansSerif, 9.0f);
             }
             ProjectorUIFont = new Font(UIFont.Name, 18.0f);
-            
+
             // Force some controls to always use the smaller font
             panelMenu.Font = UIFont;
             tabSourceView.Font = UIFont;
             tabResultView.Font = UIFont;
+            lblPlotExpression.Font = UIFont;
+            lblBestIndividualExpression.Font = UIFont;
 
             // Initialise the code font
             CodeFont = new Font("Consolas", 10.0f);
@@ -159,13 +161,22 @@ namespace esecui
                 if (!value)
                 {
                     Font = UIFont;
-                    
+
                     txtSystemESDL.Font = CodeFont;
                     txtSystemPython.Font = CodeFont;
                     txtSystemVariables.Font = CodeFont;
                     txtLandscapeParameters.Font = CodeFont;
                     txtEvaluatorCode.Font = CodeFont;
                     txtLog.Font = CodeFont;
+                    txtBestIndividual.Font = CodeFont;
+
+                    txtPlotExpression.Font = CodeFont;
+                    txtBestIndividualExpression.Font = CodeFont;
+
+                    lblStopAfter.Visible = true;
+                    lblOr1.Visible = true;
+                    lblOr2.Visible = true;
+                    lblOr3.Visible = true;
 
                     ActiveChartStyles = NormalChartStyles;
                     ActiveVisualiserStyle = NormalVisualiserStyle;
@@ -185,6 +196,15 @@ namespace esecui
                     txtLandscapeParameters.Font = ProjectorCodeFont;
                     txtEvaluatorCode.Font = ProjectorCodeFont;
                     txtLog.Font = ProjectorCodeFont;
+                    txtBestIndividual.Font = ProjectorCodeFont;
+
+                    txtPlotExpression.Font = CodeFont;
+                    txtBestIndividualExpression.Font = CodeFont;
+
+                    lblStopAfter.Visible = false;
+                    lblOr1.Visible = false;
+                    lblOr2.Visible = false;
+                    lblOr3.Visible = false;
 
                     ActiveChartStyles = ProjectorChartStyles;
                     ActiveVisualiserStyle = ProjectorVisualiserStyle;
@@ -612,16 +632,22 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         #region Monitor Callbacks
 
+        private dynamic CurrentBestIndividual;
+
         public void UpdateStats(int iterations, int evaluations, int births, TimeSpan time,
+            dynamic bestIndiv,
             dynamic bestFitness, dynamic currentBest, dynamic currentMean, dynamic currentWorst)
         {
             if (IsDisposed) return;
             if (InvokeRequired)
             {
                 Invoke((Action)(() => UpdateStats(iterations, evaluations, births, time,
-                    bestFitness, currentBest, currentMean, currentWorst)));
+                    bestIndiv, bestFitness, currentBest, currentMean, currentWorst)));
                 return;
             }
+
+            CurrentBestIndividual = bestIndiv;
+            UpdateBestIndividual();
 
             txtStatsIterations.Text = iterations.ToString();
             txtStatsEvaluations.Text = evaluations.ToString();
@@ -669,19 +695,27 @@ class CustomEvaluator(esec.landscape.Landscape):
             if (population == null) return;
             if (DisableVisualisation) return;
 
-            if (InvokeRequired)
-            {
-                BeginInvoke((Action)(() => UpdateVisualisation(population, firstRun)));
-                return;
-            }
+            var expr = txtPlotExpression.Text;
+            var scope = Python.CreateScope();
+            Python.Exec("from math import *", scope);
 
-            IList<VisualiserPoint> points;
-
+            List<VisualiserPoint> points;
             try
             {
                 points = population
-                    .Select(indiv => 
-                        new VisualiserPoint((double)indiv[0], (double)indiv[1], 0.0, ActiveVisualiserStyle))
+                    .OrderByDescending(indiv => indiv.fitness.simple)
+                    .Select((indiv, i) =>
+                        {
+                            scope.SetVariable("indiv", indiv);
+                            scope.SetVariable("i", i);
+                            return Python.Eval(expr, scope);
+                        })
+                    .Select(pair =>
+                        new VisualiserPoint(
+                            (double)pair[0],
+                            (double)pair[1],
+                            (double)(pair.__len__() < 3 ? 0.0 : pair[2]),
+                            ActiveVisualiserStyle))
                     .ToList();
             }
             catch
@@ -689,12 +723,69 @@ class CustomEvaluator(esec.landscape.Landscape):
                 DisableVisualisation = true;
                 return;
             }
+            
+            Action<List<VisualiserPoint>> continuation = pts =>
+            {
+                if (firstRun) visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+                else visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowOnly;
 
-            if (firstRun) visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            else visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowOnly;
+                visPopulation.SetPoints(pts);
+            };
 
-            visPopulation.SetPoints(points);
+            if (InvokeRequired) BeginInvoke(continuation, points);
+            else continuation(points);
+
         }
+
+        #endregion
+
+        #region Best Individual Display
+
+        private void txtBestIndividualExpression_TextChanged(object sender, EventArgs e)
+        {
+            UpdateBestIndividual();
+        }
+
+        private void txtBestIndividual_VisibleChanged(object sender, EventArgs e)
+        {
+            UpdateBestIndividual();
+        }
+
+        private void UpdateBestIndividual()
+        {
+            if (IsDisposed) return;
+            if (InvokeRequired)
+            {
+                Invoke((Action)UpdateBestIndividual);
+                return;
+            }
+
+            if (CurrentBestIndividual == null)
+            {
+                txtBestIndividual.ResetText();
+                return;
+            }
+
+            if (txtBestIndividual.Visible == false) return;
+
+            try
+            {
+                var scope = Python.CreateScope();
+                Python.Exec("from math import *", scope);
+                scope.SetVariable("indiv", CurrentBestIndividual);
+
+                var expr = string.IsNullOrWhiteSpace(txtBestIndividualExpression.Text)
+                    ? "indiv.genome_string" : txtBestIndividualExpression.Text;
+                expr = "str(" + expr + ")";
+
+                txtBestIndividual.Text = Python.Eval(expr, scope).Replace("\n", "\r\n");
+            }
+            catch
+            {
+                txtBestIndividual.Text = "(Invalid expression: " + txtBestIndividualExpression.Text + ")";
+            }
+        }
+
 
         #endregion
 
@@ -746,7 +837,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             chartResults.ShowSeries(2, chkChartCurrentMean.Checked);
             chartResults.ShowSeries(3, chkChartCurrentWorst.Checked);
 
+            txtPlotExpression.Enabled = false;
             DisableVisualisation = false;
+            visPopulation.ClearAll();
 
             CurrentMonitor = new Monitor(this);
             CurrentMonitor.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
@@ -860,6 +953,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void Task_RunExperiment_Completed(Task task)
         {
+            txtPlotExpression.Enabled = true;
+
             btnStartStop.Text = "&Start (F5)";
             btnStartStop.Enabled = true;
             CurrentMonitor = null;
@@ -869,6 +964,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void Task_RunExperiment_NotCompleted(Task task)
         {
+            txtPlotExpression.Enabled = true;
+            
             btnStartStop.Text = "&Start (F5)";
             btnStartStop.Enabled = true;
 
@@ -959,16 +1056,6 @@ class CustomEvaluator(esec.landscape.Landscape):
                 chkFitness.Checked = !string.IsNullOrWhiteSpace(txtFitness.Text);
         }
 
-        private void chkLimit_CheckedChanged(object sender, EventArgs e)
-        {
-            var chk = (CheckBox)sender;
-
-            if (chk.ForeColor != SystemColors.Highlight)
-            {
-                chk.ForeColor = (!ProjectorMode || chk.Checked) ? SystemColors.WindowText : SystemColors.ControlDark;
-            }
-        }
-
         private void chkLimit_MouseEnter(object sender, EventArgs e)
         {
             var chk = (CheckBox)sender;
@@ -980,14 +1067,14 @@ class CustomEvaluator(esec.landscape.Landscape):
         {
             var chk = (CheckBox)sender;
 
-            chk.ForeColor = (!ProjectorMode || chk.Checked) ? SystemColors.WindowText : SystemColors.ControlDark;
+            chk.ForeColor = SystemColors.WindowText;
         }
 
         private void panelMenu_Layout(object sender, LayoutEventArgs e)
         {
             panelMenu_SizeChanged(sender, EventArgs.Empty);
         }
-        
+
         private void panelMenu_SizeChanged(object sender, EventArgs e)
         {
             lstConfigurations.Width = panelMenu.ClientSize.Width
@@ -1156,8 +1243,6 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 e.Value = "(error)";
             }
-
-
         }
 
         private void lstConfigurations_SelectedIndexChanged(object sender, EventArgs e)
@@ -1206,6 +1291,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             CurrentConfiguration.LandscapeParameters = txtLandscapeParameters.Text;
             CurrentConfiguration.CustomEvaluator = txtEvaluatorCode.Text;
 
+            CurrentConfiguration.PlotExpression = txtPlotExpression.Text;
+            CurrentConfiguration.BestIndividualExpression = txtBestIndividualExpression.Text;
+
             CurrentConfiguration.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
             CurrentConfiguration.EvaluationLimit = chkEvaluations.Checked ? int.Parse(txtEvaluations.Text) : (int?)null;
             CurrentConfiguration.TimeLimit = chkSeconds.Checked ? TimeSpan.FromSeconds(double.Parse(txtSeconds.Text)) : (TimeSpan?)null;
@@ -1236,6 +1324,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtEvaluatorCode.Text = config.CustomEvaluator;
             txtEvaluatorCode.Document.MarkerStrategy.RemoveAll(_ => true);
             txtEvaluatorCode.Refresh();
+
+            txtPlotExpression.Text = config.PlotExpression;
+            txtBestIndividualExpression.Text = config.BestIndividualExpression;
 
             txtIterations.Text = config.IterationLimit.HasValue ? config.IterationLimit.Value.ToString() : "";
             txtEvaluations.Text = config.EvaluationLimit.HasValue ? config.EvaluationLimit.Value.ToString() : "";
@@ -1271,6 +1362,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtEvaluatorCode.Text = DefaultCustomEvaluator;
             txtEvaluatorCode.Document.MarkerStrategy.RemoveAll(_ => true);
             txtEvaluatorCode.Refresh();
+
+            txtPlotExpression.Text = Configuration.DefaultPlotExpression;
+            txtBestIndividualExpression.Text = Configuration.DefaultBestIndividualExpression;
 
             txtIterations.Text = "10";
             txtEvaluations.ResetText();
@@ -1401,6 +1495,12 @@ class CustomEvaluator(esec.landscape.Landscape):
                 tabResultView.SelectTab(tab2DPlot);
         }
 
+        private void menuViewSubview3_Click(object sender, EventArgs e)
+        {
+            if (chkResults.Checked)
+                tabResultView.SelectTab(tabBestIndividual);
+        }
+
         private void menuViewLog_Click(object sender, EventArgs e)
         {
             chkLog.Checked = true;
@@ -1501,6 +1601,23 @@ class CustomEvaluator(esec.landscape.Landscape):
         }
 
         #endregion
+
+        private void txtExpression_Enter(object sender, EventArgs e)
+        {
+            if (ProjectorMode)
+            {
+                ((TextBox)sender).Font = ProjectorCodeFont;
+            }
+        }
+
+        private void txtExpression_Leave(object sender, EventArgs e)
+        {
+            if (ProjectorMode)
+            {
+                ((TextBox)sender).Font = CodeFont;
+            }
+        }
+
 
     }
 }

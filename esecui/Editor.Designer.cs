@@ -71,7 +71,6 @@
             this.splitLimitsGraph = new System.Windows.Forms.SplitContainer();
             this.tableResults = new System.Windows.Forms.TableLayoutPanel();
             this.tableControls = new System.Windows.Forms.TableLayoutPanel();
-            this.btnStartStop = new System.Windows.Forms.Button();
             this.chkIterations = new System.Windows.Forms.CheckBox();
             this.chkFitness = new System.Windows.Forms.CheckBox();
             this.chkSeconds = new System.Windows.Forms.CheckBox();
@@ -84,12 +83,22 @@
             this.lblOr1 = new System.Windows.Forms.Label();
             this.lblOr3 = new System.Windows.Forms.Label();
             this.lblOr2 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnStartStop = new System.Windows.Forms.Button();
             this.splitGraphStats = new System.Windows.Forms.SplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
             this.chartResults = new VisualiserLib.Visualiser();
             this.tab2DPlot = new System.Windows.Forms.TabPage();
+            this.table2DPlot = new System.Windows.Forms.TableLayoutPanel();
             this.visPopulation = new VisualiserLib.Visualiser();
+            this.lblPlotExpression = new System.Windows.Forms.Label();
+            this.txtPlotExpression = new System.Windows.Forms.TextBox();
+            this.tabBestIndividual = new System.Windows.Forms.TabPage();
+            this.tableBestIndividual = new System.Windows.Forms.TableLayoutPanel();
+            this.lblBestIndividualExpression = new System.Windows.Forms.Label();
+            this.txtBestIndividualExpression = new System.Windows.Forms.TextBox();
+            this.txtBestIndividual = new System.Windows.Forms.TextBox();
             this.tableStats = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -129,6 +138,7 @@
             this.menuViewLog = new System.Windows.Forms.ToolStripMenuItem();
             this.menuViewSubview1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuViewSubview2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewSubview3 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuViewProjectorMode = new System.Windows.Forms.ToolStripMenuItem();
             this.menuControl = new System.Windows.Forms.ToolStripMenuItem();
             this.menuControlStartStop = new System.Windows.Forms.ToolStripMenuItem();
@@ -177,6 +187,7 @@
             this.splitLimitsGraph.SuspendLayout();
             this.tableResults.SuspendLayout();
             this.tableControls.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).BeginInit();
             this.splitGraphStats.Panel1.SuspendLayout();
             this.splitGraphStats.Panel2.SuspendLayout();
@@ -184,6 +195,9 @@
             this.tabResultView.SuspendLayout();
             this.tabChart.SuspendLayout();
             this.tab2DPlot.SuspendLayout();
+            this.table2DPlot.SuspendLayout();
+            this.tabBestIndividual.SuspendLayout();
+            this.tableBestIndividual.SuspendLayout();
             this.tableStats.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.panelMenu.SuspendLayout();
@@ -597,19 +611,19 @@
             // 
             this.tableResults.ColumnCount = 1;
             this.tableResults.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableResults.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableResults.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableResults.Controls.Add(this.tableControls, 0, 0);
+            this.tableResults.Controls.Add(this.tableControls, 0, 1);
+            this.tableResults.Controls.Add(this.tableLayoutPanel1, 0, 0);
             this.tableResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableResults.Location = new System.Drawing.Point(0, 0);
             this.tableResults.Name = "tableResults";
-            this.tableResults.RowCount = 6;
+            this.tableResults.RowCount = 4;
             this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableResults.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableResults.Size = new System.Drawing.Size(320, 661);
             this.tableResults.TabIndex = 0;
             // 
@@ -621,7 +635,6 @@
             this.tableControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableControls.Controls.Add(this.btnStartStop, 0, 0);
             this.tableControls.Controls.Add(this.chkIterations, 2, 1);
             this.tableControls.Controls.Add(this.chkFitness, 2, 4);
             this.tableControls.Controls.Add(this.chkSeconds, 2, 3);
@@ -635,7 +648,7 @@
             this.tableControls.Controls.Add(this.lblOr3, 0, 4);
             this.tableControls.Controls.Add(this.lblOr2, 0, 3);
             this.tableControls.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableControls.Location = new System.Drawing.Point(0, 0);
+            this.tableControls.Location = new System.Drawing.Point(0, 53);
             this.tableControls.Margin = new System.Windows.Forms.Padding(0);
             this.tableControls.Name = "tableControls";
             this.tableControls.RowCount = 5;
@@ -644,24 +657,8 @@
             this.tableControls.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableControls.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableControls.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableControls.Size = new System.Drawing.Size(320, 169);
+            this.tableControls.Size = new System.Drawing.Size(320, 116);
             this.tableControls.TabIndex = 0;
-            // 
-            // btnStartStop
-            // 
-            this.btnStartStop.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnStartStop.AutoSize = true;
-            this.btnStartStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableControls.SetColumnSpan(this.btnStartStop, 3);
-            this.btnStartStop.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
-            this.btnStartStop.Location = new System.Drawing.Point(103, 3);
-            this.btnStartStop.Name = "btnStartStop";
-            this.btnStartStop.Padding = new System.Windows.Forms.Padding(8, 9, 8, 9);
-            this.btnStartStop.Size = new System.Drawing.Size(114, 47);
-            this.btnStartStop.TabIndex = 12;
-            this.btnStartStop.Text = "&Start (F5)";
-            this.btnStartStop.UseVisualStyleBackColor = true;
-            this.btnStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
             // 
             // chkIterations
             // 
@@ -670,13 +667,12 @@
             this.chkIterations.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkIterations.Checked = true;
             this.chkIterations.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkIterations.Location = new System.Drawing.Point(231, 58);
+            this.chkIterations.Location = new System.Drawing.Point(231, 5);
             this.chkIterations.Name = "chkIterations";
             this.chkIterations.Size = new System.Drawing.Size(86, 19);
             this.chkIterations.TabIndex = 2;
             this.chkIterations.Text = "iterations";
             this.chkIterations.UseVisualStyleBackColor = true;
-            this.chkIterations.CheckedChanged += new System.EventHandler(this.chkLimit_CheckedChanged);
             this.chkIterations.MouseEnter += new System.EventHandler(this.chkLimit_MouseEnter);
             this.chkIterations.MouseLeave += new System.EventHandler(this.chkLimit_MouseLeave);
             // 
@@ -685,13 +681,12 @@
             this.chkFitness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkFitness.AutoSize = true;
             this.chkFitness.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkFitness.Location = new System.Drawing.Point(231, 145);
+            this.chkFitness.Location = new System.Drawing.Point(231, 92);
             this.chkFitness.Name = "chkFitness";
             this.chkFitness.Size = new System.Drawing.Size(86, 19);
             this.chkFitness.TabIndex = 11;
             this.chkFitness.Text = "fitness";
             this.chkFitness.UseVisualStyleBackColor = true;
-            this.chkFitness.CheckedChanged += new System.EventHandler(this.chkLimit_CheckedChanged);
             this.chkFitness.MouseEnter += new System.EventHandler(this.chkLimit_MouseEnter);
             this.chkFitness.MouseLeave += new System.EventHandler(this.chkLimit_MouseLeave);
             // 
@@ -700,13 +695,12 @@
             this.chkSeconds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSeconds.AutoSize = true;
             this.chkSeconds.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkSeconds.Location = new System.Drawing.Point(231, 116);
+            this.chkSeconds.Location = new System.Drawing.Point(231, 63);
             this.chkSeconds.Name = "chkSeconds";
             this.chkSeconds.Size = new System.Drawing.Size(86, 19);
             this.chkSeconds.TabIndex = 8;
             this.chkSeconds.Text = "seconds";
             this.chkSeconds.UseVisualStyleBackColor = true;
-            this.chkSeconds.CheckedChanged += new System.EventHandler(this.chkLimit_CheckedChanged);
             this.chkSeconds.MouseEnter += new System.EventHandler(this.chkLimit_MouseEnter);
             this.chkSeconds.MouseLeave += new System.EventHandler(this.chkLimit_MouseLeave);
             // 
@@ -715,20 +709,19 @@
             this.chkEvaluations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkEvaluations.AutoSize = true;
             this.chkEvaluations.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkEvaluations.Location = new System.Drawing.Point(231, 87);
+            this.chkEvaluations.Location = new System.Drawing.Point(231, 34);
             this.chkEvaluations.Name = "chkEvaluations";
             this.chkEvaluations.Size = new System.Drawing.Size(86, 19);
             this.chkEvaluations.TabIndex = 5;
             this.chkEvaluations.Text = "evaluations";
             this.chkEvaluations.UseVisualStyleBackColor = true;
-            this.chkEvaluations.CheckedChanged += new System.EventHandler(this.chkLimit_CheckedChanged);
             this.chkEvaluations.MouseEnter += new System.EventHandler(this.chkLimit_MouseEnter);
             this.chkEvaluations.MouseLeave += new System.EventHandler(this.chkLimit_MouseLeave);
             // 
             // txtFitness
             // 
             this.txtFitness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFitness.Location = new System.Drawing.Point(67, 143);
+            this.txtFitness.Location = new System.Drawing.Point(67, 90);
             this.txtFitness.Name = "txtFitness";
             this.txtFitness.Size = new System.Drawing.Size(158, 23);
             this.txtFitness.TabIndex = 10;
@@ -738,7 +731,7 @@
             // txtEvaluations
             // 
             this.txtEvaluations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtEvaluations.Location = new System.Drawing.Point(67, 85);
+            this.txtEvaluations.Location = new System.Drawing.Point(67, 32);
             this.txtEvaluations.Name = "txtEvaluations";
             this.txtEvaluations.Size = new System.Drawing.Size(158, 23);
             this.txtEvaluations.TabIndex = 4;
@@ -748,7 +741,7 @@
             // txtSeconds
             // 
             this.txtSeconds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSeconds.Location = new System.Drawing.Point(67, 114);
+            this.txtSeconds.Location = new System.Drawing.Point(67, 61);
             this.txtSeconds.Name = "txtSeconds";
             this.txtSeconds.Size = new System.Drawing.Size(158, 23);
             this.txtSeconds.TabIndex = 7;
@@ -758,7 +751,7 @@
             // txtIterations
             // 
             this.txtIterations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtIterations.Location = new System.Drawing.Point(67, 56);
+            this.txtIterations.Location = new System.Drawing.Point(67, 3);
             this.txtIterations.Name = "txtIterations";
             this.txtIterations.Size = new System.Drawing.Size(158, 23);
             this.txtIterations.TabIndex = 1;
@@ -770,7 +763,7 @@
             // 
             this.lblStopAfter.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblStopAfter.AutoSize = true;
-            this.lblStopAfter.Location = new System.Drawing.Point(3, 60);
+            this.lblStopAfter.Location = new System.Drawing.Point(3, 7);
             this.lblStopAfter.Name = "lblStopAfter";
             this.lblStopAfter.Size = new System.Drawing.Size(58, 15);
             this.lblStopAfter.TabIndex = 0;
@@ -780,7 +773,7 @@
             // 
             this.lblOr1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblOr1.AutoSize = true;
-            this.lblOr1.Location = new System.Drawing.Point(43, 89);
+            this.lblOr1.Location = new System.Drawing.Point(43, 36);
             this.lblOr1.Name = "lblOr1";
             this.lblOr1.Size = new System.Drawing.Size(18, 15);
             this.lblOr1.TabIndex = 3;
@@ -790,7 +783,7 @@
             // 
             this.lblOr3.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblOr3.AutoSize = true;
-            this.lblOr3.Location = new System.Drawing.Point(30, 147);
+            this.lblOr3.Location = new System.Drawing.Point(30, 94);
             this.lblOr3.Name = "lblOr3";
             this.lblOr3.Size = new System.Drawing.Size(31, 15);
             this.lblOr3.TabIndex = 9;
@@ -800,11 +793,43 @@
             // 
             this.lblOr2.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblOr2.AutoSize = true;
-            this.lblOr2.Location = new System.Drawing.Point(43, 118);
+            this.lblOr2.Location = new System.Drawing.Point(43, 65);
             this.lblOr2.Name = "lblOr2";
             this.lblOr2.Size = new System.Drawing.Size(18, 15);
             this.lblOr2.TabIndex = 6;
             this.lblOr2.Text = "or";
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.AutoSize = true;
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.btnStartStop, 1, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(320, 53);
+            this.tableLayoutPanel1.TabIndex = 13;
+            // 
+            // btnStartStop
+            // 
+            this.btnStartStop.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnStartStop.AutoSize = true;
+            this.btnStartStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnStartStop.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
+            this.btnStartStop.Location = new System.Drawing.Point(103, 3);
+            this.btnStartStop.Name = "btnStartStop";
+            this.btnStartStop.Padding = new System.Windows.Forms.Padding(8, 9, 8, 9);
+            this.btnStartStop.Size = new System.Drawing.Size(114, 47);
+            this.btnStartStop.TabIndex = 12;
+            this.btnStartStop.Text = "&Start (F5)";
+            this.btnStartStop.UseVisualStyleBackColor = true;
+            this.btnStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
             // 
             // splitGraphStats
             // 
@@ -828,6 +853,7 @@
             // 
             this.tabResultView.Controls.Add(this.tabChart);
             this.tabResultView.Controls.Add(this.tab2DPlot);
+            this.tabResultView.Controls.Add(this.tabBestIndividual);
             this.tabResultView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabResultView.Location = new System.Drawing.Point(0, 0);
             this.tabResultView.Name = "tabResultView";
@@ -862,7 +888,7 @@
             // 
             // tab2DPlot
             // 
-            this.tab2DPlot.Controls.Add(this.visPopulation);
+            this.tab2DPlot.Controls.Add(this.table2DPlot);
             this.tab2DPlot.Location = new System.Drawing.Point(4, 22);
             this.tab2DPlot.Name = "tab2DPlot";
             this.tab2DPlot.Padding = new System.Windows.Forms.Padding(3);
@@ -871,21 +897,125 @@
             this.tab2DPlot.Text = "2D Plot (Alt+2)";
             this.tab2DPlot.UseVisualStyleBackColor = true;
             // 
+            // table2DPlot
+            // 
+            this.table2DPlot.ColumnCount = 2;
+            this.table2DPlot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.table2DPlot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.table2DPlot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.table2DPlot.Controls.Add(this.visPopulation, 0, 1);
+            this.table2DPlot.Controls.Add(this.lblPlotExpression, 0, 0);
+            this.table2DPlot.Controls.Add(this.txtPlotExpression, 1, 0);
+            this.table2DPlot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.table2DPlot.Location = new System.Drawing.Point(3, 3);
+            this.table2DPlot.Name = "table2DPlot";
+            this.table2DPlot.RowCount = 2;
+            this.table2DPlot.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.table2DPlot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.table2DPlot.Size = new System.Drawing.Size(625, 460);
+            this.table2DPlot.TabIndex = 0;
+            // 
             // visPopulation
             // 
             this.visPopulation.AutoRange = true;
             this.visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.visPopulation.BackColor = System.Drawing.Color.White;
+            this.table2DPlot.SetColumnSpan(this.visPopulation, 2);
             this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.visPopulation.HorizontalOffset = -100000D;
             this.visPopulation.HorizontalRange = 1000000D;
-            this.visPopulation.Location = new System.Drawing.Point(3, 3);
+            this.visPopulation.Location = new System.Drawing.Point(3, 32);
             this.visPopulation.MaintainSquareAspect = true;
             this.visPopulation.Name = "visPopulation";
-            this.visPopulation.Size = new System.Drawing.Size(625, 460);
-            this.visPopulation.TabIndex = 1;
-            this.visPopulation.VerticalOffset = -7.2505224287160672D;
+            this.visPopulation.ShowMouseCoordinates = true;
+            this.visPopulation.Size = new System.Drawing.Size(619, 425);
+            this.visPopulation.TabIndex = 2;
+            this.visPopulation.VerticalOffset = -7.2505224288324825D;
             this.visPopulation.VerticalRange = 1000000D;
+            // 
+            // lblPlotExpression
+            // 
+            this.lblPlotExpression.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.lblPlotExpression.AutoSize = true;
+            this.lblPlotExpression.Location = new System.Drawing.Point(3, 7);
+            this.lblPlotExpression.Name = "lblPlotExpression";
+            this.lblPlotExpression.Size = new System.Drawing.Size(65, 15);
+            this.lblPlotExpression.TabIndex = 3;
+            this.lblPlotExpression.Text = "Expression:";
+            // 
+            // txtPlotExpression
+            // 
+            this.txtPlotExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPlotExpression.Location = new System.Drawing.Point(74, 3);
+            this.txtPlotExpression.Name = "txtPlotExpression";
+            this.txtPlotExpression.Size = new System.Drawing.Size(548, 23);
+            this.txtPlotExpression.TabIndex = 4;
+            this.txtPlotExpression.Text = "(indiv[0], indiv[1])";
+            this.txtPlotExpression.Enter += new System.EventHandler(this.txtExpression_Enter);
+            this.txtPlotExpression.Leave += new System.EventHandler(this.txtExpression_Leave);
+            // 
+            // tabBestIndividual
+            // 
+            this.tabBestIndividual.Controls.Add(this.tableBestIndividual);
+            this.tabBestIndividual.Location = new System.Drawing.Point(4, 22);
+            this.tabBestIndividual.Name = "tabBestIndividual";
+            this.tabBestIndividual.Padding = new System.Windows.Forms.Padding(3);
+            this.tabBestIndividual.Size = new System.Drawing.Size(631, 466);
+            this.tabBestIndividual.TabIndex = 2;
+            this.tabBestIndividual.Text = "Best (Alt+3)";
+            this.tabBestIndividual.UseVisualStyleBackColor = true;
+            // 
+            // tableBestIndividual
+            // 
+            this.tableBestIndividual.ColumnCount = 2;
+            this.tableBestIndividual.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableBestIndividual.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableBestIndividual.Controls.Add(this.lblBestIndividualExpression, 0, 0);
+            this.tableBestIndividual.Controls.Add(this.txtBestIndividualExpression, 1, 0);
+            this.tableBestIndividual.Controls.Add(this.txtBestIndividual, 0, 1);
+            this.tableBestIndividual.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableBestIndividual.Location = new System.Drawing.Point(3, 3);
+            this.tableBestIndividual.Name = "tableBestIndividual";
+            this.tableBestIndividual.RowCount = 2;
+            this.tableBestIndividual.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableBestIndividual.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableBestIndividual.Size = new System.Drawing.Size(625, 460);
+            this.tableBestIndividual.TabIndex = 0;
+            // 
+            // lblBestIndividualExpression
+            // 
+            this.lblBestIndividualExpression.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.lblBestIndividualExpression.AutoSize = true;
+            this.lblBestIndividualExpression.Location = new System.Drawing.Point(3, 7);
+            this.lblBestIndividualExpression.Name = "lblBestIndividualExpression";
+            this.lblBestIndividualExpression.Size = new System.Drawing.Size(65, 15);
+            this.lblBestIndividualExpression.TabIndex = 0;
+            this.lblBestIndividualExpression.Text = "Expression:";
+            // 
+            // txtBestIndividualExpression
+            // 
+            this.txtBestIndividualExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtBestIndividualExpression.Location = new System.Drawing.Point(74, 3);
+            this.txtBestIndividualExpression.Name = "txtBestIndividualExpression";
+            this.txtBestIndividualExpression.Size = new System.Drawing.Size(548, 23);
+            this.txtBestIndividualExpression.TabIndex = 1;
+            this.txtBestIndividualExpression.Text = "indiv.phenome_string";
+            this.txtBestIndividualExpression.TextChanged += new System.EventHandler(this.txtBestIndividualExpression_TextChanged);
+            this.txtBestIndividualExpression.Enter += new System.EventHandler(this.txtExpression_Enter);
+            this.txtBestIndividualExpression.Leave += new System.EventHandler(this.txtExpression_Leave);
+            // 
+            // txtBestIndividual
+            // 
+            this.tableBestIndividual.SetColumnSpan(this.txtBestIndividual, 2);
+            this.txtBestIndividual.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtBestIndividual.Location = new System.Drawing.Point(3, 32);
+            this.txtBestIndividual.Multiline = true;
+            this.txtBestIndividual.Name = "txtBestIndividual";
+            this.txtBestIndividual.ReadOnly = true;
+            this.txtBestIndividual.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtBestIndividual.Size = new System.Drawing.Size(619, 425);
+            this.txtBestIndividual.TabIndex = 2;
+            this.txtBestIndividual.VisibleChanged += new System.EventHandler(this.txtBestIndividual_VisibleChanged);
             // 
             // tableStats
             // 
@@ -1269,6 +1399,7 @@
             menuViewSeparator4,
             this.menuViewSubview1,
             this.menuViewSubview2,
+            this.menuViewSubview3,
             menuViewSeparator5,
             this.menuViewProjectorMode});
             this.menuView.Name = "menuView";
@@ -1323,6 +1454,14 @@
             this.menuViewSubview2.Size = new System.Drawing.Size(181, 22);
             this.menuViewSubview2.Text = "Subview &2";
             this.menuViewSubview2.Click += new System.EventHandler(this.menuViewSubview2_Click);
+            // 
+            // menuViewSubview3
+            // 
+            this.menuViewSubview3.Name = "menuViewSubview3";
+            this.menuViewSubview3.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D3)));
+            this.menuViewSubview3.Size = new System.Drawing.Size(181, 22);
+            this.menuViewSubview3.Text = "Subview &3";
+            this.menuViewSubview3.Click += new System.EventHandler(this.menuViewSubview3_Click);
             // 
             // menuViewProjectorMode
             // 
@@ -1539,6 +1678,8 @@
             this.tableResults.PerformLayout();
             this.tableControls.ResumeLayout(false);
             this.tableControls.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.splitGraphStats.Panel1.ResumeLayout(false);
             this.splitGraphStats.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).EndInit();
@@ -1546,6 +1687,11 @@
             this.tabResultView.ResumeLayout(false);
             this.tabChart.ResumeLayout(false);
             this.tab2DPlot.ResumeLayout(false);
+            this.table2DPlot.ResumeLayout(false);
+            this.table2DPlot.PerformLayout();
+            this.tabBestIndividual.ResumeLayout(false);
+            this.tableBestIndividual.ResumeLayout(false);
+            this.tableBestIndividual.PerformLayout();
             this.tableStats.ResumeLayout(false);
             this.tableStats.PerformLayout();
             this.menuStrip.ResumeLayout(false);
@@ -1620,7 +1766,6 @@
         private System.Windows.Forms.TabControl tabResultView;
         private System.Windows.Forms.TabPage tabChart;
         private System.Windows.Forms.TabPage tab2DPlot;
-        private VisualiserLib.Visualiser visPopulation;
         private ICSharpCode.TextEditor.TextEditorControl txtEvaluatorCode;
         private System.Windows.Forms.Label lblEvaluatorCode;
         private VisualiserLib.Visualiser chartResults;
@@ -1666,6 +1811,17 @@
         private System.Windows.Forms.ListView lstPythonDefinitions;
         private System.Windows.Forms.ImageList imlPythonDefinitions;
         private System.Windows.Forms.ToolStripMenuItem menuViewProjectorMode;
+        private System.Windows.Forms.TabPage tabBestIndividual;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableBestIndividual;
+        private System.Windows.Forms.Label lblBestIndividualExpression;
+        private System.Windows.Forms.TextBox txtBestIndividualExpression;
+        private System.Windows.Forms.TextBox txtBestIndividual;
+        private System.Windows.Forms.ToolStripMenuItem menuViewSubview3;
+        private System.Windows.Forms.TableLayoutPanel table2DPlot;
+        private VisualiserLib.Visualiser visPopulation;
+        private System.Windows.Forms.Label lblPlotExpression;
+        private System.Windows.Forms.TextBox txtPlotExpression;
     }
 }
 

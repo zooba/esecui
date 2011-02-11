@@ -148,6 +148,7 @@ namespace esecui
         public void on_post_breed(dynamic sender)
         {
             Owner.UpdateStats(Iterations, Evaluations, Births, DateTime.Now.Subtract(StartTime),
+                BestSolution,
                 BestSolution == null ? null : BestSolution.fitness,
                 CurrentBest == null ? null : CurrentBest.fitness,
                 CurrentMean == null ? null : CurrentMean,
@@ -162,6 +163,7 @@ namespace esecui
         public void on_run_end(dynamic sender)
         {
             Owner.UpdateStats(Iterations, Evaluations, Births, DateTime.Now.Subtract(StartTime),
+                BestSolution,
                 BestSolution == null ? null : BestSolution.fitness,
                 CurrentBest == null ? null : CurrentBest.fitness,
                 CurrentMean == null ? null : CurrentMean,

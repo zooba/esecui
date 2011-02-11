@@ -20,7 +20,7 @@ namespace esecui
         {
             Read(source);
         }
-        
+
         public string Name { get; set; }
         public string Source { get; set; }
 
@@ -32,15 +32,21 @@ namespace esecui
         public string LandscapeParameters { get; set; }
         public string CustomEvaluator { get; set; }
 
+        public string PlotExpression { get; set; }
+        public string BestIndividualExpression { get; set; }
+        public const string DefaultPlotExpression = "(indiv[0], indiv[1])";
+        public const string DefaultBestIndividualExpression = "indiv.phenome_string";
+
+
         public int? IterationLimit { get; set; }
         public int? EvaluationLimit { get; set; }
         public TimeSpan? TimeLimit { get; set; }
         public double? FitnessLimit { get; set; }
 
-        private static string ToPythonCode(Dictionary<string,object> source, string indent)
+        private static string ToPythonCode(Dictionary<string, object> source, string indent)
         {
             var sb = new StringBuilder();
-            foreach(var kv in source)
+            foreach (var kv in source)
             {
                 sb.Append(indent);
                 string asStr;
@@ -50,7 +56,7 @@ namespace esecui
                 sb.Append(kv.Key);
                 sb.Append("': ");
 
-                if((asStr = kv.Value as string) != null)
+                if ((asStr = kv.Value as string) != null)
                 {
                     sb.Append(asStr);
                 }
@@ -94,7 +100,7 @@ namespace esecui
                     subdict[parts[parts.Length - 1]] = value;
                 }
             }
-             
+
 
             return ToPythonCode(dict, indent);
         }
@@ -198,7 +204,10 @@ config = {
                         IterationLimit.HasValue ? new XAttribute("iterations", IterationLimit.Value) : null,
                         EvaluationLimit.HasValue ? new XAttribute("evaluations", EvaluationLimit.Value) : null,
                         TimeLimit.HasValue ? new XAttribute("seconds", TimeLimit.Value.TotalSeconds) : null,
-                        FitnessLimit.HasValue ? new XAttribute("fitness", FitnessLimit.Value) : null)));
+                        FitnessLimit.HasValue ? new XAttribute("fitness", FitnessLimit.Value) : null)),
+                new XElement("display",
+                    new XElement("bestindiv", BestIndividualExpression))
+                );
             xml.WriteTo(destination);
         }
 
@@ -218,6 +227,19 @@ config = {
             LandscapeParameters = xml.Element("landscape").Element("parameters").Value;
             Landscape = (string)xml.Element("landscape").Element("class");
             CustomEvaluator = (string)xml.Element("landscape").Element("evaluator") ?? "";
+
+
+            var displayElement = xml.Element("display");
+            if (displayElement != null)
+            {
+                PlotExpression = (string)displayElement.Element("plot") ?? DefaultPlotExpression;
+                BestIndividualExpression = (string)displayElement.Element("bestindiv") ?? DefaultBestIndividualExpression;
+            }
+            else
+            {
+                PlotExpression = DefaultPlotExpression;
+                BestIndividualExpression = DefaultBestIndividualExpression;
+            }
 
             var limits = xml.Element("monitor").Element("limits");
             IterationLimit = (int?)limits.Attribute("iterations");
