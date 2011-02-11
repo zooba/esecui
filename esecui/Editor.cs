@@ -34,35 +34,16 @@ namespace esecui
             chkResults.Tag = panelResults;
             chkLog.Tag = panelLog;
 
-            var codeFont = new Font("Consolas", 10.0f);
-            if (codeFont.Name != codeFont.OriginalFontName)
-            {
-                codeFont = new Font(FontFamily.GenericMonospace, 10.0f);
-            }
-
-            chkChartBestFitness.Tag = 0;
-            chkChartCurrentBest.Tag = 1;
-            chkChartCurrentMean.Tag = 2;
-            chkChartCurrentWorst.Tag = 3;
-            chkChartBestFitness.BackColor = ChartStyles[0].LineColor;
-            chkChartCurrentBest.BackColor = ChartStyles[1].LineColor;
-            chkChartCurrentMean.BackColor = ChartStyles[2].LineColor;
-            chkChartCurrentWorst.BackColor = ChartStyles[3].LineColor;
-
-            txtSystemESDL.Font = codeFont;
-            txtSystemPython.Font = codeFont;
-            txtSystemVariables.Font = codeFont;
-            txtLandscapeParameters.Font = codeFont;
-            txtEvaluatorCode.Font = codeFont;
-            txtLog.Font = codeFont;
-
             txtSystemESDL.SetHighlighting("ESDL");
             txtSystemPython.SetHighlighting("Python");
             txtSystemVariables.SetHighlighting("ESDLVariables");
             txtLandscapeParameters.SetHighlighting("ESDLVariables");
             txtEvaluatorCode.SetHighlighting("Python");
 
-            txtSystemPython.Document.DocumentChanged += new ICSharpCode.TextEditor.Document.DocumentEventHandler(UpdatePythonDefinitions);
+            txtSystemPython.Document.DocumentChanged +=
+                new ICSharpCode.TextEditor.Document.DocumentEventHandler(UpdatePythonDefinitions);
+
+            InitialiseDisplay(false);
         }
 
         private void menuAbout_Click(object sender, EventArgs e)
@@ -77,52 +58,174 @@ namespace esecui
             Close();
         }
 
+        #region Projector Mode
+
+        private static readonly string[] Styles = new[] { "BestFitness", "CurrentBest", "CurrentMean", "CurrentWorst" };
+
+        private Font UIFont;
+        private Font ProjectorUIFont;
+        private Font CodeFont;
+        private Font ProjectorCodeFont;
+
+        private void InitialiseDisplay(bool projectorMode)
+        {
+            var settings = Properties.Settings.Default;
+
+            // Initialise the UI font
+            UIFont = new Font("Segoe UI", 9.0f);
+            if (UIFont.Name != UIFont.OriginalFontName)
+            {
+                UIFont = new Font("Tahoma", 9.0f);
+            }
+            if (UIFont.Name != UIFont.OriginalFontName)
+            {
+                UIFont = new Font(FontFamily.GenericSansSerif, 9.0f);
+            }
+            ProjectorUIFont = new Font(UIFont.Name, 18.0f);
+            
+            // Force some controls to always use the smaller font
+            panelMenu.Font = UIFont;
+            tabSourceView.Font = UIFont;
+            tabResultView.Font = UIFont;
+
+            // Initialise the code font
+            CodeFont = new Font("Consolas", 10.0f);
+            if (CodeFont.Name != CodeFont.OriginalFontName)
+            {
+                CodeFont = new Font(FontFamily.GenericMonospace, 10.0f);
+            }
+            ProjectorCodeFont = new Font(CodeFont.Name, 20.0f);
+
+            // Initialise the chart styles
+            SeriesNames = new Dictionary<string, int>();
+            NormalChartStyles = new Dictionary<string, VisualiserPointStyle>();
+            ProjectorChartStyles = new Dictionary<string, VisualiserPointStyle>();
+            int seriesNumber = 0;
+
+            foreach (var style in Styles)
+            {
+                SeriesNames[style] = seriesNumber++;
+
+                NormalChartStyles[style] = new VisualiserPointStyle
+                {
+                    LineColor = (Color)settings[style + "LineColor"],
+                    LineThickness = (double)settings[style + "LineThickness"]
+                };
+
+                ProjectorChartStyles[style] = new VisualiserPointStyle
+                {
+                    LineColor = (Color)settings[style + "LineColorProjector"],
+                    LineThickness = (double)settings[style + "LineThicknessProjector"]
+                };
+            }
+
+            // Initialise the visualiser styles
+            NormalVisualiserStyle = new VisualiserPointStyle
+            {
+                BorderColor = settings.VisualiserBorderColor,
+                BorderThickness = settings.VisualiserBorderThickness,
+                FillColor = settings.VisualiserFillColor,
+                Size = settings.VisualiserSize,
+                ScaleMode = VisualiserPointScaleMode.Pixels,
+                Shape = settings.VisualiserShape
+            };
+
+            ProjectorVisualiserStyle = new VisualiserPointStyle
+            {
+                BorderColor = settings.VisualiserBorderColorProjector,
+                BorderThickness = settings.VisualiserBorderThicknessProjector,
+                FillColor = settings.VisualiserFillColorProjector,
+                Size = settings.VisualiserSizeProjector,
+                ScaleMode = VisualiserPointScaleMode.Pixels,
+                Shape = settings.VisualiserShapeProjector
+            };
+
+            // Set the mode to the specified parameter
+            _ProjectorMode = !projectorMode;
+            ProjectorMode = projectorMode;
+        }
+
+        private FormWindowState NormalWindowState = FormWindowState.Normal;
+        private bool _ProjectorMode;
+        public bool ProjectorMode
+        {
+            get { return _ProjectorMode; }
+            set
+            {
+                if (_ProjectorMode == value) return;
+
+                _ProjectorMode = value;
+                SuspendLayout();
+                if (!value)
+                {
+                    Font = UIFont;
+                    
+                    txtSystemESDL.Font = CodeFont;
+                    txtSystemPython.Font = CodeFont;
+                    txtSystemVariables.Font = CodeFont;
+                    txtLandscapeParameters.Font = CodeFont;
+                    txtEvaluatorCode.Font = CodeFont;
+                    txtLog.Font = CodeFont;
+
+                    ActiveChartStyles = NormalChartStyles;
+                    ActiveVisualiserStyle = NormalVisualiserStyle;
+
+                    WindowState = NormalWindowState;
+                    Refresh();
+                }
+                else
+                {
+                    NormalWindowState = WindowState;
+
+                    Font = ProjectorUIFont;
+
+                    txtSystemESDL.Font = ProjectorCodeFont;
+                    txtSystemPython.Font = ProjectorCodeFont;
+                    txtSystemVariables.Font = ProjectorCodeFont;
+                    txtLandscapeParameters.Font = ProjectorCodeFont;
+                    txtEvaluatorCode.Font = ProjectorCodeFont;
+                    txtLog.Font = ProjectorCodeFont;
+
+                    ActiveChartStyles = ProjectorChartStyles;
+                    ActiveVisualiserStyle = ProjectorVisualiserStyle;
+
+                    WindowState = FormWindowState.Maximized;
+                    Refresh();
+                }
+                ResumeLayout(true);
+                Editor_ClientSizeChanged(this, EventArgs.Empty);
+            }
+        }
+
+        private void menuViewProjectorMode_Click(object sender, EventArgs e)
+        {
+            ProjectorMode = !ProjectorMode;
+            menuViewProjectorMode.Checked = ProjectorMode;
+        }
+
+        #endregion
+
         #region Chart Styles
 
-        private static readonly VisualiserPointStyle VisualiserStyle = new VisualiserPointStyle
-        {
-            BorderColor = Color.RoyalBlue,
-            BorderThickness = 1.0,
-            FillColor = Color.FromArgb(64, Color.Blue),
-            Size = 9.0,
-            ScaleMode = VisualiserPointScaleMode.Pixels,
-            Shape = VisualiserPointShape.Diamond
-        };
+        private VisualiserPointStyle ActiveVisualiserStyle;
+        private VisualiserPointStyle NormalVisualiserStyle;
+        private VisualiserPointStyle ProjectorVisualiserStyle;
 
-        private static readonly VisualiserPointStyle[] ChartStyles = new[]
-        {
-            new VisualiserPointStyle
-            {
-                LineColor = Color.Blue,
-                LineThickness = 2.0,
-            },
-            new VisualiserPointStyle
-            {
-                LineColor = Color.Red,
-                LineThickness = 1.0,
-            },
-            new VisualiserPointStyle
-            {
-                LineColor = Color.Green,
-                LineThickness = 1.0,
-            },
-            new VisualiserPointStyle
-            {
-                LineColor = Color.Gold,
-                LineThickness = 1.0,
-            },
-        };
+        private IDictionary<string, VisualiserPointStyle> ActiveChartStyles;
+        private Dictionary<string, VisualiserPointStyle> NormalChartStyles;
+        private Dictionary<string, VisualiserPointStyle> ProjectorChartStyles;
+        private Dictionary<string, int> SeriesNames;
 
         private void chkChartSeries_CheckedChanged(object sender, EventArgs e)
         {
             var checkbox = (CheckBox)sender;
-            chartResults.ShowSeries((int)checkbox.Tag, checkbox.Checked);
+            chartResults.ShowSeries(SeriesNames[(string)checkbox.Tag], checkbox.Checked);
         }
 
         private void chkChartSeries_VisibleChanged(object sender, EventArgs e)
         {
             var checkbox = (CheckBox)sender;
-            checkbox.BackColor = ChartStyles[(int)checkbox.Tag].LineColor;
+            checkbox.BackColor = ActiveChartStyles[(string)checkbox.Tag].LineColor;
         }
 
         #endregion
@@ -537,25 +640,25 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 double value = (double)bestFitness.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ChartStyles[0]), 0);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ActiveChartStyles["BestFitness"]), 0);
             }
             if (currentBest != null)
             {
                 double value = (double)currentBest.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ChartStyles[1]), 1);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ActiveChartStyles["CurrentBest"]), 1);
             }
             if (currentMean != null)
             {
                 double value = (double)currentMean.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ChartStyles[2]), 2);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ActiveChartStyles["CurrentMean"]), 2);
             }
             if (currentWorst != null)
             {
                 double value = (double)currentWorst.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ChartStyles[3]), 3);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ActiveChartStyles["CurrentWorst"]), 3);
             }
         }
 
@@ -576,7 +679,10 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             try
             {
-                points = population.Select(indiv => new VisualiserPoint((double)indiv[0], (double)indiv[1], 0.0, VisualiserStyle)).ToList();
+                points = population
+                    .Select(indiv => 
+                        new VisualiserPoint((double)indiv[0], (double)indiv[1], 0.0, ActiveVisualiserStyle))
+                    .ToList();
             }
             catch
             {
@@ -853,29 +959,43 @@ class CustomEvaluator(esec.landscape.Landscape):
                 chkFitness.Checked = !string.IsNullOrWhiteSpace(txtFitness.Text);
         }
 
+        private void chkLimit_CheckedChanged(object sender, EventArgs e)
+        {
+            var chk = (CheckBox)sender;
+
+            if (chk.ForeColor != SystemColors.Highlight)
+            {
+                chk.ForeColor = (!ProjectorMode || chk.Checked) ? SystemColors.WindowText : SystemColors.ControlDark;
+            }
+        }
+
         private void chkLimit_MouseEnter(object sender, EventArgs e)
         {
-            var chk = sender as CheckBox;
-            if (chk == null) return;
+            var chk = (CheckBox)sender;
 
             chk.ForeColor = SystemColors.Highlight;
         }
 
         private void chkLimit_MouseLeave(object sender, EventArgs e)
         {
-            var chk = sender as CheckBox;
-            if (chk == null) return;
+            var chk = (CheckBox)sender;
 
-            chk.ForeColor = SystemColors.WindowText;
+            chk.ForeColor = (!ProjectorMode || chk.Checked) ? SystemColors.WindowText : SystemColors.ControlDark;
         }
 
         private void panelMenu_Layout(object sender, LayoutEventArgs e)
+        {
+            panelMenu_SizeChanged(sender, EventArgs.Empty);
+        }
+        
+        private void panelMenu_SizeChanged(object sender, EventArgs e)
         {
             lstConfigurations.Width = panelMenu.ClientSize.Width
                 - lstConfigurations.Left
                 - lstConfigurations.Margin.Right - panelMenu.Padding.Right;
             lstConfigurations.DropDownWidth = Math.Max(lstConfigurations.Width, 200);
         }
+
 
         private void DrawPanelToBitmap(Panel panel, Bitmap bitmap)
         {
@@ -884,6 +1004,9 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void LookDisabled()
         {
+            Image oldImage = null;
+            if (picDimmer.Visible) oldImage = picDimmer.Image;
+
             var dimmed = new Bitmap(ClientSize.Width, ClientSize.Height);
             DrawPanelToBitmap(panelMenu, dimmed);
             DrawPanelToBitmap(panelSystem, dimmed);
@@ -900,6 +1023,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             picDimmer.SetBounds(0, 0, ClientSize.Width, ClientSize.Height);
             picDimmer.Visible = true;
 
+            if (oldImage != null) oldImage.Dispose();
         }
 
         private void LookEnabled()
@@ -908,6 +1032,25 @@ class CustomEvaluator(esec.landscape.Landscape):
             picDimmer.Image = null;
             picDimmer.Visible = false;
             dimmed.Dispose();
+        }
+
+        bool Resizing = false;
+        private void Editor_ClientSizeChanged(object sender, EventArgs e)
+        {
+            picDimmer.SetBounds(0, 0, ClientSize.Width, ClientSize.Height);
+            if (!Resizing && picDimmer.Visible) LookDisabled();
+        }
+
+        private void Editor_ResizeBegin(object sender, EventArgs e)
+        {
+            Resizing = true;
+        }
+
+        private void Editor_ResizeEnd(object sender, EventArgs e)
+        {
+            Resizing = false;
+            Editor_ClientSizeChanged(sender, e);
+            //PerformLayout();
         }
 
         #endregion
