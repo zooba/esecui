@@ -53,7 +53,7 @@ namespace esecui
             return (IDictionary<object, object>)Eval("dict(contents)", scope);
         }
 
-        public IDictionary<object, object> Dict(IDictionary<object,object> contents)
+        public IDictionary<object, object> Dict(IDictionary<object, object> contents)
         {
             var result = Dict();
             foreach (var item in contents)
@@ -99,12 +99,12 @@ namespace esecui
         {
             Exec(code, Scope);
         }
-        
+
         public void Exec(string code, ScriptScope scope)
         {
             Engine.Execute(code, scope);
         }
-        
+
         public string Repr(object value)
         {
             var scope = CreateScope();
@@ -112,14 +112,19 @@ namespace esecui
             return Engine.Execute<string>("repr(__object)", scope);
         }
 
-        public dynamic Eval(string expression)
+        public ScriptSource CompileExpression(string expression)
         {
-            return Eval(expression, Scope);
+            return Engine.CreateScriptSourceFromString(expression, Microsoft.Scripting.SourceCodeKind.Expression);
         }
 
-        public dynamic Eval(string expression, ScriptScope scope)
+        public dynamic Eval(string expression, ScriptScope scope = null)
         {
-            return Engine.Execute(expression, scope);
+            return Engine.Execute(expression, scope ?? Scope);
+        }
+
+        public dynamic Eval(ScriptSource expression, ScriptScope scope = null)
+        {
+            return expression.Execute(scope ?? Scope);
         }
     }
 }
