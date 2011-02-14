@@ -130,7 +130,7 @@ namespace esecui
             if (!scope.ContainsVariable(parts[0]))
             {
                 dest[parts[0]] = newNested();
-                scope.SetVariable(parts[0], dest[parts[0]]);
+                scope.SetVariable(parts[0], (object)dest[parts[0]]);
             }
 
             foreach (var part in parts.Take(parts.Length - 1))

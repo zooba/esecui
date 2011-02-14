@@ -744,8 +744,8 @@ class CustomEvaluator(esec.landscape.Landscape):
                     .OrderByDescending(indiv => indiv.fitness.simple)
                     .Select((indiv, i) =>
                         {
-                            scope.SetVariable("indiv", indiv);
-                            scope.SetVariable("i", i);
+                            scope.SetVariable("indiv", (object)indiv);
+                            scope.SetVariable("i", (object)i);
                             return Python.Eval(expr, scope);
                         })
                     .Select(pair =>
@@ -809,7 +809,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 var scope = Python.CreateScope();
                 Python.Exec("from math import *", scope);
-                scope.SetVariable("indiv", CurrentBestIndividual);
+                scope.SetVariable("indiv", (object)CurrentBestIndividual);
 
                 var expr = string.IsNullOrWhiteSpace(txtBestIndividualExpression.Text)
                     ? "indiv.genome_string" : txtBestIndividualExpression.Text;

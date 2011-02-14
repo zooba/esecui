@@ -25,10 +25,6 @@ namespace esecui
             }
 
             Scope = Engine.CreateScope();
-
-            Engine.Execute("import clr", Scope);
-            Engine.Execute("clr.AddReference('System')", Scope);
-            Engine.Execute("from System import *", Scope);
         }
 
         public dynamic Import(string package)
@@ -67,7 +63,7 @@ namespace esecui
 
         public IDictionary<object, object> Dict(object contents, ScriptScope scope)
         {
-            scope.SetVariable("__contents", contents);
+            scope.SetVariable("__contents", (object)contents);
             return (IDictionary<object, object>)Eval("dict(__contents)", scope);
         }
 
@@ -80,8 +76,6 @@ namespace esecui
         public ScriptScope CreateScope()
         {
             var scope = Engine.CreateScope();
-            Engine.Execute("import clr", scope);
-            Engine.Execute("clr.AddReference('System')", scope);
             Engine.Execute("from System import *", scope);
             return scope;
         }
@@ -89,8 +83,6 @@ namespace esecui
         public ScriptScope CreateScope(IDictionary<string, object> dictionary)
         {
             var scope = Engine.CreateScope(dictionary);
-            Engine.Execute("import clr", scope);
-            Engine.Execute("clr.AddReference('System')", scope);
             Engine.Execute("from System import *", scope);
             return scope;
         }
@@ -108,7 +100,7 @@ namespace esecui
         public string Repr(object value)
         {
             var scope = CreateScope();
-            scope.SetVariable("__object", value);
+            scope.SetVariable("__object", (object)value);
             return Engine.Execute<string>("repr(__object)", scope);
         }
 
