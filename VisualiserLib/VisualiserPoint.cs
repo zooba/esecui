@@ -47,7 +47,7 @@ namespace VisualiserLib
             X = x;
             Y = y;
             Z = z;
-            Style = style ?? DefaultStyle;
+            Style = style;
         }
 
         /// <summary>

@@ -20,12 +20,6 @@ namespace VisualiserLib
                 ControlStyles.ResizeRedraw | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 
             InitializeComponent();
-
-            _Points = new Dictionary<int, List<VisualiserPoint>>();
-            _Points[0] = new List<VisualiserPoint>();
-
-            _Visible = new Dictionary<int, bool>();
-            _Visible[0] = true;
         }
 
         #region Begin/End Update
@@ -448,7 +442,7 @@ namespace VisualiserLib
             double horizontalMin = 0, horizontalMax = 0, verticalMin = 0, verticalMax = 0;
 
             bool firstPoint = true;
-            foreach (var pt in _Points.Where((p, i) => !_Visible.ContainsKey(i) || _Visible[i]).SelectMany(kv => kv.Value))
+            foreach (var pt in Series.Where(s => s.Visible).SelectMany(s => s.Points))
             {
                 horizontalMin = (firstPoint || pt.X < horizontalMin) ? pt.X : horizontalMin;
                 horizontalMax = (firstPoint || pt.X > horizontalMax) ? pt.X : horizontalMax;
@@ -631,6 +625,34 @@ namespace VisualiserLib
             }
         }
 
+
+        const double DefaultHorizontalAxisThickness = 1.0;
+        private double _HorizontalAxisThickness = DefaultHorizontalAxisThickness;
+        [Browsable(true), DefaultValue(DefaultHorizontalAxisThickness)]
+        [Description("The number of pixels tall to make the horizontal axis.")]
+        public double HorizontalAxisThickness
+        {
+            get { return _HorizontalAxisThickness; }
+            set
+            {
+                _HorizontalAxisThickness = value;
+            }
+        }
+
+
+        const double DefaultVerticalAxisThickness = 1.0;
+        private double _VerticalAxisThickness = DefaultVerticalAxisThickness;
+        [Browsable(true), DefaultValue(DefaultVerticalAxisThickness)]
+        [Description("The number of pixels wide to make the vertical axis.")]
+        public double VerticalAxisThickness
+        {
+            get { return _VerticalAxisThickness; }
+            set
+            {
+                _VerticalAxisThickness = value;
+            }
+        }
+
         const bool DefaultShowMouseCoordinates = false;
         private bool _ShowMouseCoordinates = DefaultShowMouseCoordinates;
         [Browsable(true), DefaultValue(DefaultShowMouseCoordinates)]
@@ -661,29 +683,120 @@ namespace VisualiserLib
 
         #region Point Properties and Methods
 
-        private Dictionary<int, List<VisualiserPoint>> _Points;
-        private Dictionary<int, bool> _Visible;
-
-        private List<VisualiserPoint> GetSeries(int series)
+        /// <summary>
+        /// Represents the information associated with a particular series.
+        /// </summary>
+        public class SeriesInfo
         {
-            if (!_Points.ContainsKey(series)) _Points[series] = new List<VisualiserPoint>();
-            return _Points[series];
+            /// <summary>
+            /// Initialises a default series.
+            /// </summary>
+            public SeriesInfo() { Points = new List<VisualiserPoint>(); Visible = true; Style = null; }
+            /// <summary>
+            /// The points belonging to this series.
+            /// </summary>
+            public List<VisualiserPoint> Points { get; set; }
+            /// <summary>
+            /// True if the series should be displayed; otherwise, false.
+            /// </summary>
+            public bool Visible { get; set; }
+            /// <summary>
+            /// The style to use for points in this series if they are not
+            /// overloaded.
+            /// </summary>
+            public VisualiserPointStyle Style { get; set; }
         }
-
-        private void SetSeries(int series, List<VisualiserPoint> points)
-        {
-            _Points[series] = points;
-        }
-
 
         /// <summary>
-        /// Gets the points for the default series (series zero).
+        /// Represents the collection of series in this visualiser.
+        /// </summary>
+        public class SeriesCollection : IEnumerable<SeriesInfo>
+        {
+            SortedList<int, SeriesInfo> Dict = new SortedList<int, SeriesInfo>();
+
+            /// <summary>
+            /// Removes all series.
+            /// </summary>
+            public void Clear()
+            {
+                Dict.Clear();
+            }
+
+            /// <summary>
+            /// Gets the specifies series. If it does not exist, an empty
+            /// series is created.
+            /// </summary>
+            /// <param name="index">The index of the series.</param>
+            /// <returns>The series at the specified index.</returns>
+            public SeriesInfo this[int index]
+            {
+                get
+                {
+                    if (!Dict.ContainsKey(index)) Dict[index] = new SeriesInfo();
+                    return Dict[index];
+                }
+            }
+
+            /// <summary>
+            /// Returns True if there are any points in any series.
+            /// </summary>
+            /// <param name="visibleOnly">If True, ignores points for invisible
+            /// series.</param>
+            /// <returns>True if there are any points in any series.</returns>
+            public bool AnyPoints(bool visibleOnly = true)
+            {
+                if (visibleOnly)
+                    return Dict.Count > 0 && Dict.Any(kv => kv.Value.Visible && kv.Value.Points.Count > 0);
+                else
+                    return Dict.Count > 0 && Dict.Any(kv => kv.Value.Points.Count > 0);
+            }
+
+            /// <summary>
+            /// Gets the number of series.
+            /// </summary>
+            public int Count
+            {
+                get { return Dict.Count; }
+            }
+
+            /// <summary>
+            /// Gets the total number of points in all series.
+            /// </summary>
+            public int PointCount
+            {
+                get { return Dict.Sum(kv => kv.Value.Points.Count); }
+            }
+
+            /// <summary>
+            /// Returns an enumerator for the series in this collection.
+            /// </summary>
+            /// <returns>
+            /// An enumerator for the series in this collection.
+            /// </returns>
+            public IEnumerator<SeriesInfo> GetEnumerator()
+            {
+                return Dict.Values.GetEnumerator();
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
+
+        private readonly SeriesCollection _Series = new SeriesCollection();
+        /// <summary>
+        /// Gets the collection of series. New series may be added by accessing
+        /// an otherwise unused index. Series may only be removed by clearing
+        /// the collection.
+        /// 
+        /// Use of the methods bound to <see cref="Visualiser"/> is recommended
+        /// to ensure the display is updated. Otherwise, after directly
+        /// manipulating a series, call <see cref="PerformAutoRange"/> if
+        /// desired, followed by <see cref="Refresh"/>.
         /// </summary>
         [Browsable(false)]
-        public ReadOnlyCollection<VisualiserPoint> Points
-        {
-            get { return new ReadOnlyCollection<VisualiserPoint>(GetSeries(0)); }
-        }
+        public SeriesCollection Series { get { return _Series; } }
 
         /// <summary>
         /// Adds a point to the visualiser.
@@ -692,8 +805,9 @@ namespace VisualiserLib
         /// <param name="series">The series to add the point to.</param>
         public void Add(VisualiserPoint point, int series = 0)
         {
-            GetSeries(series).Add(point);
-            if (!_Visible.ContainsKey(series) || _Visible[series])
+            var s = Series[series];
+            s.Points.Add(point);
+            if (s.Visible)
             {
                 if (AutoRange) PerformAutoRange(true);
                 Refresh();
@@ -701,14 +815,19 @@ namespace VisualiserLib
         }
 
         /// <summary>
-        /// Removes all points from the visualiser.
+        /// Removes all series from the visualiser.
         /// </summary>
-        public void ClearAll()
+        public void ClearAll(bool pointsOnly = false)
         {
-            _Points = new Dictionary<int, List<VisualiserPoint>>();
-            _Points[0] = new List<VisualiserPoint>();
-            _Visible = new Dictionary<int, bool>();
-            _Visible[0] = true;
+            if (pointsOnly)
+            {
+                foreach (var s in Series) s.Points.Clear();
+            }
+            else
+            {
+                Series.Clear();
+            }
+            if (AutoRange) PerformAutoRange(true);
             Refresh();
         }
 
@@ -718,8 +837,9 @@ namespace VisualiserLib
         /// <param name="series">The series to clear.</param>
         public void Clear(int series = 0)
         {
-            GetSeries(series).Clear();
-            if (!_Visible.ContainsKey(series) || _Visible[series])
+            var s = Series[series];
+            s.Points.Clear();
+            if (s.Visible)
             {
                 if (AutoRange) PerformAutoRange(true);
                 Refresh();
@@ -735,9 +855,24 @@ namespace VisualiserLib
         /// </param>
         public void ShowSeries(int series, bool visible = true)
         {
-            _Visible[series] = visible;
+            Series[series].Visible = visible;
             if (AutoRange) PerformAutoRange(true);
             Refresh();
+        }
+
+        /// <summary>
+        /// Changes the default style for a series.
+        /// </summary>
+        /// <param name="series">The series to update.</param>
+        /// <param name="style">The style to use.</param>
+        public void SetSeriesStyle(int series, VisualiserPointStyle style)
+        {
+            var s = Series[series];
+            s.Style = style;
+            if (s.Visible)
+            {
+                Refresh();
+            }
         }
 
         /// <summary>
@@ -747,8 +882,9 @@ namespace VisualiserLib
         /// <param name="series">The series to set.</param>
         public void SetPoints(IEnumerable<VisualiserPoint> points, int series = 0)
         {
-            SetSeries(series, points.ToList());
-            if (!_Visible.ContainsKey(series) || _Visible[series])
+            var s = Series[series];
+            s.Points = points.ToList();
+            if (s.Visible)
             {
                 if (AutoRange) PerformAutoRange(true);
                 Refresh();
@@ -842,7 +978,8 @@ namespace VisualiserLib
         {
             if (!AllowUpdate) return;
 
-            if (_Points == null || _Points.Count == 0) return;
+            if (!Series.AnyPoints(true)) return;
+
 
             e.Graphics.InterpolationMode = InterpolationMode.High;
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
@@ -855,46 +992,64 @@ namespace VisualiserLib
 
             var scale = GetScaledRange();
 
-            float axisThickness = 2.0f;
-            using (var axisPen = new Pen(Color.Black, axisThickness))
-                DrawAxes(e.Graphics, axisPen, scale);
+            using (var horizontalAxisPen = new Pen(ForeColor, (float)_HorizontalAxisThickness))
+            using (var verticalAxisPen = new Pen(ForeColor, (float)_VerticalAxisThickness))
+                DrawAxes(e.Graphics, horizontalAxisPen, verticalAxisPen, scale);
 
-            var series = _Points
-                .Where((p, i) => !_Visible.ContainsKey(i) || _Visible[i])
-                .OrderBy(kv => kv.Key)
-                .Select(kv => kv.Value)
-                .ToList();
+            var visibleSeries = Series.Where(s => s.Visible).ToList();
 
-            foreach (var pt in series.SelectMany(v => v))
+            var defStyle = VisualiserPoint.DefaultStyle;
+            defStyle.BeginRender(scale.X, scale.Y, scale.Width, scale.Height);
+            foreach (var s in visibleSeries)
             {
-                pt.Style.BeginRender(scale.X, scale.Y, scale.Width, scale.Height);
-            }
-
-            foreach (var points in series)
-            {
-                if (points.Count > 1)
+                if (s.Style != null) s.Style.BeginRender(scale.X, scale.Y, scale.Width, scale.Height);
+                foreach (var pt in s.Points)
                 {
-                    var previous = points[0];
-                    foreach (var pt in points.Skip(1))
-                    {
-                        pt.Style.RenderLine(e.Graphics, previous, pt);
-                        previous = pt;
-                    }
-                    if (points[0].Style.LineLoop)
-                    {
-                        points[0].Style.RenderLine(e.Graphics, previous, points[0]);
-                    }
-                }
-
-                foreach (var pt in points)
-                {
-                    pt.Style.RenderPoint(e.Graphics, pt);
+                    if (pt.Style != null) pt.Style.BeginRender(scale.X, scale.Y, scale.Width, scale.Height);
                 }
             }
 
-            foreach (var pt in series.SelectMany(v => v))
+            foreach (var s in visibleSeries)
             {
-                pt.Style.EndRender();
+                if (s.Points.Count > 1)
+                {
+                    if (s.Points.All(pt => pt.Style == null))
+                    {
+                        (s.Style ?? defStyle).RenderLinePath(e.Graphics, s.Points);
+                    }
+                    else
+                    {
+                        var previous = s.Points[0];
+                        foreach (var pt in s.Points.Skip(1))
+                        {
+                            (pt.Style ?? s.Style ?? defStyle).RenderLine(e.Graphics, previous, pt);
+                            previous = pt;
+                        }
+
+                        {
+                            var style = (s.Points[0].Style ?? s.Style ?? defStyle);
+                            if (style.LineLoop)
+                            {
+                                style.RenderLine(e.Graphics, previous, s.Points[0]);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var pt in s.Points)
+                {
+                    (pt.Style ?? s.Style ?? defStyle).RenderPoint(e.Graphics, pt);
+                }
+            }
+
+            defStyle.EndRender();
+            foreach (var s in visibleSeries)
+            {
+                if(s.Style != null) s.Style.EndRender();
+                foreach (var pt in s.Points)
+                {
+                    if (pt.Style != null) pt.Style.EndRender();
+                }
             }
 
             DrawZoomRectangle(e.Graphics);
@@ -920,7 +1075,7 @@ namespace VisualiserLib
 
                 string formatX = (precisionX > 0) ? "." + new string('0', precisionX) : "";
                 string formatY = (precisionY > 0) ? "." + new string('0', precisionY) : "";
-                
+
                 var formatString = "{0:0" + formatX + "}, {1:0" + formatY + "}";
                 var display = string.Format(formatString, x, y);
 
@@ -971,15 +1126,15 @@ namespace VisualiserLib
             }
         }
 
-        private void DrawAxes(Graphics g, Pen axisPen, RectangleF scale)
+        private void DrawAxes(Graphics g, Pen horizontalAxisPen, Pen verticalAxisPen, RectangleF scale)
         {
             if (!_HorizontalAxis && !_VerticalAxis) return;
 
             float x = -scale.X * scale.Width;
             float y = -scale.Y * scale.Height;
 
-            if (_HorizontalAxis && y < ClientSize.Height) g.DrawLine(axisPen, 0.0f, y, ClientSize.Width, y);
-            if (_VerticalAxis && x < ClientSize.Width) g.DrawLine(axisPen, x, 0.0f, x, ClientSize.Height);
+            if (_HorizontalAxis && y < ClientSize.Height) g.DrawLine(horizontalAxisPen, 0.0f, y, ClientSize.Width, y);
+            if (_VerticalAxis && x < ClientSize.Width) g.DrawLine(verticalAxisPen, x, 0.0f, x, ClientSize.Height);
 
             if (_HorizontalAxisTicks)
             {
@@ -999,11 +1154,13 @@ namespace VisualiserLib
                 }
                 if (tickInterval < 100000)
                 {
+                    y += (float)_HorizontalAxisThickness * 0.5f;
                     float d = (float)(tickInterval * scale.Width);
                     for (int step = 1; x - step * d > 0; step += 1)
-                        g.DrawLine(axisPen, x - step * d, y, x - step * d, y + tickSize);
+                        g.DrawLine(horizontalAxisPen, x - step * d, y, x - step * d, y + tickSize);
                     for (int step = 1; x + step * d < ClientSize.Width; step += 1)
-                        g.DrawLine(axisPen, x + step * d, y, x + step * d, y + tickSize);
+                        g.DrawLine(horizontalAxisPen, x + step * d, y, x + step * d, y + tickSize);
+                    y -= (float)_HorizontalAxisThickness * 0.5f;
                 }
             }
             if (_VerticalAxisTicks)
@@ -1024,11 +1181,13 @@ namespace VisualiserLib
                 }
                 if (tickInterval < 100000)
                 {
+                    x += (float)_VerticalAxisThickness * 0.5f;
                     float d = (float)(tickInterval * scale.Height);
                     for (int step = 1; y - step * d > 0; step += 1)
-                        g.DrawLine(axisPen, x, y - step * d, x + tickSize, y - step * d);
+                        g.DrawLine(verticalAxisPen, x, y - step * d, x + tickSize, y - step * d);
                     for (int step = 1; y + step * d < ClientSize.Height; step += 1)
-                        g.DrawLine(axisPen, x, y + step * d, x + tickSize, y + step * d);
+                        g.DrawLine(verticalAxisPen, x, y + step * d, x + tickSize, y + step * d);
+                    x -= (float)_VerticalAxisThickness * 0.5f;
                 }
             }
         }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 
 namespace VisualiserLib
 {
@@ -326,6 +327,21 @@ namespace VisualiserLib
             var pt1 = RenderObjects.GetCenterPoint(from);
             var pt2 = RenderObjects.GetCenterPoint(to);
             g.DrawLine(RenderObjects.LinePen, pt1, pt2);
+        }
+
+        public void RenderLinePath(Graphics g, IEnumerable<VisualiserPoint> source)
+        {
+            if (RenderObjects.LinePen == null) return;
+
+            var points = source.Select(pt => RenderObjects.GetCenterPoint(pt)).ToArray();
+            var types = new byte[points.Length];
+            types[0] = (byte)PathPointType.Start;
+            for (int i = 1; i < types.Length; ++i) types[i] = (byte)PathPointType.Line;
+            using (var gp = new GraphicsPath(points, types))
+            {
+                if (LineLoop) gp.CloseAllFigures();
+                g.DrawPath(RenderObjects.LinePen, gp);
+            }
         }
 
         public void RenderPoint(Graphics g, VisualiserPoint point)
