@@ -66,6 +66,8 @@ namespace esecui
         private Font ProjectorUIFont;
         private Font CodeFont;
         private Font ProjectorCodeFont;
+        private double AxisThickness;
+        private double ProjectorAxisThickness;
 
         private void InitialiseDisplay(bool projectorMode)
         {
@@ -99,6 +101,9 @@ namespace esecui
             ProjectorCodeFont = new Font(CodeFont.Name, 20.0f);
 
             // Initialise the chart styles
+            AxisThickness = settings.AxisThickness;
+            ProjectorAxisThickness = settings.AxisThicknessProjector;
+
             SeriesNames = new Dictionary<string, int>();
             NormalChartStyles = new Dictionary<string, VisualiserPointStyle>();
             ProjectorChartStyles = new Dictionary<string, VisualiserPointStyle>();
@@ -157,63 +162,81 @@ namespace esecui
                 if (_ProjectorMode == value) return;
 
                 _ProjectorMode = value;
+                
                 SuspendLayout();
-                if (!value)
+                visPopulation.BeginUpdate();
+                chartResults.BeginUpdate();
+                try
                 {
-                    Font = UIFont;
+                    if (!value)
+                    {
+                        Font = UIFont;
 
-                    txtSystemESDL.Font = CodeFont;
-                    txtSystemPython.Font = CodeFont;
-                    txtSystemVariables.Font = CodeFont;
-                    txtLandscapeParameters.Font = CodeFont;
-                    txtEvaluatorCode.Font = CodeFont;
-                    txtLog.Font = CodeFont;
-                    txtBestIndividual.Font = CodeFont;
+                        txtSystemESDL.Font = CodeFont;
+                        txtSystemPython.Font = CodeFont;
+                        txtSystemVariables.Font = CodeFont;
+                        txtLandscapeParameters.Font = CodeFont;
+                        txtEvaluatorCode.Font = CodeFont;
+                        txtLog.Font = CodeFont;
+                        txtBestIndividual.Font = CodeFont;
 
-                    txtPlotExpression.Font = CodeFont;
-                    txtBestIndividualExpression.Font = CodeFont;
+                        txtPlotExpression.Font = CodeFont;
+                        txtBestIndividualExpression.Font = CodeFont;
 
-                    lblStopAfter.Visible = true;
-                    lblOr1.Visible = true;
-                    lblOr2.Visible = true;
-                    lblOr3.Visible = true;
+                        lblStopAfter.Visible = true;
+                        lblOr1.Visible = true;
+                        lblOr2.Visible = true;
+                        lblOr3.Visible = true;
 
-                    ActiveChartStyles = NormalChartStyles;
-                    ActiveVisualiserStyle = NormalVisualiserStyle;
+                        ActiveChartStyles = NormalChartStyles;
+                        ActiveVisualiserStyle = NormalVisualiserStyle;
+                        chartResults.HorizontalAxisThickness = AxisThickness;
+                        chartResults.VerticalAxisThickness = AxisThickness;
+                        visPopulation.HorizontalAxisThickness = AxisThickness;
+                        visPopulation.VerticalAxisThickness = AxisThickness;
 
-                    WindowState = NormalWindowState;
+                        WindowState = NormalWindowState;
+                    }
+                    else
+                    {
+                        NormalWindowState = WindowState;
+
+                        Font = ProjectorUIFont;
+
+                        txtSystemESDL.Font = ProjectorCodeFont;
+                        txtSystemPython.Font = ProjectorCodeFont;
+                        txtSystemVariables.Font = ProjectorCodeFont;
+                        txtLandscapeParameters.Font = ProjectorCodeFont;
+                        txtEvaluatorCode.Font = ProjectorCodeFont;
+                        txtLog.Font = ProjectorCodeFont;
+                        txtBestIndividual.Font = ProjectorCodeFont;
+
+                        txtPlotExpression.Font = CodeFont;
+                        txtBestIndividualExpression.Font = CodeFont;
+
+                        lblStopAfter.Visible = false;
+                        lblOr1.Visible = false;
+                        lblOr2.Visible = false;
+                        lblOr3.Visible = false;
+
+                        ActiveChartStyles = ProjectorChartStyles;
+                        ActiveVisualiserStyle = ProjectorVisualiserStyle;
+                        chartResults.HorizontalAxisThickness = ProjectorAxisThickness;
+                        chartResults.VerticalAxisThickness = ProjectorAxisThickness;
+                        visPopulation.HorizontalAxisThickness = ProjectorAxisThickness;
+                        visPopulation.VerticalAxisThickness = ProjectorAxisThickness;
+
+                        WindowState = FormWindowState.Maximized;
+                    }
+                }
+                finally
+                {
+                    visPopulation.EndUpdate();
+                    chartResults.EndUpdate();
+                    ResumeLayout(true);
+                    Editor_ClientSizeChanged(this, EventArgs.Empty);
                     Refresh();
                 }
-                else
-                {
-                    NormalWindowState = WindowState;
-
-                    Font = ProjectorUIFont;
-
-                    txtSystemESDL.Font = ProjectorCodeFont;
-                    txtSystemPython.Font = ProjectorCodeFont;
-                    txtSystemVariables.Font = ProjectorCodeFont;
-                    txtLandscapeParameters.Font = ProjectorCodeFont;
-                    txtEvaluatorCode.Font = ProjectorCodeFont;
-                    txtLog.Font = ProjectorCodeFont;
-                    txtBestIndividual.Font = ProjectorCodeFont;
-
-                    txtPlotExpression.Font = CodeFont;
-                    txtBestIndividualExpression.Font = CodeFont;
-
-                    lblStopAfter.Visible = false;
-                    lblOr1.Visible = false;
-                    lblOr2.Visible = false;
-                    lblOr3.Visible = false;
-
-                    ActiveChartStyles = ProjectorChartStyles;
-                    ActiveVisualiserStyle = ProjectorVisualiserStyle;
-
-                    WindowState = FormWindowState.Maximized;
-                    Refresh();
-                }
-                ResumeLayout(true);
-                Editor_ClientSizeChanged(this, EventArgs.Empty);
             }
         }
 
@@ -227,11 +250,29 @@ namespace esecui
 
         #region Chart Styles
 
-        private VisualiserPointStyle ActiveVisualiserStyle;
+        private VisualiserPointStyle ActiveVisualiserStyle
+        {
+            set { visPopulation.SetSeriesStyle(0, value); }
+        }
         private VisualiserPointStyle NormalVisualiserStyle;
         private VisualiserPointStyle ProjectorVisualiserStyle;
+        
+        private IDictionary<string, VisualiserPointStyle> ActiveChartStyles
+        {
+            set
+            {
+                foreach (var kv in value)
+                {
+                    chartResults.Series[SeriesNames[kv.Key]].Style = kv.Value;
+                    foreach (var cb in new[] { chkChartBestFitness, chkChartCurrentBest, chkChartCurrentMean, chkChartCurrentWorst })
+                    {
+                        if ((string)cb.Tag == kv.Key) cb.BackColor = kv.Value.LineColor;
+                    }
+                }
+                chartResults.Refresh();
+            }
+        }
 
-        private IDictionary<string, VisualiserPointStyle> ActiveChartStyles;
         private Dictionary<string, VisualiserPointStyle> NormalChartStyles;
         private Dictionary<string, VisualiserPointStyle> ProjectorChartStyles;
         private Dictionary<string, int> SeriesNames;
@@ -240,12 +281,6 @@ namespace esecui
         {
             var checkbox = (CheckBox)sender;
             chartResults.ShowSeries(SeriesNames[(string)checkbox.Tag], checkbox.Checked);
-        }
-
-        private void chkChartSeries_VisibleChanged(object sender, EventArgs e)
-        {
-            var checkbox = (CheckBox)sender;
-            checkbox.BackColor = ActiveChartStyles[(string)checkbox.Tag].LineColor;
         }
 
         #endregion
@@ -666,25 +701,25 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 double value = (double)bestFitness.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ActiveChartStyles["BestFitness"]), 0);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0), 0);
             }
             if (currentBest != null)
             {
                 double value = (double)currentBest.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ActiveChartStyles["CurrentBest"]), 1);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0), 1);
             }
             if (currentMean != null)
             {
                 double value = (double)currentMean.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ActiveChartStyles["CurrentMean"]), 2);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0), 2);
             }
             if (currentWorst != null)
             {
                 double value = (double)currentWorst.simple;
                 value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0, ActiveChartStyles["CurrentWorst"]), 3);
+                chartResults.Add(new VisualiserPoint(iterations, value, 0.0), 3);
             }
         }
 
@@ -695,7 +730,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             if (population == null) return;
             if (DisableVisualisation) return;
 
-            var expr = txtPlotExpression.Text;
+            var expr = Python.CompileExpression(txtPlotExpression.Text);
             var scope = Python.CreateScope();
             Python.Exec("from math import *", scope);
 
@@ -714,8 +749,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                         new VisualiserPoint(
                             (double)pair[0],
                             (double)pair[1],
-                            (double)(pair.__len__() < 3 ? 0.0 : pair[2]),
-                            ActiveVisualiserStyle))
+                            (double)(pair.__len__() < 3 ? 0.0 : pair[2])))
                     .ToList();
             }
             catch
@@ -831,16 +865,6 @@ class CustomEvaluator(esec.landscape.Landscape):
                 return;
             }
 
-            chartResults.ClearAll();
-            chartResults.ShowSeries(0, chkChartBestFitness.Checked);
-            chartResults.ShowSeries(1, chkChartCurrentBest.Checked);
-            chartResults.ShowSeries(2, chkChartCurrentMean.Checked);
-            chartResults.ShowSeries(3, chkChartCurrentWorst.Checked);
-
-            txtPlotExpression.Enabled = false;
-            DisableVisualisation = false;
-            visPopulation.ClearAll();
-
             CurrentMonitor = new Monitor(this);
             CurrentMonitor.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
             CurrentMonitor.EvaluationLimit = chkEvaluations.Checked ? int.Parse(txtEvaluations.Text) : (int?)null;
@@ -877,6 +901,16 @@ class CustomEvaluator(esec.landscape.Landscape):
             state["random_seed"] = 12345;       // TODO: Settable random seed
             state["preamble"] = txtSystemPython.Text;
 
+            chartResults.ClearAll(true);
+            chartResults.ShowSeries(0, chkChartBestFitness.Checked);
+            chartResults.ShowSeries(1, chkChartCurrentBest.Checked);
+            chartResults.ShowSeries(2, chkChartCurrentMean.Checked);
+            chartResults.ShowSeries(3, chkChartCurrentWorst.Checked);
+
+            txtPlotExpression.Enabled = false;
+            DisableVisualisation = false;
+            visPopulation.ClearAll(true);
+
             CurrentExperiment = new Task(Task_RunExperiment, state,
                 CancellationToken.None,
                 TaskCreationOptions.LongRunning);
@@ -888,8 +922,12 @@ class CustomEvaluator(esec.landscape.Landscape):
                 CancellationToken.None,
                 TaskContinuationOptions.NotOnRanToCompletion,
                 TaskScheduler.FromCurrentSynchronizationContext());
+            noErrTask.ContinueWith(Task_RunExperiment_Finally, TaskScheduler.FromCurrentSynchronizationContext());
+            errTask.ContinueWith(Task_RunExperiment_Finally, TaskScheduler.FromCurrentSynchronizationContext());
 
             btnStartStop.Text = "&Stop (F5)";
+
+            lstConfigurations.Enabled = false;
 
             chkResults.Checked = true;
             CurrentExperiment.Start();
@@ -952,23 +990,10 @@ class CustomEvaluator(esec.landscape.Landscape):
         }
 
         private void Task_RunExperiment_Completed(Task task)
-        {
-            txtPlotExpression.Enabled = true;
-
-            btnStartStop.Text = "&Start (F5)";
-            btnStartStop.Enabled = true;
-            CurrentMonitor = null;
-            CurrentExperiment.Dispose();
-            CurrentExperiment = null;
-        }
+        { }
 
         private void Task_RunExperiment_NotCompleted(Task task)
         {
-            txtPlotExpression.Enabled = true;
-            
-            btnStartStop.Text = "&Start (F5)";
-            btnStartStop.Enabled = true;
-
             Exception ex = task.Exception;
             if (ex is AggregateException) ex = ((AggregateException)ex).InnerExceptions[0];
 
@@ -994,10 +1019,20 @@ class CustomEvaluator(esec.landscape.Landscape):
 
                 chkLog.Checked = true;
             }
+        }
+
+        private void Task_RunExperiment_Finally(Task task)
+        {
+            txtPlotExpression.Enabled = true;
+            lstConfigurations.Enabled = true;
+
+            btnStartStop.Text = "&Start (F5)";
+            btnStartStop.Enabled = true;
             CurrentMonitor = null;
-            CurrentExperiment.Dispose();
+            if (CurrentExperiment != null) CurrentExperiment.Dispose();
             CurrentExperiment = null;
         }
+
         #endregion
 
         #region Fancy UI Tricks
@@ -1277,6 +1312,9 @@ class CustomEvaluator(esec.landscape.Landscape):
                 }
             }
 
+            chartResults.ClearAll(true);
+            visPopulation.ClearAll(true);
+
             UpdateEditor(config);
 
             CurrentConfiguration = config;
@@ -1515,6 +1553,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             Debug.Assert(panel != null);
 
             panel.Visible = chk.Checked;
+            if (picDimmer.Visible) LookDisabled();
         }
 
 
