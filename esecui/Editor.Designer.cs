@@ -37,16 +37,19 @@
             System.Windows.Forms.ToolStripSeparator menuViewSeparator3;
             System.Windows.Forms.ToolStripSeparator menuViewSeparator4;
             System.Windows.Forms.ToolStripSeparator menuViewSeparator5;
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Example assignment", "VSObject_Constant.bmp");
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Example class", "VSObject_Class.bmp");
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Example function", "VSObject_Method.bmp");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Example assignment", "VSObject_Constant.bmp");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Example class", "VSObject_Class.bmp");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Example function", "VSObject_Method.bmp");
             this.splitSystemErrors = new System.Windows.Forms.SplitContainer();
             this.tabSourceView = new System.Windows.Forms.TabControl();
             this.tabSourceESDL = new System.Windows.Forms.TabPage();
             this.splitSystemVariables = new System.Windows.Forms.SplitContainer();
+            this.txtSystemESDL = new ICSharpCode.TextEditor.TextEditorControl();
+            this.txtSystemVariables = new ICSharpCode.TextEditor.TextEditorControl();
             this.tabSourcePython = new System.Windows.Forms.TabPage();
             this.splitPythonDefinitions = new System.Windows.Forms.SplitContainer();
+            this.txtSystemPython = new ICSharpCode.TextEditor.TextEditorControl();
             this.lstPythonDefinitions = new System.Windows.Forms.ListView();
             this.imlPythonDefinitions = new System.Windows.Forms.ImageList(this.components);
             this.lstErrors = new System.Windows.Forms.ListView();
@@ -57,17 +60,23 @@
             this.splitLandscape = new System.Windows.Forms.SplitContainer();
             this.lstLandscapes = new System.Windows.Forms.TreeView();
             this.tableLandscape = new System.Windows.Forms.TableLayoutPanel();
+            this.txtEvaluatorCode = new ICSharpCode.TextEditor.TextEditorControl();
             this.lblLandscapeInternalName = new System.Windows.Forms.Label();
             this.txtLandscapeInternalName = new System.Windows.Forms.TextBox();
             this.lblLandscapeDescription = new System.Windows.Forms.Label();
             this.txtLandscapeDescription = new System.Windows.Forms.TextBox();
             this.lblLandscapeParameters = new System.Windows.Forms.Label();
+            this.txtLandscapeParameters = new ICSharpCode.TextEditor.TextEditorControl();
             this.lblEvaluatorCode = new System.Windows.Forms.Label();
             this.splitLimitsGraph = new System.Windows.Forms.SplitContainer();
             this.tableResults = new System.Windows.Forms.TableLayoutPanel();
             this.tableControls = new System.Windows.Forms.TableLayoutPanel();
             this.chkIterations = new System.Windows.Forms.CheckBox();
             this.chkFitness = new System.Windows.Forms.CheckBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnStart = new System.Windows.Forms.Button();
+            this.btnPause = new System.Windows.Forms.CheckBox();
+            this.btnStop = new System.Windows.Forms.Button();
             this.chkSeconds = new System.Windows.Forms.CheckBox();
             this.chkEvaluations = new System.Windows.Forms.CheckBox();
             this.txtFitness = new System.Windows.Forms.TextBox();
@@ -79,12 +88,13 @@
             this.lblOr3 = new System.Windows.Forms.Label();
             this.lblOr2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnStartStop = new System.Windows.Forms.Button();
             this.splitGraphStats = new System.Windows.Forms.SplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
+            this.chartResults = new VisualiserLib.Visualiser();
             this.tab2DPlot = new System.Windows.Forms.TabPage();
             this.table2DPlot = new System.Windows.Forms.TableLayoutPanel();
+            this.visPopulation = new VisualiserLib.Visualiser();
             this.lblPlotExpression = new System.Windows.Forms.Label();
             this.txtPlotExpression = new System.Windows.Forms.TextBox();
             this.tabBestIndividual = new System.Windows.Forms.TabPage();
@@ -134,7 +144,8 @@
             this.menuViewSubview3 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuViewProjectorMode = new System.Windows.Forms.ToolStripMenuItem();
             this.menuControl = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuControlStartStop = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuControlStartPause = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuControlStop = new System.Windows.Forms.ToolStripMenuItem();
             this.panelMenu = new System.Windows.Forms.FlowLayoutPanel();
             this.chkSystem = new System.Windows.Forms.RadioButton();
             this.chkLandscape = new System.Windows.Forms.RadioButton();
@@ -144,15 +155,10 @@
             this.panelLandscape = new System.Windows.Forms.Panel();
             this.panelResults = new System.Windows.Forms.Panel();
             this.panelLog = new System.Windows.Forms.Panel();
-            this.picDimmer = new System.Windows.Forms.PictureBox();
-            this.txtSystemESDL = new ICSharpCode.TextEditor.TextEditorControl();
-            this.txtSystemVariables = new ICSharpCode.TextEditor.TextEditorControl();
-            this.txtSystemPython = new ICSharpCode.TextEditor.TextEditorControl();
             this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
-            this.txtEvaluatorCode = new ICSharpCode.TextEditor.TextEditorControl();
-            this.txtLandscapeParameters = new ICSharpCode.TextEditor.TextEditorControl();
-            this.chartResults = new VisualiserLib.Visualiser();
-            this.visPopulation = new VisualiserLib.Visualiser();
+            this.picDimmer = new System.Windows.Forms.PictureBox();
+            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.menuControlStep = new System.Windows.Forms.ToolStripMenuItem();
             menuConfigurationSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -187,7 +193,7 @@
             this.splitLimitsGraph.SuspendLayout();
             this.tableResults.SuspendLayout();
             this.tableControls.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).BeginInit();
             this.splitGraphStats.Panel1.SuspendLayout();
             this.splitGraphStats.Panel2.SuspendLayout();
@@ -308,13 +314,41 @@
             this.splitSystemVariables.SplitterDistance = 652;
             this.splitSystemVariables.TabIndex = 0;
             // 
+            // txtSystemESDL
+            // 
+            this.txtSystemESDL.ConvertTabsToSpaces = true;
+            this.txtSystemESDL.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemESDL.EnableFolding = false;
+            this.txtSystemESDL.IsReadOnly = false;
+            this.txtSystemESDL.Location = new System.Drawing.Point(0, 0);
+            this.txtSystemESDL.Name = "txtSystemESDL";
+            this.txtSystemESDL.ShowVRuler = false;
+            this.txtSystemESDL.Size = new System.Drawing.Size(652, 498);
+            this.txtSystemESDL.TabIndex = 0;
+            this.txtSystemESDL.Text = resources.GetString("txtSystemESDL.Text");
+            // 
+            // txtSystemVariables
+            // 
+            this.txtSystemVariables.ConvertTabsToSpaces = true;
+            this.txtSystemVariables.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemVariables.EnableFolding = false;
+            this.txtSystemVariables.IndentStyle = ICSharpCode.TextEditor.Document.IndentStyle.None;
+            this.txtSystemVariables.IsReadOnly = false;
+            this.txtSystemVariables.Location = new System.Drawing.Point(0, 0);
+            this.txtSystemVariables.Name = "txtSystemVariables";
+            this.txtSystemVariables.ShowLineNumbers = false;
+            this.txtSystemVariables.ShowVRuler = false;
+            this.txtSystemVariables.Size = new System.Drawing.Size(293, 498);
+            this.txtSystemVariables.TabIndex = 0;
+            this.txtSystemVariables.Text = "size: 50";
+            // 
             // tabSourcePython
             // 
             this.tabSourcePython.Controls.Add(this.splitPythonDefinitions);
-            this.tabSourcePython.Location = new System.Drawing.Point(4, 24);
+            this.tabSourcePython.Location = new System.Drawing.Point(4, 22);
             this.tabSourcePython.Name = "tabSourcePython";
             this.tabSourcePython.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSourcePython.Size = new System.Drawing.Size(955, 504);
+            this.tabSourcePython.Size = new System.Drawing.Size(955, 506);
             this.tabSourcePython.TabIndex = 1;
             this.tabSourcePython.Text = "Python (Alt+2)";
             this.tabSourcePython.UseVisualStyleBackColor = true;
@@ -333,23 +367,35 @@
             // splitPythonDefinitions.Panel2
             // 
             this.splitPythonDefinitions.Panel2.Controls.Add(this.lstPythonDefinitions);
-            this.splitPythonDefinitions.Size = new System.Drawing.Size(949, 498);
+            this.splitPythonDefinitions.Size = new System.Drawing.Size(949, 500);
             this.splitPythonDefinitions.SplitterDistance = 726;
             this.splitPythonDefinitions.TabIndex = 2;
+            // 
+            // txtSystemPython
+            // 
+            this.txtSystemPython.ConvertTabsToSpaces = true;
+            this.txtSystemPython.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemPython.EnableFolding = false;
+            this.txtSystemPython.IsReadOnly = false;
+            this.txtSystemPython.Location = new System.Drawing.Point(0, 0);
+            this.txtSystemPython.Name = "txtSystemPython";
+            this.txtSystemPython.ShowVRuler = false;
+            this.txtSystemPython.Size = new System.Drawing.Size(726, 500);
+            this.txtSystemPython.TabIndex = 1;
             // 
             // lstPythonDefinitions
             // 
             this.lstPythonDefinitions.Activation = System.Windows.Forms.ItemActivation.OneClick;
             this.lstPythonDefinitions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstPythonDefinitions.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem4,
-            listViewItem5,
-            listViewItem6});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3});
             this.lstPythonDefinitions.LabelWrap = false;
             this.lstPythonDefinitions.Location = new System.Drawing.Point(0, 0);
             this.lstPythonDefinitions.MultiSelect = false;
             this.lstPythonDefinitions.Name = "lstPythonDefinitions";
-            this.lstPythonDefinitions.Size = new System.Drawing.Size(219, 498);
+            this.lstPythonDefinitions.Size = new System.Drawing.Size(219, 500);
             this.lstPythonDefinitions.SmallImageList = this.imlPythonDefinitions;
             this.lstPythonDefinitions.TabIndex = 0;
             this.lstPythonDefinitions.UseCompatibleStateImageBehavior = false;
@@ -399,7 +445,7 @@
             this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lstConfigurations.Enabled = false;
             this.lstConfigurations.FormattingEnabled = true;
-            this.lstConfigurations.Location = new System.Drawing.Point(552, 4);
+            this.lstConfigurations.Location = new System.Drawing.Point(552, 5);
             this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
             this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
             this.lstConfigurations.Name = "lstConfigurations";
@@ -459,6 +505,23 @@
             this.tableLandscape.Size = new System.Drawing.Size(639, 661);
             this.tableLandscape.TabIndex = 0;
             // 
+            // txtEvaluatorCode
+            // 
+            this.txtEvaluatorCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtEvaluatorCode.ConvertTabsToSpaces = true;
+            this.txtEvaluatorCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtEvaluatorCode.EnableFolding = false;
+            this.txtEvaluatorCode.IsReadOnly = false;
+            this.txtEvaluatorCode.Location = new System.Drawing.Point(92, 473);
+            this.txtEvaluatorCode.Name = "txtEvaluatorCode";
+            this.txtEvaluatorCode.ShowLineNumbers = false;
+            this.txtEvaluatorCode.ShowVRuler = false;
+            this.txtEvaluatorCode.Size = new System.Drawing.Size(544, 185);
+            this.txtEvaluatorCode.TabIndex = 6;
+            this.txtEvaluatorCode.Text = "fitness = 0.0\r\nfor x in indiv:\r\n    fitness += x**2\r\n\r\nreturn FitnessMinimise(fit" +
+                "ness)";
+            this.txtEvaluatorCode.Visible = false;
+            // 
             // lblLandscapeInternalName
             // 
             this.lblLandscapeInternalName.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -511,6 +574,19 @@
             this.lblLandscapeParameters.Size = new System.Drawing.Size(69, 15);
             this.lblLandscapeParameters.TabIndex = 4;
             this.lblLandscapeParameters.Text = "Parameters:";
+            // 
+            // txtLandscapeParameters
+            // 
+            this.txtLandscapeParameters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLandscapeParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLandscapeParameters.EnableFolding = false;
+            this.txtLandscapeParameters.IsReadOnly = false;
+            this.txtLandscapeParameters.Location = new System.Drawing.Point(92, 221);
+            this.txtLandscapeParameters.Name = "txtLandscapeParameters";
+            this.txtLandscapeParameters.ShowLineNumbers = false;
+            this.txtLandscapeParameters.ShowVRuler = false;
+            this.txtLandscapeParameters.Size = new System.Drawing.Size(544, 246);
+            this.txtLandscapeParameters.TabIndex = 5;
             // 
             // lblEvaluatorCode
             // 
@@ -571,6 +647,7 @@
             this.tableControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableControls.Controls.Add(this.chkIterations, 2, 1);
             this.tableControls.Controls.Add(this.chkFitness, 2, 4);
+            this.tableControls.Controls.Add(this.flowLayoutPanel1, 0, 0);
             this.tableControls.Controls.Add(this.chkSeconds, 2, 3);
             this.tableControls.Controls.Add(this.chkEvaluations, 2, 2);
             this.tableControls.Controls.Add(this.txtFitness, 1, 4);
@@ -582,7 +659,7 @@
             this.tableControls.Controls.Add(this.lblOr3, 0, 4);
             this.tableControls.Controls.Add(this.lblOr2, 0, 3);
             this.tableControls.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableControls.Location = new System.Drawing.Point(0, 53);
+            this.tableControls.Location = new System.Drawing.Point(0, 0);
             this.tableControls.Margin = new System.Windows.Forms.Padding(0);
             this.tableControls.Name = "tableControls";
             this.tableControls.RowCount = 5;
@@ -591,7 +668,7 @@
             this.tableControls.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableControls.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableControls.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableControls.Size = new System.Drawing.Size(320, 116);
+            this.tableControls.Size = new System.Drawing.Size(320, 166);
             this.tableControls.TabIndex = 0;
             // 
             // chkIterations
@@ -601,7 +678,7 @@
             this.chkIterations.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkIterations.Checked = true;
             this.chkIterations.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkIterations.Location = new System.Drawing.Point(231, 5);
+            this.chkIterations.Location = new System.Drawing.Point(231, 55);
             this.chkIterations.Name = "chkIterations";
             this.chkIterations.Size = new System.Drawing.Size(86, 19);
             this.chkIterations.TabIndex = 2;
@@ -615,7 +692,7 @@
             this.chkFitness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkFitness.AutoSize = true;
             this.chkFitness.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkFitness.Location = new System.Drawing.Point(231, 92);
+            this.chkFitness.Location = new System.Drawing.Point(231, 142);
             this.chkFitness.Name = "chkFitness";
             this.chkFitness.Size = new System.Drawing.Size(86, 19);
             this.chkFitness.TabIndex = 11;
@@ -624,12 +701,68 @@
             this.chkFitness.MouseEnter += new System.EventHandler(this.chkLimit_MouseEnter);
             this.chkFitness.MouseLeave += new System.EventHandler(this.chkLimit_MouseLeave);
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.flowLayoutPanel1.AutoSize = true;
+            this.tableControls.SetColumnSpan(this.flowLayoutPanel1, 3);
+            this.flowLayoutPanel1.Controls.Add(this.btnStart);
+            this.flowLayoutPanel1.Controls.Add(this.btnPause);
+            this.flowLayoutPanel1.Controls.Add(this.btnStop);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(65, 3);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(190, 44);
+            this.flowLayoutPanel1.TabIndex = 15;
+            // 
+            // btnStart
+            // 
+            this.btnStart.AutoSize = true;
+            this.btnStart.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnStart.Image = global::esecui.Properties.Resources.start;
+            this.btnStart.Location = new System.Drawing.Point(3, 3);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(96, 38);
+            this.btnStart.TabIndex = 13;
+            this.btnStart.Text = "&Start (F5)";
+            this.btnStart.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            // 
+            // btnPause
+            // 
+            this.btnPause.Appearance = System.Windows.Forms.Appearance.Button;
+            this.btnPause.AutoSize = true;
+            this.btnPause.Enabled = false;
+            this.btnPause.Image = global::esecui.Properties.Resources.pause;
+            this.btnPause.Location = new System.Drawing.Point(105, 3);
+            this.btnPause.Name = "btnPause";
+            this.btnPause.Size = new System.Drawing.Size(38, 38);
+            this.btnPause.TabIndex = 14;
+            this.toolTips.SetToolTip(this.btnPause, "Pause (F5)");
+            this.btnPause.UseVisualStyleBackColor = true;
+            this.btnPause.CheckedChanged += new System.EventHandler(this.btnPause_CheckedChanged);
+            // 
+            // btnStop
+            // 
+            this.btnStop.AutoSize = true;
+            this.btnStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnStop.Enabled = false;
+            this.btnStop.Image = global::esecui.Properties.Resources.stop;
+            this.btnStop.Location = new System.Drawing.Point(149, 3);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(38, 38);
+            this.btnStop.TabIndex = 13;
+            this.btnStop.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.toolTips.SetToolTip(this.btnStop, "Stop (Shift+F5)");
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
             // chkSeconds
             // 
             this.chkSeconds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSeconds.AutoSize = true;
             this.chkSeconds.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkSeconds.Location = new System.Drawing.Point(231, 63);
+            this.chkSeconds.Location = new System.Drawing.Point(231, 113);
             this.chkSeconds.Name = "chkSeconds";
             this.chkSeconds.Size = new System.Drawing.Size(86, 19);
             this.chkSeconds.TabIndex = 8;
@@ -643,7 +776,7 @@
             this.chkEvaluations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkEvaluations.AutoSize = true;
             this.chkEvaluations.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkEvaluations.Location = new System.Drawing.Point(231, 34);
+            this.chkEvaluations.Location = new System.Drawing.Point(231, 84);
             this.chkEvaluations.Name = "chkEvaluations";
             this.chkEvaluations.Size = new System.Drawing.Size(86, 19);
             this.chkEvaluations.TabIndex = 5;
@@ -655,7 +788,7 @@
             // txtFitness
             // 
             this.txtFitness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFitness.Location = new System.Drawing.Point(67, 90);
+            this.txtFitness.Location = new System.Drawing.Point(67, 140);
             this.txtFitness.Name = "txtFitness";
             this.txtFitness.Size = new System.Drawing.Size(158, 23);
             this.txtFitness.TabIndex = 10;
@@ -665,7 +798,7 @@
             // txtEvaluations
             // 
             this.txtEvaluations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtEvaluations.Location = new System.Drawing.Point(67, 32);
+            this.txtEvaluations.Location = new System.Drawing.Point(67, 82);
             this.txtEvaluations.Name = "txtEvaluations";
             this.txtEvaluations.Size = new System.Drawing.Size(158, 23);
             this.txtEvaluations.TabIndex = 4;
@@ -675,7 +808,7 @@
             // txtSeconds
             // 
             this.txtSeconds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSeconds.Location = new System.Drawing.Point(67, 61);
+            this.txtSeconds.Location = new System.Drawing.Point(67, 111);
             this.txtSeconds.Name = "txtSeconds";
             this.txtSeconds.Size = new System.Drawing.Size(158, 23);
             this.txtSeconds.TabIndex = 7;
@@ -685,7 +818,7 @@
             // txtIterations
             // 
             this.txtIterations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtIterations.Location = new System.Drawing.Point(67, 3);
+            this.txtIterations.Location = new System.Drawing.Point(67, 53);
             this.txtIterations.Name = "txtIterations";
             this.txtIterations.Size = new System.Drawing.Size(158, 23);
             this.txtIterations.TabIndex = 1;
@@ -697,7 +830,7 @@
             // 
             this.lblStopAfter.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblStopAfter.AutoSize = true;
-            this.lblStopAfter.Location = new System.Drawing.Point(3, 7);
+            this.lblStopAfter.Location = new System.Drawing.Point(3, 57);
             this.lblStopAfter.Name = "lblStopAfter";
             this.lblStopAfter.Size = new System.Drawing.Size(58, 15);
             this.lblStopAfter.TabIndex = 0;
@@ -707,7 +840,7 @@
             // 
             this.lblOr1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblOr1.AutoSize = true;
-            this.lblOr1.Location = new System.Drawing.Point(43, 36);
+            this.lblOr1.Location = new System.Drawing.Point(43, 86);
             this.lblOr1.Name = "lblOr1";
             this.lblOr1.Size = new System.Drawing.Size(18, 15);
             this.lblOr1.TabIndex = 3;
@@ -717,7 +850,7 @@
             // 
             this.lblOr3.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblOr3.AutoSize = true;
-            this.lblOr3.Location = new System.Drawing.Point(30, 94);
+            this.lblOr3.Location = new System.Drawing.Point(30, 144);
             this.lblOr3.Name = "lblOr3";
             this.lblOr3.Size = new System.Drawing.Size(31, 15);
             this.lblOr3.TabIndex = 9;
@@ -727,7 +860,7 @@
             // 
             this.lblOr2.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblOr2.AutoSize = true;
-            this.lblOr2.Location = new System.Drawing.Point(43, 65);
+            this.lblOr2.Location = new System.Drawing.Point(43, 115);
             this.lblOr2.Name = "lblOr2";
             this.lblOr2.Size = new System.Drawing.Size(18, 15);
             this.lblOr2.TabIndex = 6;
@@ -736,34 +869,20 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.AutoSize = true;
-            this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.btnStartStop, 1, 0);
+            this.tableLayoutPanel1.ColumnCount = 5;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(320, 53);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(320, 1);
             this.tableLayoutPanel1.TabIndex = 13;
-            // 
-            // btnStartStop
-            // 
-            this.btnStartStop.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnStartStop.AutoSize = true;
-            this.btnStartStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnStartStop.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
-            this.btnStartStop.Location = new System.Drawing.Point(103, 3);
-            this.btnStartStop.Name = "btnStartStop";
-            this.btnStartStop.Padding = new System.Windows.Forms.Padding(8, 9, 8, 9);
-            this.btnStartStop.Size = new System.Drawing.Size(114, 47);
-            this.btnStartStop.TabIndex = 12;
-            this.btnStartStop.Text = "&Start (F5)";
-            this.btnStartStop.UseVisualStyleBackColor = true;
-            this.btnStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
             // 
             // splitGraphStats
             // 
@@ -807,6 +926,20 @@
             this.tabChart.Text = "Chart (Alt+1)";
             this.tabChart.UseVisualStyleBackColor = true;
             // 
+            // chartResults
+            // 
+            this.chartResults.AutoRange = true;
+            this.chartResults.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chartResults.FlipVertical = true;
+            this.chartResults.Location = new System.Drawing.Point(3, 3);
+            this.chartResults.MustIncludeHorizontalZero = true;
+            this.chartResults.MustIncludeVerticalZero = true;
+            this.chartResults.Name = "chartResults";
+            this.chartResults.ShowMouseCoordinates = true;
+            this.chartResults.Size = new System.Drawing.Size(625, 458);
+            this.chartResults.TabIndex = 0;
+            // 
             // tab2DPlot
             // 
             this.tab2DPlot.Controls.Add(this.table2DPlot);
@@ -836,6 +969,23 @@
             this.table2DPlot.Size = new System.Drawing.Size(625, 460);
             this.table2DPlot.TabIndex = 0;
             // 
+            // visPopulation
+            // 
+            this.visPopulation.AutoRange = true;
+            this.visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.visPopulation.BackColor = System.Drawing.Color.White;
+            this.table2DPlot.SetColumnSpan(this.visPopulation, 2);
+            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.visPopulation.HorizontalOffset = -100000D;
+            this.visPopulation.HorizontalRange = 1000000D;
+            this.visPopulation.Location = new System.Drawing.Point(3, 32);
+            this.visPopulation.Name = "visPopulation";
+            this.visPopulation.ShowMouseCoordinates = true;
+            this.visPopulation.Size = new System.Drawing.Size(619, 425);
+            this.visPopulation.TabIndex = 2;
+            this.visPopulation.VerticalOffset = -7.2505224288324825D;
+            this.visPopulation.VerticalRange = 1000000D;
+            // 
             // lblPlotExpression
             // 
             this.lblPlotExpression.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -860,10 +1010,10 @@
             // tabBestIndividual
             // 
             this.tabBestIndividual.Controls.Add(this.tableBestIndividual);
-            this.tabBestIndividual.Location = new System.Drawing.Point(4, 22);
+            this.tabBestIndividual.Location = new System.Drawing.Point(4, 24);
             this.tabBestIndividual.Name = "tabBestIndividual";
             this.tabBestIndividual.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBestIndividual.Size = new System.Drawing.Size(631, 466);
+            this.tabBestIndividual.Size = new System.Drawing.Size(631, 464);
             this.tabBestIndividual.TabIndex = 2;
             this.tabBestIndividual.Text = "Best (Alt+3)";
             this.tabBestIndividual.UseVisualStyleBackColor = true;
@@ -882,7 +1032,7 @@
             this.tableBestIndividual.RowCount = 2;
             this.tableBestIndividual.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableBestIndividual.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableBestIndividual.Size = new System.Drawing.Size(625, 460);
+            this.tableBestIndividual.Size = new System.Drawing.Size(625, 458);
             this.tableBestIndividual.TabIndex = 0;
             // 
             // lblBestIndividualExpression
@@ -916,7 +1066,7 @@
             this.txtBestIndividual.Name = "txtBestIndividual";
             this.txtBestIndividual.ReadOnly = true;
             this.txtBestIndividual.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtBestIndividual.Size = new System.Drawing.Size(619, 425);
+            this.txtBestIndividual.Size = new System.Drawing.Size(619, 423);
             this.txtBestIndividual.TabIndex = 2;
             this.txtBestIndividual.VisibleChanged += new System.EventHandler(this.txtBestIndividual_VisibleChanged);
             // 
@@ -1281,7 +1431,7 @@
             // menuAbout
             // 
             this.menuAbout.Name = "menuAbout";
-            this.menuAbout.Size = new System.Drawing.Size(107, 22);
+            this.menuAbout.Size = new System.Drawing.Size(152, 22);
             this.menuAbout.Text = "&About";
             this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
             // 
@@ -1373,19 +1523,29 @@
             // menuControl
             // 
             this.menuControl.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuControlStartStop});
+            this.menuControlStartPause,
+            this.menuControlStop,
+            this.menuControlStep});
             this.menuControl.Name = "menuControl";
             this.menuControl.Size = new System.Drawing.Size(59, 20);
             this.menuControl.Text = "&Control";
             this.menuControl.Visible = false;
             // 
-            // menuControlStartStop
+            // menuControlStartPause
             // 
-            this.menuControlStartStop.Name = "menuControlStartStop";
-            this.menuControlStartStop.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.menuControlStartStop.Size = new System.Drawing.Size(146, 22);
-            this.menuControlStartStop.Text = "Start/Stop";
-            this.menuControlStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
+            this.menuControlStartPause.Name = "menuControlStartPause";
+            this.menuControlStartPause.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.menuControlStartPause.Size = new System.Drawing.Size(153, 22);
+            this.menuControlStartPause.Text = "Start/Pause";
+            this.menuControlStartPause.Click += new System.EventHandler(this.menuControlStartPause_Click);
+            // 
+            // menuControlStop
+            // 
+            this.menuControlStop.Name = "menuControlStop";
+            this.menuControlStop.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F5)));
+            this.menuControlStop.Size = new System.Drawing.Size(153, 22);
+            this.menuControlStop.Text = "Stop";
+            this.menuControlStop.Click += new System.EventHandler(this.menuControlStop_Click);
             // 
             // panelMenu
             // 
@@ -1505,56 +1665,6 @@
             this.panelLog.TabIndex = 7;
             this.panelLog.Visible = false;
             // 
-            // picDimmer
-            // 
-            this.picDimmer.Location = new System.Drawing.Point(0, 0);
-            this.picDimmer.Name = "picDimmer";
-            this.picDimmer.Size = new System.Drawing.Size(100, 54);
-            this.picDimmer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picDimmer.TabIndex = 8;
-            this.picDimmer.TabStop = false;
-            this.picDimmer.Visible = false;
-            // 
-            // txtSystemESDL
-            // 
-            this.txtSystemESDL.ConvertTabsToSpaces = true;
-            this.txtSystemESDL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystemESDL.EnableFolding = false;
-            this.txtSystemESDL.IsReadOnly = false;
-            this.txtSystemESDL.Location = new System.Drawing.Point(0, 0);
-            this.txtSystemESDL.Name = "txtSystemESDL";
-            this.txtSystemESDL.ShowVRuler = false;
-            this.txtSystemESDL.Size = new System.Drawing.Size(652, 498);
-            this.txtSystemESDL.TabIndex = 0;
-            this.txtSystemESDL.Text = resources.GetString("txtSystemESDL.Text");
-            // 
-            // txtSystemVariables
-            // 
-            this.txtSystemVariables.ConvertTabsToSpaces = true;
-            this.txtSystemVariables.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystemVariables.EnableFolding = false;
-            this.txtSystemVariables.IndentStyle = ICSharpCode.TextEditor.Document.IndentStyle.None;
-            this.txtSystemVariables.IsReadOnly = false;
-            this.txtSystemVariables.Location = new System.Drawing.Point(0, 0);
-            this.txtSystemVariables.Name = "txtSystemVariables";
-            this.txtSystemVariables.ShowLineNumbers = false;
-            this.txtSystemVariables.ShowVRuler = false;
-            this.txtSystemVariables.Size = new System.Drawing.Size(293, 498);
-            this.txtSystemVariables.TabIndex = 0;
-            this.txtSystemVariables.Text = "size: 50";
-            // 
-            // txtSystemPython
-            // 
-            this.txtSystemPython.ConvertTabsToSpaces = true;
-            this.txtSystemPython.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystemPython.EnableFolding = false;
-            this.txtSystemPython.IsReadOnly = false;
-            this.txtSystemPython.Location = new System.Drawing.Point(0, 0);
-            this.txtSystemPython.Name = "txtSystemPython";
-            this.txtSystemPython.ShowVRuler = false;
-            this.txtSystemPython.Size = new System.Drawing.Size(726, 498);
-            this.txtSystemPython.TabIndex = 1;
-            // 
             // txtLog
             // 
             this.txtLog.ConvertTabsToSpaces = true;
@@ -1568,66 +1678,23 @@
             this.txtLog.Size = new System.Drawing.Size(957, 655);
             this.txtLog.TabIndex = 0;
             // 
-            // txtEvaluatorCode
+            // picDimmer
             // 
-            this.txtEvaluatorCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtEvaluatorCode.ConvertTabsToSpaces = true;
-            this.txtEvaluatorCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtEvaluatorCode.EnableFolding = false;
-            this.txtEvaluatorCode.IsReadOnly = false;
-            this.txtEvaluatorCode.Location = new System.Drawing.Point(92, 473);
-            this.txtEvaluatorCode.Name = "txtEvaluatorCode";
-            this.txtEvaluatorCode.ShowLineNumbers = false;
-            this.txtEvaluatorCode.ShowVRuler = false;
-            this.txtEvaluatorCode.Size = new System.Drawing.Size(544, 185);
-            this.txtEvaluatorCode.TabIndex = 6;
-            this.txtEvaluatorCode.Text = "fitness = 0.0\r\nfor x in indiv:\r\n    fitness += x**2\r\n\r\nreturn FitnessMinimise(fit" +
-                "ness)";
-            this.txtEvaluatorCode.Visible = false;
+            this.picDimmer.Location = new System.Drawing.Point(0, 0);
+            this.picDimmer.Name = "picDimmer";
+            this.picDimmer.Size = new System.Drawing.Size(100, 54);
+            this.picDimmer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picDimmer.TabIndex = 8;
+            this.picDimmer.TabStop = false;
+            this.picDimmer.Visible = false;
             // 
-            // txtLandscapeParameters
+            // menuControlStep
             // 
-            this.txtLandscapeParameters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtLandscapeParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtLandscapeParameters.EnableFolding = false;
-            this.txtLandscapeParameters.IsReadOnly = false;
-            this.txtLandscapeParameters.Location = new System.Drawing.Point(92, 221);
-            this.txtLandscapeParameters.Name = "txtLandscapeParameters";
-            this.txtLandscapeParameters.ShowLineNumbers = false;
-            this.txtLandscapeParameters.ShowVRuler = false;
-            this.txtLandscapeParameters.Size = new System.Drawing.Size(544, 246);
-            this.txtLandscapeParameters.TabIndex = 5;
-            // 
-            // chartResults
-            // 
-            this.chartResults.AutoRange = true;
-            this.chartResults.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chartResults.FlipVertical = true;
-            this.chartResults.Location = new System.Drawing.Point(3, 3);
-            this.chartResults.MustIncludeHorizontalZero = true;
-            this.chartResults.MustIncludeVerticalZero = true;
-            this.chartResults.Name = "chartResults";
-            this.chartResults.ShowMouseCoordinates = true;
-            this.chartResults.Size = new System.Drawing.Size(625, 458);
-            this.chartResults.TabIndex = 0;
-            // 
-            // visPopulation
-            // 
-            this.visPopulation.AutoRange = true;
-            this.visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.visPopulation.BackColor = System.Drawing.Color.White;
-            this.table2DPlot.SetColumnSpan(this.visPopulation, 2);
-            this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.visPopulation.HorizontalOffset = -100000D;
-            this.visPopulation.HorizontalRange = 1000000D;
-            this.visPopulation.Location = new System.Drawing.Point(3, 32);
-            this.visPopulation.Name = "visPopulation";
-            this.visPopulation.ShowMouseCoordinates = true;
-            this.visPopulation.Size = new System.Drawing.Size(619, 425);
-            this.visPopulation.TabIndex = 2;
-            this.visPopulation.VerticalOffset = -7.2505224288324825D;
-            this.visPopulation.VerticalRange = 1000000D;
+            this.menuControlStep.Name = "menuControlStep";
+            this.menuControlStep.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.menuControlStep.Size = new System.Drawing.Size(153, 22);
+            this.menuControlStep.Text = "Step";
+            this.menuControlStep.Click += new System.EventHandler(this.menuControlStep_Click);
             // 
             // Editor
             // 
@@ -1679,8 +1746,8 @@
             this.tableResults.PerformLayout();
             this.tableControls.ResumeLayout(false);
             this.tableControls.PerformLayout();
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.splitGraphStats.Panel1.ResumeLayout(false);
             this.splitGraphStats.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).EndInit();
@@ -1751,7 +1818,6 @@
         private ICSharpCode.TextEditor.TextEditorControl txtLandscapeParameters;
         private System.Windows.Forms.ComboBox lstConfigurations;
         private System.Windows.Forms.TableLayoutPanel tableControls;
-        private System.Windows.Forms.Button btnStartStop;
         private System.Windows.Forms.CheckBox chkIterations;
         private System.Windows.Forms.CheckBox chkFitness;
         private System.Windows.Forms.CheckBox chkSeconds;
@@ -1802,7 +1868,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuViewSubview2;
         private System.Windows.Forms.ToolStripMenuItem menuViewLog;
         private System.Windows.Forms.ToolStripMenuItem menuControl;
-        private System.Windows.Forms.ToolStripMenuItem menuControlStartStop;
+        private System.Windows.Forms.ToolStripMenuItem menuControlStartPause;
         private System.Windows.Forms.PictureBox picDimmer;
         private System.Windows.Forms.TabControl tabSourceView;
         private System.Windows.Forms.TabPage tabSourceESDL;
@@ -1823,6 +1889,13 @@
         private VisualiserLib.Visualiser visPopulation;
         private System.Windows.Forms.Label lblPlotExpression;
         private System.Windows.Forms.TextBox txtPlotExpression;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.CheckBox btnPause;
+        private System.Windows.Forms.ToolStripMenuItem menuControlStop;
+        private System.Windows.Forms.ToolTip toolTips;
+        private System.Windows.Forms.ToolStripMenuItem menuControlStep;
     }
 }
 

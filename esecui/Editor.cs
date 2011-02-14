@@ -91,6 +91,9 @@ namespace esecui
             tabResultView.Font = UIFont;
             lblPlotExpression.Font = UIFont;
             lblBestIndividualExpression.Font = UIFont;
+            btnStart.Font = UIFont;
+            btnPause.Font = UIFont;
+            btnStop.Font = UIFont;
 
             // Initialise the code font
             CodeFont = new Font("Consolas", 10.0f);
@@ -828,15 +831,61 @@ class CustomEvaluator(esec.landscape.Landscape):
         private Task CurrentExperiment;
         private Monitor CurrentMonitor;
 
-        private void btnStartStop_Click(object sender, EventArgs e)
+        private void menuControlStartPause_Click(object sender, EventArgs e)
+        {
+            if (picDimmer.Visible) return;
+
+            if (IsExperimentRunning)
+            {
+                btnPause.Checked = !btnPause.Checked;
+            }
+            else
+            {
+                chkResults.Checked = true;
+                StartExperiment();
+            }
+        }
+        
+        private void menuControlStep_Click(object sender, EventArgs e)
+        {
+            if (IsExperimentRunning)
+            {
+                CurrentMonitor.SingleStep();
+                btnPause.Checked = true;
+            }
+            else
+            {
+                btnPause.Checked = true;
+                StartExperiment(true);
+            }
+        }
+
+        private void menuControlStop_Click(object sender, EventArgs e)
         {
             if (IsExperimentRunning)
             {
                 StopExperiment();
             }
-            else
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            StartExperiment();
+        }
+
+        private void btnPause_CheckedChanged(object sender, EventArgs e)
+        {
+            if (IsExperimentRunning)
             {
-                StartExperiment();
+                CurrentMonitor.IsPaused = btnPause.Checked;
+            }
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            if (IsExperimentRunning)
+            {
+                StopExperiment();
             }
         }
 
@@ -848,89 +897,111 @@ class CustomEvaluator(esec.landscape.Landscape):
         private void StopExperiment()
         {
             CurrentMonitor.Cancel();
-            btnStartStop.Enabled = false;
+            btnStart.Enabled = true;
+            btnPause.Enabled = false;
+            btnPause.Checked = false;
+            btnStop.Enabled = false;
         }
 
-        private void StartExperiment()
+        private void StartExperiment(bool singleStep = false)
         {
-            if (txtSystemESDL.Text.Length == 0)
+            UseWaitCursor = true;
+            btnStart.Enabled = false;
+            bool completed = false;
+
+            try
             {
-                chkSystem.Checked = true;
-                return;
+                if (txtSystemESDL.Text.Length == 0)
+                {
+                    chkSystem.Checked = true;
+                    return;
+                }
+                if (lstLandscapes.SelectedNode == null ||
+                    (lstLandscapes.SelectedNode.Tag == null && lstLandscapes.SelectedNode.Name != "Custom"))
+                {
+                    chkLandscape.Checked = true;
+                    return;
+                }
+
+                CurrentMonitor = new Monitor(this);
+                if (singleStep) CurrentMonitor.IsPaused = true;
+                CurrentMonitor.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
+                CurrentMonitor.EvaluationLimit = chkEvaluations.Checked ? int.Parse(txtEvaluations.Text) : (int?)null;
+                CurrentMonitor.TimeLimit = chkSeconds.Checked ? TimeSpan.FromSeconds(double.Parse(txtSeconds.Text)) : (TimeSpan?)null;
+                CurrentMonitor.FitnessLimit = chkFitness.Checked ? double.Parse(txtFitness.Text) : (double?)null;
+
+                IList<ErrorItem> errors = null;
+                var variables = Python.ConfigDict(txtSystemVariables, out errors);
+                if (errors.Any())
+                {
+                    foreach (var err in errors) lstErrors.Items.Add(err);
+                    chkSystem.Checked = true;
+                    return;
+                }
+
+                var landscape = Python.ConfigDict(txtLandscapeParameters, out errors);
+                if (errors.Any())
+                {
+                    foreach (var err in errors) lstErrors.Items.Add(err);
+                    chkLandscape.Checked = true;
+                    return;
+                }
+                if (lstLandscapes.SelectedNode.Name != "Custom")
+                {
+                    landscape["class"] = lstLandscapes.SelectedNode.Tag;
+                }
+
+                var state = new Dictionary<string, object>();
+                state["landscape"] = landscape;
+                state["landscape.evaluator"] = GetCustomEvaluator();
+                state["monitor"] = CurrentMonitor;
+                state["system.description"] = txtSystemESDL.Text;
+                state["system"] = variables;
+                state["random_seed"] = 12345;       // TODO: Settable random seed
+                state["preamble"] = txtSystemPython.Text;
+
+                chartResults.ClearAll(true);
+                chartResults.ShowSeries(0, chkChartBestFitness.Checked);
+                chartResults.ShowSeries(1, chkChartCurrentBest.Checked);
+                chartResults.ShowSeries(2, chkChartCurrentMean.Checked);
+                chartResults.ShowSeries(3, chkChartCurrentWorst.Checked);
+
+                txtPlotExpression.Enabled = false;
+                DisableVisualisation = false;
+                visPopulation.ClearAll(true);
+
+                CurrentExperiment = new Task(Task_RunExperiment, state,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning);
+                var noErrTask = CurrentExperiment.ContinueWith(Task_RunExperiment_Completed,
+                    CancellationToken.None,
+                    TaskContinuationOptions.OnlyOnRanToCompletion,
+                    TaskScheduler.FromCurrentSynchronizationContext());
+                var errTask = CurrentExperiment.ContinueWith(Task_RunExperiment_NotCompleted,
+                    CancellationToken.None,
+                    TaskContinuationOptions.NotOnRanToCompletion,
+                    TaskScheduler.FromCurrentSynchronizationContext());
+                noErrTask.ContinueWith(Task_RunExperiment_Finally, TaskScheduler.FromCurrentSynchronizationContext());
+                errTask.ContinueWith(Task_RunExperiment_Finally, TaskScheduler.FromCurrentSynchronizationContext());
+
+                lstConfigurations.Enabled = false;
+                btnPause.Enabled = true;
+                btnStop.Enabled = true;
+
+                chkResults.Checked = true;
+                CurrentExperiment.Start();
+
+                completed = true;
             }
-            if (lstLandscapes.SelectedNode == null ||
-                (lstLandscapes.SelectedNode.Tag == null && lstLandscapes.SelectedNode.Name != "Custom"))
+            finally
             {
-                chkLandscape.Checked = true;
-                return;
+                if (!completed)
+                {
+                    UseWaitCursor = false;  // wait cursor is disabled after initialistion
+                    btnStart.Enabled = true;
+                }
             }
 
-            CurrentMonitor = new Monitor(this);
-            CurrentMonitor.IterationLimit = chkIterations.Checked ? int.Parse(txtIterations.Text) : (int?)null;
-            CurrentMonitor.EvaluationLimit = chkEvaluations.Checked ? int.Parse(txtEvaluations.Text) : (int?)null;
-            CurrentMonitor.TimeLimit = chkSeconds.Checked ? TimeSpan.FromSeconds(double.Parse(txtSeconds.Text)) : (TimeSpan?)null;
-            CurrentMonitor.FitnessLimit = chkFitness.Checked ? double.Parse(txtFitness.Text) : (double?)null;
-
-            IList<ErrorItem> errors = null;
-            var variables = Python.ConfigDict(txtSystemVariables, out errors);
-            if (errors.Any())
-            {
-                foreach (var err in errors) lstErrors.Items.Add(err);
-                chkSystem.Checked = true;
-                return;
-            }
-
-            var landscape = Python.ConfigDict(txtLandscapeParameters, out errors);
-            if (errors.Any())
-            {
-                foreach (var err in errors) lstErrors.Items.Add(err);
-                chkLandscape.Checked = true;
-                return;
-            }
-            if (lstLandscapes.SelectedNode.Name != "Custom")
-            {
-                landscape["class"] = lstLandscapes.SelectedNode.Tag;
-            }
-
-            var state = new Dictionary<string, object>();
-            state["landscape"] = landscape;
-            state["landscape.evaluator"] = GetCustomEvaluator();
-            state["monitor"] = CurrentMonitor;
-            state["system.description"] = txtSystemESDL.Text;
-            state["system"] = variables;
-            state["random_seed"] = 12345;       // TODO: Settable random seed
-            state["preamble"] = txtSystemPython.Text;
-
-            chartResults.ClearAll(true);
-            chartResults.ShowSeries(0, chkChartBestFitness.Checked);
-            chartResults.ShowSeries(1, chkChartCurrentBest.Checked);
-            chartResults.ShowSeries(2, chkChartCurrentMean.Checked);
-            chartResults.ShowSeries(3, chkChartCurrentWorst.Checked);
-
-            txtPlotExpression.Enabled = false;
-            DisableVisualisation = false;
-            visPopulation.ClearAll(true);
-
-            CurrentExperiment = new Task(Task_RunExperiment, state,
-                CancellationToken.None,
-                TaskCreationOptions.LongRunning);
-            var noErrTask = CurrentExperiment.ContinueWith(Task_RunExperiment_Completed,
-                CancellationToken.None,
-                TaskContinuationOptions.OnlyOnRanToCompletion,
-                TaskScheduler.FromCurrentSynchronizationContext());
-            var errTask = CurrentExperiment.ContinueWith(Task_RunExperiment_NotCompleted,
-                CancellationToken.None,
-                TaskContinuationOptions.NotOnRanToCompletion,
-                TaskScheduler.FromCurrentSynchronizationContext());
-            noErrTask.ContinueWith(Task_RunExperiment_Finally, TaskScheduler.FromCurrentSynchronizationContext());
-            errTask.ContinueWith(Task_RunExperiment_Finally, TaskScheduler.FromCurrentSynchronizationContext());
-
-            btnStartStop.Text = "&Stop (F5)";
-
-            lstConfigurations.Enabled = false;
-
-            chkResults.Checked = true;
-            CurrentExperiment.Start();
         }
 
         private void Task_RunExperiment(object state_obj)
@@ -986,6 +1057,8 @@ class CustomEvaluator(esec.landscape.Landscape):
                 // Alternatively, you can disable "Just My Code" in the debugging options.
                 throw new Exception("Experiment.__init__", ex);
             }
+
+            UseWaitCursor = false;
             exp.run();
         }
 
@@ -1026,8 +1099,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtPlotExpression.Enabled = true;
             lstConfigurations.Enabled = true;
 
-            btnStartStop.Text = "&Start (F5)";
-            btnStartStop.Enabled = true;
+            btnStart.Enabled = true;
+            btnPause.Enabled = false;
+            btnStop.Enabled = false;
             CurrentMonitor = null;
             if (CurrentExperiment != null) CurrentExperiment.Dispose();
             CurrentExperiment = null;
@@ -1173,6 +1247,22 @@ class CustomEvaluator(esec.landscape.Landscape):
             Resizing = false;
             Editor_ClientSizeChanged(sender, e);
             //PerformLayout();
+        }
+
+        private void txtExpression_Enter(object sender, EventArgs e)
+        {
+            if (ProjectorMode)
+            {
+                ((TextBox)sender).Font = ProjectorCodeFont;
+            }
+        }
+
+        private void txtExpression_Leave(object sender, EventArgs e)
+        {
+            if (ProjectorMode)
+            {
+                ((TextBox)sender).Font = CodeFont;
+            }
         }
 
         #endregion
@@ -1640,22 +1730,6 @@ class CustomEvaluator(esec.landscape.Landscape):
         }
 
         #endregion
-
-        private void txtExpression_Enter(object sender, EventArgs e)
-        {
-            if (ProjectorMode)
-            {
-                ((TextBox)sender).Font = ProjectorCodeFont;
-            }
-        }
-
-        private void txtExpression_Leave(object sender, EventArgs e)
-        {
-            if (ProjectorMode)
-            {
-                ((TextBox)sender).Font = CodeFont;
-            }
-        }
 
 
     }

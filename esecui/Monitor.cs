@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IronPython.Runtime;
-using System.Windows.Forms;
-using System.Runtime.CompilerServices;
-using Microsoft.Scripting.Hosting;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+using IronPython.Runtime;
+using Microsoft.Scripting.Hosting;
 
 namespace esecui
 {
@@ -15,10 +16,25 @@ namespace esecui
     {
         private Editor Owner;
 
+        private AutoResetEvent PausedChanged;
+        private bool _IsPaused;
+        private bool _IsSingleStep;
+        public bool IsPaused
+        {
+            get { return _IsPaused; }
+            set { _IsPaused = value; PausedChanged.Set(); }
+        }
+        public void SingleStep()
+        {
+            _IsSingleStep = true;
+            IsPaused = false;
+        }
+
         public bool IsCancelled { get; private set; }
         public void Cancel()
         {
             IsCancelled = true;
+            IsPaused = false;
         }
 
         public int Iterations { get; private set; }
@@ -39,6 +55,9 @@ namespace esecui
         public Monitor(Editor owner)
         {
             Owner = owner;
+            
+            PausedChanged = new AutoResetEvent(false);
+            IsPaused = false;
 
             IsCancelled = false;
             
@@ -153,6 +172,13 @@ namespace esecui
                 CurrentBest == null ? null : CurrentBest.fitness,
                 CurrentMean == null ? null : CurrentMean,
                 CurrentWorst == null ? null : CurrentWorst.fitness);
+
+            while (IsPaused && !IsCancelled)
+            {
+                PausedChanged.WaitOne();
+            }
+            if (_IsSingleStep) IsPaused = true;
+            _IsSingleStep = false;
         }
 
         public void on_run_start(dynamic sender)
