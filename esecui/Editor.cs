@@ -1040,10 +1040,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                 }
                 foreach (var name in scopeObj.GetVariableNames())
                 {
-                    if (!Python.Scope.ContainsVariable(name))
-                    {
-                        systemDict[name] = scopeObj.GetVariable(name);
-                    }
+                    systemDict[name] = scopeObj.GetVariable(name);
                 }
             }
 
@@ -1062,7 +1059,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
 
             UseWaitCursor = false;
-            exp.run();
+            if (!CurrentMonitor.IsCancelled) exp.run();
         }
 
         private void Task_RunExperiment_Completed(Task task)

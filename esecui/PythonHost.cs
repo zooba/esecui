@@ -13,10 +13,12 @@ namespace esecui
         public ScriptScope Scope { get; private set; }
 
 
-        public PythonHost(string path)
+        public PythonHost(string path, bool debug = false)
         {
-            Engine = Python.CreateEngine();
-
+            var srs = Python.CreateRuntimeSetup(new Dictionary<string, object> { { "Debug", debug } });
+            var runtime = new ScriptRuntime(srs);
+            Engine = Python.GetEngine(runtime);
+            
             if (path != null)
             {
                 var searchPaths = Engine.GetSearchPaths();
@@ -25,7 +27,6 @@ namespace esecui
             }
 
             Scope = Engine.CreateScope();
-            ((dynamic)Engine.GetClrModule()).AddReference(System.Reflection.Assembly.GetCallingAssembly().FullName);
         }
 
         public dynamic Import(string package)
