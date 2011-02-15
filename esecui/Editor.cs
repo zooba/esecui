@@ -165,7 +165,7 @@ namespace esecui
                 if (_ProjectorMode == value) return;
 
                 _ProjectorMode = value;
-                
+
                 SuspendLayout();
                 visPopulation.BeginUpdate();
                 chartResults.BeginUpdate();
@@ -259,7 +259,7 @@ namespace esecui
         }
         private VisualiserPointStyle NormalVisualiserStyle;
         private VisualiserPointStyle ProjectorVisualiserStyle;
-        
+
         private IDictionary<string, VisualiserPointStyle> ActiveChartStyles
         {
             set
@@ -326,6 +326,8 @@ namespace esecui
             esec = Python.Import("esec");
             esdlc = Python.Import("esdlc");
 
+            EsecOverrides.AddOverrides(esec);
+            
             PrepareLandscapeTree();
         }
 
@@ -351,8 +353,9 @@ namespace esecui
 
         private void Task_Init_NotCompleted(Task task)
         {
-            menuStrip.Enabled = true;
             LookEnabled();
+            menuStrip.Enabled = true;
+            UseWaitCursor = false;
 
             if (!task.IsCanceled)
             {
@@ -760,7 +763,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                 DisableVisualisation = true;
                 return;
             }
-            
+
             Action<List<VisualiserPoint>> continuation = pts =>
             {
                 if (firstRun) visPopulation.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -845,7 +848,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                 StartExperiment();
             }
         }
-        
+
         private void menuControlStep_Click(object sender, EventArgs e)
         {
             if (IsExperimentRunning)

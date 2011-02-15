@@ -25,6 +25,7 @@ namespace esecui
             }
 
             Scope = Engine.CreateScope();
+            ((dynamic)Engine.GetClrModule()).AddReference(System.Reflection.Assembly.GetCallingAssembly().FullName);
         }
 
         public dynamic Import(string package)
