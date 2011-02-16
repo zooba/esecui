@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor;
+using Microsoft.Scripting.Interpreter;
 
 namespace esecui
 {
@@ -75,7 +76,33 @@ namespace esecui
             Text = string.Format("{0}:{1}", Line + 1, Column + 1);
         }
 
-        public static ErrorItem FromPython(TextEditorControl source, dynamic error)
+        public static ErrorItem FromIronPythonException(TextEditorControl source, Exception error)
+        {
+            var ifi = error.Data[typeof(InterpretedFrameInfo)] as InterpretedFrameInfo[];
+            var se = error as Microsoft.Scripting.SyntaxErrorException;
+            if (ifi != null)
+            {
+                var col = ifi[0].DebugInfo.Index;
+                var line = source.Document.GetLineNumberForOffset(ifi[0].DebugInfo.Index);
+                return new ErrorItem(source,
+                    line, 0, line, source.Document.GetLineSegment(line).Length,
+                    error.Message, "", false);
+            }
+            else if (se != null)
+            {
+                return new ErrorItem(source,
+                    se.Line - 1, se.Column - 1, se.Line - 1, se.Column - 1 + se.RawSpan.Length,
+                    se.Message, se.ErrorCode.ToString(), se.Severity == Microsoft.Scripting.Severity.Warning);
+            }
+            else
+            {
+                return new ErrorItem(source,
+                    0, 0, 0, 0,
+                    error.Message, "", false);
+            }
+        }
+
+        public static ErrorItem FromEsdlcException(TextEditorControl source, dynamic error)
         {
             return new ErrorItem(source,
                 error.line - 1, error.col - 1, error.line - 1, error.col - 1 + error.length,

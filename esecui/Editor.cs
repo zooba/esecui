@@ -589,7 +589,21 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 error.Source.ActiveTextAreaControl.Caret.Position = error.EndPosition;
                 error.Source.ActiveTextAreaControl.SelectionManager.SetSelection(error);
-                if (panelLandscape.Contains(error.Source)) chkLandscape.Checked = true;
+                if (error.Source == txtSystemESDL)
+                {
+                    chkSystem.Checked = true;
+                    tabSourceView.SelectTab(tabSourceESDL);
+                }
+                else if (error.Source == txtSystemPython)
+                {
+                    chkSystem.Checked = true;
+                    tabSourceView.SelectTab(tabSourcePython);
+                }
+                else if (error.Source == txtLandscapeParameters ||
+                    error.Source == txtEvaluatorCode)
+                {
+                    chkLandscape.Checked = true;
+                }
                 error.Source.Focus();
             }
         }
@@ -610,8 +624,10 @@ class CustomEvaluator(esec.landscape.Landscape):
             // Reset everything
             lstErrors.Items.Clear();
             txtSystemESDL.BeginUpdate();
+            txtSystemPython.BeginUpdate();
             txtSystemVariables.BeginUpdate();
             txtSystemESDL.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtSystemPython.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
 
             var variables = Python.ConfigDict(txtSystemVariables);
@@ -623,50 +639,80 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
-            Task.Factory.StartNew((Func<object, dynamic>)(state_obj =>
+            var compileTask = new Task<dynamic>(Task_CheckSyntaxCompile,
+                new object[] { txtSystemESDL.Text, txtSystemPython.Text, externs });
+
+            var errorTask = compileTask.ContinueWith(Task_CheckSyntax_Error, 
+                CancellationToken.None,
+                TaskContinuationOptions.NotOnRanToCompletion,
+                guiScheduler);
+
+            var successTask = compileTask.ContinueWith(Task_CheckSyntax_Success,
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnRanToCompletion,
+                guiScheduler);
+
+            errorTask.ContinueWith(Task_CheckSyntax_Finally, guiScheduler);
+            successTask.ContinueWith(Task_CheckSyntax_Finally, guiScheduler);
+
+            compileTask.Start();
+        }
+
+        private dynamic Task_CheckSyntaxCompile(object state_obj)
+        {
+            var state = (object[])state_obj;
+            dynamic scope = Python.CreateScope();
+            scope.esec = esec;
+            scope.esdlc = esdlc;
+            Python.Exec((string)state[1], scope);
+
+            dynamic ast = scope.esdlc.compileESDL((string)state[0], (List<string>)state[2]);
+            return ast;
+        }
+
+        private void Task_CheckSyntax_Error(Task<dynamic> task)
+        {
+            lstErrors.Items.Add(ErrorItem.FromIronPythonException(txtSystemPython, task.Exception.InnerException));
+        }
+
+        private void Task_CheckSyntax_Success(Task<dynamic> task)
+        {
+            dynamic ast = task.Result;
+            foreach (var error in ast._errors)
             {
-                var state = (object[])state_obj;
-                dynamic scope = Python.CreateScope();
-                scope.esec = esec;
-                scope.esdlc = esdlc;
-                Python.Exec((string)state[1], scope);
+                lstErrors.Items.Add(ErrorItem.FromEsdlcException(txtSystemESDL, error));
+            }
 
-                dynamic ast = scope.esdlc.compileESDL((string)state[0], (List<string>)state[2]);
-                return ast;
-            }), new object[] { txtSystemESDL.Text, txtSystemPython.Text, externs })
-            .ContinueWith((Action<Task<dynamic>>)(task =>
+            var variables = Python.ConfigDict(txtSystemVariables);
+            foreach (var uninit in ast.warnings)
             {
-                dynamic ast = task.Result;
-                foreach (var error in ast._errors)
+                string code = uninit.code;
+                if (code != "W2002" && code != "W2003" && code != "W2004") continue;
+
+                string variable = uninit.text;
+
+                if (!variables.ContainsKey(variable))
                 {
-                    lstErrors.Items.Add(ErrorItem.FromPython(txtSystemESDL, error));
-                }
-
-                foreach (var uninit in ast.warnings)
-                {
-                    string code = uninit.code;
-                    if (code != "W2002" && code != "W2003" && code != "W2004") continue;
-
-                    string variable = uninit.text;
-
-                    if (!variables.ContainsKey(variable))
+                    if (txtSystemVariables.Document.TextLength > 0 &&
+                        txtSystemVariables.Document.GetText(txtSystemVariables.Document.TextLength - 1, 1) != "\n")
                     {
-                        if (txtSystemVariables.Document.TextLength > 0 &&
-                            txtSystemVariables.Document.GetText(txtSystemVariables.Document.TextLength - 1, 1) != "\n")
-                        {
-                            txtSystemVariables.Document.Insert(txtSystemVariables.Document.TextLength, "\r\n");
-                        }
-                        txtSystemVariables.Document.Insert(txtSystemVariables.Document.TextLength,
-                            string.Format("{0}: None\r\n", variable));
+                        txtSystemVariables.Document.Insert(txtSystemVariables.Document.TextLength, "\r\n");
                     }
+                    txtSystemVariables.Document.Insert(txtSystemVariables.Document.TextLength,
+                        string.Format("{0}: None\r\n", variable));
                 }
+            }
+        }
 
-                UseWaitCursor = false;
-                txtSystemESDL.EndUpdate();
-                txtSystemESDL.Refresh();
-                txtSystemVariables.EndUpdate();
-                txtSystemVariables.Refresh();
-            }), guiScheduler);
+        private void Task_CheckSyntax_Finally(Task task)
+        {
+            UseWaitCursor = false;
+            txtSystemESDL.EndUpdate();
+            txtSystemESDL.Refresh();
+            txtSystemPython.EndUpdate();
+            txtSystemPython.Refresh();
+            txtSystemVariables.EndUpdate();
+            txtSystemVariables.Refresh();
         }
 
         #endregion
