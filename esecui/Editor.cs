@@ -1239,6 +1239,39 @@ class CustomEvaluator(esec.landscape.Landscape):
         }
 
 
+#if MONO
+        private void LookDisabled()
+        {
+            panelMenu.Enabled = false;
+            panelSystem.Enabled = false;
+            panelLandscape.Enabled = false;
+            panelResults.Enabled = false;
+            panelLog.Enabled = false;
+            picDimmer.SendToBack();
+            picDimmer.Visible = true;
+        }
+
+        private void LookEnabled()
+        {
+            panelMenu.Enabled = true;
+            panelSystem.Enabled = true;
+            panelLandscape.Enabled = true;
+            panelResults.Enabled = true;
+            panelLog.Enabled = true;
+            picDimmer.Visible = false;
+        }
+
+        private void Editor_ClientSizeChanged(object sender, EventArgs e)
+        { }
+
+        private void Editor_ResizeBegin(object sender, EventArgs e)
+        { }
+
+        private void Editor_ResizeEnd(object sender, EventArgs e)
+        { }
+
+#else
+        // Exclude the entire function from Mono builds to get an error if we try and use it.
         private void DrawPanelToBitmap(Panel panel, Bitmap bitmap)
         {
             if (panel.Visible) panel.DrawToBitmap(bitmap, new Rectangle(panel.Location, panel.Size));
@@ -1295,6 +1328,8 @@ class CustomEvaluator(esec.landscape.Landscape):
             //PerformLayout();
         }
 
+#endif
+
         private void txtExpression_Enter(object sender, EventArgs e)
         {
             if (ProjectorMode)
@@ -1349,21 +1384,26 @@ class CustomEvaluator(esec.landscape.Landscape):
 
                 if (newSelection == "FirstRunDefault")
                 {
-                    lstConfigurations.SelectedIndex = firstRunDefault;
+                    if (InvokeRequired) Invoke((Action)(() => { lstConfigurations.SelectedIndex = firstRunDefault; }));
+                    else lstConfigurations.SelectedIndex = firstRunDefault;
                 }
                 else if (newSelection != null && set.Contains(newSelection.ToUpperInvariant()))
                 {
                     lstConfigurations_SuppressLoad += 1;
-                    lstConfigurations.SelectedItem = lstConfigurations.Items
+                    var item = lstConfigurations.Items
                         .OfType<FileInfo>()
                         .FirstOrDefault(i => i.FullName.Equals(newSelection, StringComparison.InvariantCultureIgnoreCase));
+                    if (InvokeRequired) Invoke((Action)(() => { lstConfigurations.SelectedItem = item; }));
+                    else lstConfigurations.SelectedItem = item;
                 }
                 else if (selection != null && set.Contains(selection.FullName.ToUpperInvariant()))
                 {
                     lstConfigurations_SuppressLoad += 1;
-                    lstConfigurations.SelectedItem = lstConfigurations.Items
+                    var item = lstConfigurations.Items
                         .OfType<FileInfo>()
                         .FirstOrDefault(i => i.FullName.Equals(selection.FullName, StringComparison.InvariantCultureIgnoreCase));
+                    if (InvokeRequired) Invoke((Action)(() => { lstConfigurations.SelectedItem = item; }));
+                    else lstConfigurations.SelectedItem = item;
                 }
             }
             finally
@@ -1374,6 +1414,34 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         #region GetRelativePath
 
+#if MONO
+        private static string GetRelativePath(string fromPath, string toPath)
+        {
+            fromPath = Path.GetFullPath(fromPath);
+            toPath = Path.GetFullPath(toPath);
+            if (toPath.StartsWith(fromPath, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return toPath.Substring(fromPath.Length + 1);
+            }
+
+            var fromBits = fromPath.Split('\\', '/');
+            var toBits = toPath.Split('\\', '/');
+            for (int i = 0; i < fromBits.Length && i < toBits.Length; ++i)
+            {
+                if (!fromBits[i].Equals(toBits[i], StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if (i == 0) return toPath;
+
+                    var result = "";
+                    for (int j = i; j < fromBits.Length; ++j) result += "..\\";
+                    for (int j = i; j < toBits.Length - 1; ++j) result += toBits[j] + "\\";
+                    return result + toBits[toBits.Length - 1];
+                }
+            }
+
+            return toPath;
+        }
+#else
         [System.Runtime.InteropServices.DllImport("shlwapi.dll",
             CallingConvention = System.Runtime.InteropServices.CallingConvention.Winapi,
             CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
@@ -1395,7 +1463,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                 return toPath;
             }
         }
-
+#endif
         #endregion
 
         private void lstConfigurations_Format(object sender, ListControlConvertEventArgs e)

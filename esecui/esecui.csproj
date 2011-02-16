@@ -98,7 +98,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -109,6 +108,9 @@
     </Compile>
     <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CompatibleSplitContainer.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Configuration.cs" />
     <Compile Include="Editor.cs">
@@ -185,7 +187,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)postbuild.cmd" $(SolutionDir) $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)postbuild.cmd" "$(ProjectDir)..\" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

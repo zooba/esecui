@@ -41,14 +41,14 @@
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Example assignment", "VSObject_Constant.bmp");
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Example class", "VSObject_Class.bmp");
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Example function", "VSObject_Method.bmp");
-            this.splitSystemErrors = new System.Windows.Forms.SplitContainer();
+            this.splitSystemErrors = new esecui.CompatibleSplitContainer();
             this.tabSourceView = new System.Windows.Forms.TabControl();
             this.tabSourceESDL = new System.Windows.Forms.TabPage();
-            this.splitSystemVariables = new System.Windows.Forms.SplitContainer();
+            this.splitSystemVariables = new esecui.CompatibleSplitContainer();
             this.txtSystemESDL = new ICSharpCode.TextEditor.TextEditorControl();
             this.txtSystemVariables = new ICSharpCode.TextEditor.TextEditorControl();
             this.tabSourcePython = new System.Windows.Forms.TabPage();
-            this.splitPythonDefinitions = new System.Windows.Forms.SplitContainer();
+            this.splitPythonDefinitions = new esecui.CompatibleSplitContainer();
             this.txtSystemPython = new ICSharpCode.TextEditor.TextEditorControl();
             this.lstPythonDefinitions = new System.Windows.Forms.ListView();
             this.imlPythonDefinitions = new System.Windows.Forms.ImageList(this.components);
@@ -57,7 +57,7 @@
             this.colCode = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lstConfigurations = new System.Windows.Forms.ComboBox();
-            this.splitLandscape = new System.Windows.Forms.SplitContainer();
+            this.splitLandscape = new esecui.CompatibleSplitContainer();
             this.lstLandscapes = new System.Windows.Forms.TreeView();
             this.tableLandscape = new System.Windows.Forms.TableLayoutPanel();
             this.txtEvaluatorCode = new ICSharpCode.TextEditor.TextEditorControl();
@@ -68,7 +68,7 @@
             this.lblLandscapeParameters = new System.Windows.Forms.Label();
             this.txtLandscapeParameters = new ICSharpCode.TextEditor.TextEditorControl();
             this.lblEvaluatorCode = new System.Windows.Forms.Label();
-            this.splitLimitsGraph = new System.Windows.Forms.SplitContainer();
+            this.splitLimitsGraph = new esecui.CompatibleSplitContainer();
             this.tableResults = new System.Windows.Forms.TableLayoutPanel();
             this.tableControls = new System.Windows.Forms.TableLayoutPanel();
             this.chkIterations = new System.Windows.Forms.CheckBox();
@@ -88,7 +88,7 @@
             this.lblOr3 = new System.Windows.Forms.Label();
             this.lblOr2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.splitGraphStats = new System.Windows.Forms.SplitContainer();
+            this.splitGraphStats = new esecui.CompatibleSplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
             this.chartResults = new VisualiserLib.Visualiser();
@@ -146,6 +146,7 @@
             this.menuControl = new System.Windows.Forms.ToolStripMenuItem();
             this.menuControlStartPause = new System.Windows.Forms.ToolStripMenuItem();
             this.menuControlStop = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuControlStep = new System.Windows.Forms.ToolStripMenuItem();
             this.panelMenu = new System.Windows.Forms.FlowLayoutPanel();
             this.chkSystem = new System.Windows.Forms.RadioButton();
             this.chkLandscape = new System.Windows.Forms.RadioButton();
@@ -158,7 +159,6 @@
             this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
             this.picDimmer = new System.Windows.Forms.PictureBox();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
-            this.menuControlStep = new System.Windows.Forms.ToolStripMenuItem();
             menuConfigurationSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -445,7 +445,7 @@
             this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lstConfigurations.Enabled = false;
             this.lstConfigurations.FormattingEnabled = true;
-            this.lstConfigurations.Location = new System.Drawing.Point(552, 5);
+            this.lstConfigurations.Location = new System.Drawing.Point(552, 4);
             this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
             this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
             this.lstConfigurations.Name = "lstConfigurations";
@@ -1010,10 +1010,10 @@
             // tabBestIndividual
             // 
             this.tabBestIndividual.Controls.Add(this.tableBestIndividual);
-            this.tabBestIndividual.Location = new System.Drawing.Point(4, 24);
+            this.tabBestIndividual.Location = new System.Drawing.Point(4, 22);
             this.tabBestIndividual.Name = "tabBestIndividual";
             this.tabBestIndividual.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBestIndividual.Size = new System.Drawing.Size(631, 464);
+            this.tabBestIndividual.Size = new System.Drawing.Size(631, 466);
             this.tabBestIndividual.TabIndex = 2;
             this.tabBestIndividual.Text = "Best (Alt+3)";
             this.tabBestIndividual.UseVisualStyleBackColor = true;
@@ -1032,7 +1032,7 @@
             this.tableBestIndividual.RowCount = 2;
             this.tableBestIndividual.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableBestIndividual.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableBestIndividual.Size = new System.Drawing.Size(625, 458);
+            this.tableBestIndividual.Size = new System.Drawing.Size(625, 460);
             this.tableBestIndividual.TabIndex = 0;
             // 
             // lblBestIndividualExpression
@@ -1066,7 +1066,7 @@
             this.txtBestIndividual.Name = "txtBestIndividual";
             this.txtBestIndividual.ReadOnly = true;
             this.txtBestIndividual.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtBestIndividual.Size = new System.Drawing.Size(619, 423);
+            this.txtBestIndividual.Size = new System.Drawing.Size(619, 425);
             this.txtBestIndividual.TabIndex = 2;
             this.txtBestIndividual.VisibleChanged += new System.EventHandler(this.txtBestIndividual_VisibleChanged);
             // 
@@ -1431,7 +1431,7 @@
             // menuAbout
             // 
             this.menuAbout.Name = "menuAbout";
-            this.menuAbout.Size = new System.Drawing.Size(152, 22);
+            this.menuAbout.Size = new System.Drawing.Size(107, 22);
             this.menuAbout.Text = "&About";
             this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
             // 
@@ -1546,6 +1546,14 @@
             this.menuControlStop.Size = new System.Drawing.Size(153, 22);
             this.menuControlStop.Text = "Stop";
             this.menuControlStop.Click += new System.EventHandler(this.menuControlStop_Click);
+            // 
+            // menuControlStep
+            // 
+            this.menuControlStep.Name = "menuControlStep";
+            this.menuControlStep.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.menuControlStep.Size = new System.Drawing.Size(153, 22);
+            this.menuControlStep.Text = "Step";
+            this.menuControlStep.Click += new System.EventHandler(this.menuControlStep_Click);
             // 
             // panelMenu
             // 
@@ -1688,14 +1696,6 @@
             this.picDimmer.TabStop = false;
             this.picDimmer.Visible = false;
             // 
-            // menuControlStep
-            // 
-            this.menuControlStep.Name = "menuControlStep";
-            this.menuControlStep.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.menuControlStep.Size = new System.Drawing.Size(153, 22);
-            this.menuControlStep.Text = "Step";
-            this.menuControlStep.Click += new System.EventHandler(this.menuControlStep_Click);
-            // 
             // Editor
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1778,13 +1778,13 @@
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer splitSystemErrors;
-        private System.Windows.Forms.SplitContainer splitSystemVariables;
+        private esecui.CompatibleSplitContainer splitSystemErrors;
+        private esecui.CompatibleSplitContainer splitSystemVariables;
         private System.Windows.Forms.ListView lstErrors;
         private System.Windows.Forms.ColumnHeader colLocation;
         private System.Windows.Forms.ColumnHeader colCode;
         private System.Windows.Forms.ColumnHeader colMessage;
-        private System.Windows.Forms.SplitContainer splitLandscape;
+        private esecui.CompatibleSplitContainer splitLandscape;
         private System.Windows.Forms.TreeView lstLandscapes;
         private System.Windows.Forms.TableLayoutPanel tableLandscape;
         private System.Windows.Forms.Label lblLandscapeInternalName;
@@ -1792,9 +1792,9 @@
         private System.Windows.Forms.Label lblLandscapeDescription;
         private System.Windows.Forms.TextBox txtLandscapeDescription;
         private System.Windows.Forms.Label lblLandscapeParameters;
-        private System.Windows.Forms.SplitContainer splitLimitsGraph;
+        private esecui.CompatibleSplitContainer splitLimitsGraph;
         private System.Windows.Forms.TableLayoutPanel tableResults;
-        private System.Windows.Forms.SplitContainer splitGraphStats;
+        private esecui.CompatibleSplitContainer splitGraphStats;
         private System.Windows.Forms.TableLayoutPanel tableStats;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
@@ -1874,7 +1874,7 @@
         private System.Windows.Forms.TabPage tabSourceESDL;
         private System.Windows.Forms.TabPage tabSourcePython;
         private ICSharpCode.TextEditor.TextEditorControl txtSystemPython;
-        private System.Windows.Forms.SplitContainer splitPythonDefinitions;
+        private esecui.CompatibleSplitContainer splitPythonDefinitions;
         private System.Windows.Forms.ListView lstPythonDefinitions;
         private System.Windows.Forms.ImageList imlPythonDefinitions;
         private System.Windows.Forms.ToolStripMenuItem menuViewProjectorMode;
