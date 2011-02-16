@@ -1434,6 +1434,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                 if (path == null || !path.Exists) return;
 
                 config = new Configuration();
+                config.Source = path.FullName;
 
                 if (path.Extension.Equals(".py", StringComparison.InvariantCultureIgnoreCase))
                 {
