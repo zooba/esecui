@@ -84,6 +84,7 @@ namespace esecui
         }
 
         private string MainGroup;
+        private List<dynamic> CachedMainGroup;
 
         public void on_yield(dynamic sender, dynamic name, dynamic group_obj)
         {
@@ -91,26 +92,30 @@ namespace esecui
 
             if (MainGroup == name)
             {
-                var group = (IList<dynamic>)group_obj;
-                dynamic best = null, worst = null, sum = null;
-
-                foreach (var indiv in group)
-                {
-                    if (best == null || indiv.fitness > best.fitness) best = indiv;
-                    if (worst == null || indiv.fitness < worst.fitness) worst = indiv;
-                    if (sum == null) sum = indiv.fitness; else sum = sum + indiv.fitness;
-                }
-
-                if (BestSolution == null || best.fitness > BestSolution.fitness)
-                {
-                    BestSolution = best;
-                }
-                CurrentBest = best;
-                CurrentMean = sum.__div__(group.Count);
-                CurrentWorst = worst;
-
-                Owner.UpdateVisualisation(group, Iterations <= 1);
+                CachedMainGroup = new List<dynamic>((IList<dynamic>)group_obj);
+                Owner.UpdateVisualisation(CachedMainGroup, Iterations <= 1);
             }
+        }
+
+        private void CalculateStats()
+        {
+            var group = CachedMainGroup;
+            dynamic best = null, worst = null, sum = null;
+
+            foreach (var indiv in group)
+            {
+                if (best == null || indiv.fitness > best.fitness) best = indiv;
+                if (worst == null || indiv.fitness < worst.fitness) worst = indiv;
+                if (sum == null) sum = indiv.fitness; else sum = sum + indiv.fitness;
+            }
+
+            if (BestSolution == null || best.fitness > BestSolution.fitness)
+            {
+                BestSolution = best;
+            }
+            CurrentBest = best;
+            CurrentMean = sum.__div__(group.Count);
+            CurrentWorst = worst;
         }
 
         public void on_notify(dynamic sender, dynamic name, dynamic value)
@@ -166,6 +171,8 @@ namespace esecui
 
         public void on_post_breed(dynamic sender)
         {
+            CalculateStats();
+
             Owner.UpdateStats(Iterations, Evaluations, Births, DateTime.Now.Subtract(StartTime),
                 BestSolution,
                 BestSolution == null ? null : BestSolution.fitness,
