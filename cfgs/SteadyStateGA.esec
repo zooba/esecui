@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Template: Steady State GA"><system><definition># Steady-State Genetic Algorithm
+﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Steady State GA"><system><definition># Steady-State Genetic Algorithm
 #
 # Uses binary-valued individuals, binary tournament, Gaussian mutation.
 #

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Template: Evolutionary Programming"><system><definition># Evolutionary Programming
+﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Evolutionary Programming"><system><definition># Evolutionary Programming
 #
 # Uses real-valued individuals, random selection, Gaussian mutation.
 #

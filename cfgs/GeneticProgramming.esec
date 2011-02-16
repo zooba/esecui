@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Template: Genetic Programming"><system><definition># Genetic Programming
+﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Genetic Programming"><system><definition># Genetic Programming
 #
 # Uses real-valued instructions, constants between 0.0 and 1.0
 # and one of mutation, crossover or reproduction on offspring.

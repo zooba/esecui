@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Template: Genetic Algorithm"><system><definition># Genetic Algorithm
+﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Genetic Algorithm"><system><definition># Genetic Algorithm
 #
 # Uses binary individuals, fitness proportional selection,
 # single point crossover and bitflip mutation.
