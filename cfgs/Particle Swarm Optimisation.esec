@@ -1,4 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Particle Swarm Optimisation"><system><definition>FROM random_pso(length=2, \
+﻿<?xml version="1.0" encoding="utf-8"?><configuration name="Particle Swarm Optimisation"><system><definition># Particle Swarm Optimisation
+#
+# Assigns each individual a velocity based on its previous velocity
+# (momentum), the best known location and its personal best known
+# location.
+#
+# Positions are updated multiple times an iteration for nicer
+# animations. This does not affect the result of the algorithm.
+
+FROM random_pso(length=2, \
                 lowest=-100,               highest=100, \
                 position_lower_bound=-100, position_upper_bound=100, \
                 velocity_lower_bound, velocity_upper_bound) \
@@ -319,8 +328,8 @@ velocity_upper_bound = 100
 
 # use these bounds to see particles
 # wrapping around the edge
-velocity_lower_bound = None
-velocity_upper_bound = None
+#velocity_lower_bound = None
+#velocity_upper_bound = None
 </parameters></system><landscape><class>esec.landscape.real.Rastrigin</class><parameters>bounds.lower: -100
 bounds.upper: 100
 size.exact: 2
