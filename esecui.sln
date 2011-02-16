@@ -37,7 +37,8 @@ Global
 		{F1B2706E-C413-4B39-884E-6762A08432C7}.Debug|x86.Build.0 = Debug|x86
 		{F1B2706E-C413-4B39-884E-6762A08432C7}.Release|x64.ActiveCfg = Release|x64
 		{F1B2706E-C413-4B39-884E-6762A08432C7}.Release|x64.Build.0 = Release|x64
-		{F1B2706E-C413-4B39-884E-6762A08432C7}.Release|x86.ActiveCfg = Release|Any CPU
+		{F1B2706E-C413-4B39-884E-6762A08432C7}.Release|x86.ActiveCfg = Release|x86
+		{F1B2706E-C413-4B39-884E-6762A08432C7}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
