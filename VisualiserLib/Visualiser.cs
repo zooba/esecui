@@ -1048,11 +1048,13 @@ namespace VisualiserLib
             e.Graphics.InterpolationMode = InterpolationMode.High;
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
 
+#if !MONO
             if (FlipVertical)
             {
                 e.Graphics.TranslateTransform(0.0f, ClientSize.Height);
                 e.Graphics.ScaleTransform(1.0f, -1.0f);
             }
+#endif
 
             var scale = GetScaledRange();
 
