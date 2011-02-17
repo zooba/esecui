@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\esec\esec\__init__.py">
+      <Link>esec\__init__.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\compiler.py">
+      <Link>esec\compiler.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\context.py">
+      <Link>esec\context.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\experiment.py">
+      <Link>esec\experiment.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\fitness.py">
+      <Link>esec\fitness.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\individual.py">
+      <Link>esec\individual.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\system.py">
+      <Link>esec\system.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\generators\__init__.py">
+      <Link>esec\generators\__init__.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\generators\filters.py">
+      <Link>esec\generators\filters.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\generators\joiners.py">
+      <Link>esec\generators\joiners.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\generators\selectors.py">
+      <Link>esec\generators\selectors.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\landscape\__init__.py">
+      <Link>esec\landscape\__init__.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\landscape\binary.py">
+      <Link>esec\landscape\binary.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\landscape\ge.py">
+      <Link>esec\landscape\ge.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\landscape\integer.py">
+      <Link>esec\landscape\integer.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\landscape\real.py">
+      <Link>esec\landscape\real.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\landscape\tgp.py">
+      <Link>esec\landscape\tgp.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\monitors\__init__.py">
+      <Link>esec\monitors\__init__.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\monitors\consolemonitor.py">
+      <Link>esec\monitors\consolemonitor.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\monitors\csvmonitor.py">
+      <Link>esec\monitors\csvmonitor.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\monitors\multimonitor.py">
+      <Link>esec\monitors\multimonitor.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\monitors\multitarget.py">
+      <Link>esec\monitors\multitarget.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\monitors\posttarget.py">
+      <Link>esec\monitors\posttarget.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\species\__init__.py">
+      <Link>esec\species\__init__.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\species\binary.py">
+      <Link>esec\species\binary.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\species\binary_int.py">
+      <Link>esec\species\binary_int.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\species\binary_real.py">
+      <Link>esec\species\binary_real.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\species\ge.py">
+      <Link>esec\species\ge.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\species\integer.py">
+      <Link>esec\species\integer.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\species\joined.py">
+      <Link>esec\species\joined.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\species\real.py">
+      <Link>esec\species\real.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\species\tgp.py">
+      <Link>esec\species\tgp.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\utils\__init__.py">
+      <Link>esec\utils\__init__.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\utils\attributedict.py">
+      <Link>esec\utils\attributedict.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\utils\configdict.py">
+      <Link>esec\utils\configdict.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esec\utils\exceptions.py">
+      <Link>esec\utils\exceptions.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esdlc\__init__.py">
+      <Link>esdlc\__init__.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esdlc\errors.py">
+      <Link>esdlc\errors.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esdlc\esec.py">
+      <Link>esdlc\esec.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esdlc\lexer.py">
+      <Link>esdlc\lexer.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esdlc\nodes.py">
+      <Link>esdlc\nodes.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esdlc\parser.py">
+      <Link>esdlc\parser.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\esec\esdlc\verifier.py">
+      <Link>esdlc\verifier.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\__future__.py">
+      <Link>lib\__future__.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\_abcoll.py">
+      <Link>lib\_abcoll.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\_weakrefset.py">
+      <Link>lib\_weakrefset.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\abc.py">
+      <Link>lib\abc.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\bisect.py">
+      <Link>lib\bisect.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\collections.py">
+      <Link>lib\collections.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\copy.py">
+      <Link>lib\copy.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\functools.py">
+      <Link>lib\functools.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\genericpath.py">
+      <Link>lib\genericpath.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\heapq.py">
+      <Link>lib\heapq.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\httplib.py">
+      <Link>lib\httplib.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\keyword.py">
+      <Link>lib\keyword.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\linecache.py">
+      <Link>lib\linecache.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\macpath.py">
+      <Link>lib\macpath.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\mimetools.py">
+      <Link>lib\mimetools.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\ntpath.py">
+      <Link>lib\ntpath.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\os.py">
+      <Link>lib\os.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\platform.py">
+      <Link>lib\platform.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\posixpath.py">
+      <Link>lib\posixpath.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\random.py">
+      <Link>lib\random.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\rfc822.py">
+      <Link>lib\rfc822.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\runpy.py">
+      <Link>lib\runpy.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\site.py">
+      <Link>lib\site.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\stat.py">
+      <Link>lib\stat.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\string.py">
+      <Link>lib\string.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\struct.py">
+      <Link>lib\struct.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\tempfile.py">
+      <Link>lib\tempfile.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\threading.py">
+      <Link>lib\threading.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\traceback.py">
+      <Link>lib\traceback.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\types.py">
+      <Link>lib\types.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\urlparse.py">
+      <Link>lib\urlparse.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\UserDict.py">
+      <Link>lib\UserDict.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\warnings.py">
+      <Link>lib\warnings.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\weakref.py">
+      <Link>lib\weakref.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\ctypes\__init__.py">
+      <Link>lib\ctypes\__init__.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\ctypes\_endian.py">
+      <Link>lib\ctypes\_endian.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\ctypes\util.py">
+      <Link>lib\ctypes\util.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\pylib\ctypes\wintypes.py">
+      <Link>lib\ctypes\wintypes.py</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
