@@ -125,9 +125,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PythonHost.cs" />
-    <Compile Include="TextEditorControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
@@ -161,6 +158,10 @@
     <None Include="Resources\SteadyStateGA.esec" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ICSharpCode.TextEditor\Project\ICSharpCode.TextEditor.csproj">
+      <Project>{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}</Project>
+      <Name>ICSharpCode.TextEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VisualiserLib\VisualiserLib.csproj">
       <Project>{F1B2706E-C413-4B39-884E-6762A08432C7}</Project>
       <Name>VisualiserLib</Name>

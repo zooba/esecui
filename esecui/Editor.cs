@@ -328,53 +328,42 @@ namespace esecui
             InitialisationTaskCTS = new CancellationTokenSource();
 
             InitialisationTask = new Task(Task_Init, InitialisationTaskCTS.Token);
-            InitialisationTask.ContinueWith(Task_Init_Completed,
+            var onSuccess = InitialisationTask.ContinueWith(Task_Init_Completed,
                 CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, guiScheduler);
-            InitialisationTask.ContinueWith(Task_Init_NotCompleted,
+            var onError = InitialisationTask.ContinueWith(Task_Init_NotCompleted,
                 CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, guiScheduler);
+            onSuccess.ContinueWith(Task_Init_Finally, guiScheduler);
+            onError.ContinueWith(Task_Init_Finally, guiScheduler);
 
             InitialisationTask.Start();
         }
 
         private void Task_Init()
         {
-            var libraryPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            Python = new PythonHost(libraryPath);
+            var libraryPaths = new[] {
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "lib"),
+                AppDomain.CurrentDomain.BaseDirectory
+            };
+            Python = new PythonHost(libraryPaths);
 
             esec = Python.Import("esec");
             esdlc = Python.Import("esdlc");
 
             EsecOverrides.AddOverrides(esec);
-            
+
             PrepareLandscapeTree();
         }
 
         private void Task_Init_Completed(Task task)
         {
             FillLandscapeTree();
-            InitialisationTask.Dispose();
-            InitialisationTask = null;
-            InitialisationTaskCTS.Dispose();
-            InitialisationTaskCTS = null;
-
-            LookEnabled();
-            menuStrip.Enabled = true;
-            UseWaitCursor = false;
-
             ConfigurationList_Refresh("FirstRunDefault");
-            lstConfigurations.Enabled = true;
-            menuSave.Enabled = true;
-            menuSaveAs.Enabled = true;
 
             Text = "esec Experiment Designer";
         }
 
         private void Task_Init_NotCompleted(Task task)
         {
-            LookEnabled();
-            menuStrip.Enabled = true;
-            UseWaitCursor = false;
-
             if (!task.IsCanceled)
             {
                 Log("An error occurred while initialising IronPython.\n");
@@ -389,9 +378,23 @@ namespace esecui
                 }
                 chkLog.Checked = true;
             }
-            InitialisationTask.Dispose();
+        }
+
+        private void Task_Init_Finally(Task task)
+        {
+            if (InitialisationTask != null) InitialisationTask.Dispose();
             InitialisationTask = null;
+            if (InitialisationTaskCTS != null) InitialisationTaskCTS.Dispose();
             InitialisationTaskCTS = null;
+
+            LookEnabled();
+            UseWaitCursor = false;
+            lstConfigurations.Enabled = true;
+            menuStrip.Enabled = true;
+            menuSave.Enabled = true;
+            menuSaveAs.Enabled = true;
+
+            if (chkLog.Checked) chkTabs_CheckedChanged(chkLog, EventArgs.Empty);
         }
 
 
@@ -660,7 +663,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             var compileTask = new Task<dynamic>(Task_CheckSyntaxCompile,
                 new object[] { txtSystemESDL.Text, txtSystemPython.Text, externs });
 
-            var errorTask = compileTask.ContinueWith(Task_CheckSyntax_Error, 
+            var errorTask = compileTask.ContinueWith(Task_CheckSyntax_Error,
                 CancellationToken.None,
                 TaskContinuationOptions.NotOnRanToCompletion,
                 guiScheduler);
@@ -1324,7 +1327,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             var dimmed = picDimmer.Image;
             picDimmer.Image = null;
             picDimmer.Visible = false;
-            dimmed.Dispose();
+            if (dimmed != null) dimmed.Dispose();
         }
 
         bool Resizing = false;

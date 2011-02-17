@@ -445,7 +445,7 @@
             this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lstConfigurations.Enabled = false;
             this.lstConfigurations.FormattingEnabled = true;
-            this.lstConfigurations.Location = new System.Drawing.Point(552, 5);
+            this.lstConfigurations.Location = new System.Drawing.Point(552, 4);
             this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
             this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
             this.lstConfigurations.Name = "lstConfigurations";

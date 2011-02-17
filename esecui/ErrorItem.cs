@@ -29,11 +29,9 @@ namespace esecui
         public ErrorItem(TextEditorControl source, int line, int column, int endLine, int endColumn, string message, string code, bool isWarning)
         {
             Source = source;
-#if !MONO
             Source.Document.DocumentAboutToBeChanged += new DocumentEventHandler(Document_DocumentAboutToBeChanged);
             Source.Document.LineCountChanged += new EventHandler<LineCountChangeEventArgs>(Document_LineCountChanged);
             Source.Document.DocumentChanged += new DocumentEventHandler(Document_DocumentChanged);
-#endif
 
             Line = line;
             Column = column;
@@ -62,7 +60,6 @@ namespace esecui
 
         private void Update()
         {
-#if !MONO
             if (Marker == null)
             {
                 Marker = new TextMarker(Source.Document.PositionToOffset(StartPosition), Length,
@@ -74,7 +71,6 @@ namespace esecui
                 Marker.Offset = Offset;
                 Marker.Length = Length;
             }
-#endif
 
             Name = string.Format("{0}:{1}:{2}", Line, Column, Code);
             Text = string.Format("{0}:{1}", Line + 1, Column + 1);
@@ -113,7 +109,6 @@ namespace esecui
                 error.message, error.code, error.iswarning);
         }
 
-#if !MONO
         #region Error Location Tracking
 
         void Document_DocumentAboutToBeChanged(object sender, DocumentEventArgs e)
@@ -172,7 +167,6 @@ namespace esecui
         }
 
         #endregion
-#endif
 
         #region ISelection Members
 
@@ -257,14 +251,12 @@ namespace esecui
 
         public void Dispose()
         {
-#if !MONO
             if (Source != null && !Source.IsDisposed)
             {
                 Source.Document.MarkerStrategy.RemoveMarker(Marker);
                 Source.Document.DocumentChanged -= Document_DocumentChanged;
                 Source.Document.LineCountChanged -= Document_LineCountChanged;
             }
-#endif
         }
     }
 }

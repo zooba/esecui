@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Scripting.Hosting;
 using IronPython.Hosting;
+using Microsoft.Scripting;
 
 namespace esecui
 {
@@ -13,20 +14,29 @@ namespace esecui
         public ScriptScope Scope { get; private set; }
 
 
-        public PythonHost(string path, bool debug = false)
+        private ScriptSource ReprExpression;
+        private ScriptSource DictExpression;
+        private ScriptSource ImportSystemExpression;
+
+
+        public PythonHost(string[] paths, bool debug = false)
         {
             var srs = Python.CreateRuntimeSetup(new Dictionary<string, object> { { "Debug", debug } });
             var runtime = new ScriptRuntime(srs);
             Engine = Python.GetEngine(runtime);
             
-            if (path != null)
+            if (paths != null)
             {
                 var searchPaths = Engine.GetSearchPaths();
-                searchPaths.Add(path);
+                foreach (var p in paths) searchPaths.Add(p);
                 Engine.SetSearchPaths(searchPaths);
             }
 
             Scope = Engine.CreateScope();
+
+            ReprExpression = Engine.CreateScriptSourceFromString("repr(__object)", SourceCodeKind.Expression);
+            DictExpression = Engine.CreateScriptSourceFromString("dict(__contents)", SourceCodeKind.Expression);
+            ImportSystemExpression = Engine.CreateScriptSourceFromString("from System import *");
         }
 
         public dynamic Import(string package)
@@ -36,7 +46,9 @@ namespace esecui
 
         public IDictionary<object, object> Dict()
         {
-            return (IDictionary<object, object>)Eval("dict()");
+            return new IronPython.Runtime.PythonDictionary();
+            //return new Dictionary<object, object>();
+            //return (IDictionary<object, object>)Eval("dict()");
         }
 
         public IDictionary<object, object> Dict(string contents)
@@ -47,8 +59,8 @@ namespace esecui
         public IDictionary<object, object> Dict(object contents)
         {
             dynamic scope = CreateScope();
-            scope.contents = contents;
-            return (IDictionary<object, object>)Eval("dict(contents)", scope);
+            scope.__contents = contents;
+            return DictExpression.Execute<IDictionary<object, object>>(scope);
         }
 
         public IDictionary<object, object> Dict(IDictionary<object, object> contents)
@@ -66,7 +78,7 @@ namespace esecui
         public IDictionary<object, object> Dict(object contents, ScriptScope scope)
         {
             scope.SetVariable("__contents", (object)contents);
-            return (IDictionary<object, object>)Eval("dict(__contents)", scope);
+            return DictExpression.Execute<IDictionary<object, object>>(scope);
         }
 
         public dynamic this[string name]
@@ -78,14 +90,14 @@ namespace esecui
         public ScriptScope CreateScope()
         {
             var scope = Engine.CreateScope();
-            Engine.Execute("from System import *", scope);
+            ImportSystemExpression.Execute(scope);
             return scope;
         }
 
         public ScriptScope CreateScope(IDictionary<string, object> dictionary)
         {
             var scope = Engine.CreateScope(dictionary);
-            Engine.Execute("from System import *", scope);
+            ImportSystemExpression.Execute(scope);
             return scope;
         }
 
@@ -103,7 +115,7 @@ namespace esecui
         {
             var scope = CreateScope();
             scope.SetVariable("__object", (object)value);
-            return Engine.Execute<string>("repr(__object)", scope);
+            return ReprExpression.Execute<string>(scope);
         }
 
         public ScriptSource CompileExpression(string expression)

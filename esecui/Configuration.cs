@@ -274,7 +274,7 @@ config = {
 
         public override int GetHashCode()
         {
-            return Source.GetHashCode();
+            return (Source ?? Name ?? "").GetHashCode();
         }
     }
 }
