@@ -369,5 +369,53 @@ namespace esecui.Properties {
                 this["VisualiserSizeProjector"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("LightGray")]
+        public global::System.Drawing.Color GridColor {
+            get {
+                return ((global::System.Drawing.Color)(this["GridColor"]));
+            }
+            set {
+                this["GridColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.5")]
+        public double GridThickness {
+            get {
+                return ((double)(this["GridThickness"]));
+            }
+            set {
+                this["GridThickness"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("LightGray")]
+        public global::System.Drawing.Color GridColorProjector {
+            get {
+                return ((global::System.Drawing.Color)(this["GridColorProjector"]));
+            }
+            set {
+                this["GridColorProjector"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double GridThicknessProjector {
+            get {
+                return ((double)(this["GridThicknessProjector"]));
+            }
+            set {
+                this["GridThicknessProjector"] = value;
+            }
+        }
     }
 }

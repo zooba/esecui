@@ -86,8 +86,8 @@ namespace esecui
             var se = error as Microsoft.Scripting.SyntaxErrorException;
             if (ifi != null)
             {
-                var col = ifi[0].DebugInfo.Index;
-                var line = source.Document.GetLineNumberForOffset(ifi[0].DebugInfo.Index);
+                var offset = ifi[0].DebugInfo.Index;
+                var line = source.Document.GetLineNumberForOffset(offset);
                 return new ErrorItem(source,
                     line, 0, line, source.Document.GetLineSegment(line).Length,
                     error.Message, "", false);

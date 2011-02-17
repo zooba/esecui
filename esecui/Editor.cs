@@ -68,6 +68,10 @@ namespace esecui
         private Font ProjectorCodeFont;
         private double AxisThickness;
         private double ProjectorAxisThickness;
+        private Color GridColor;
+        private Color ProjectorGridColor;
+        private double GridThickness;
+        private double ProjectorGridThickness;
 
         private void InitialiseDisplay(bool projectorMode)
         {
@@ -106,6 +110,11 @@ namespace esecui
             // Initialise the chart styles
             AxisThickness = settings.AxisThickness;
             ProjectorAxisThickness = settings.AxisThicknessProjector;
+
+            GridColor = settings.GridColor;
+            ProjectorGridColor = settings.GridColorProjector;
+            GridThickness = settings.GridThickness;
+            ProjectorGridThickness = settings.GridThicknessProjector;
 
             SeriesNames = new Dictionary<string, int>();
             NormalChartStyles = new Dictionary<string, VisualiserPointStyle>();
@@ -195,8 +204,13 @@ namespace esecui
                         ActiveVisualiserStyle = NormalVisualiserStyle;
                         chartResults.HorizontalAxisThickness = AxisThickness;
                         chartResults.VerticalAxisThickness = AxisThickness;
+                        chartResults.GridColor = GridColor;
+                        chartResults.GridThickness = GridThickness;
                         visPopulation.HorizontalAxisThickness = AxisThickness;
                         visPopulation.VerticalAxisThickness = AxisThickness;
+                        visPopulation.GridColor = GridColor;
+                        visPopulation.GridThickness = GridThickness;
+
 
                         WindowState = NormalWindowState;
                     }
@@ -226,8 +240,12 @@ namespace esecui
                         ActiveVisualiserStyle = ProjectorVisualiserStyle;
                         chartResults.HorizontalAxisThickness = ProjectorAxisThickness;
                         chartResults.VerticalAxisThickness = ProjectorAxisThickness;
+                        chartResults.GridColor = ProjectorGridColor;
+                        chartResults.GridThickness = ProjectorGridThickness;
                         visPopulation.HorizontalAxisThickness = ProjectorAxisThickness;
                         visPopulation.VerticalAxisThickness = ProjectorAxisThickness;
+                        visPopulation.GridColor = ProjectorGridColor;
+                        visPopulation.GridThickness = ProjectorGridThickness;
 
                         WindowState = FormWindowState.Maximized;
                     }

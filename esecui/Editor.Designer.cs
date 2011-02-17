@@ -445,7 +445,7 @@
             this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lstConfigurations.Enabled = false;
             this.lstConfigurations.FormattingEnabled = true;
-            this.lstConfigurations.Location = new System.Drawing.Point(552, 4);
+            this.lstConfigurations.Location = new System.Drawing.Point(552, 5);
             this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
             this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
             this.lstConfigurations.Name = "lstConfigurations";
@@ -932,6 +932,8 @@
             this.chartResults.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chartResults.FlipVertical = true;
+            this.chartResults.GridColor = System.Drawing.Color.Gray;
+            this.chartResults.HorizontalAxisColor = System.Drawing.Color.Black;
             this.chartResults.Location = new System.Drawing.Point(3, 3);
             this.chartResults.MustIncludeHorizontalZero = true;
             this.chartResults.MustIncludeVerticalZero = true;
@@ -939,6 +941,7 @@
             this.chartResults.ShowMouseCoordinates = true;
             this.chartResults.Size = new System.Drawing.Size(625, 458);
             this.chartResults.TabIndex = 0;
+            this.chartResults.VerticalAxisColor = System.Drawing.Color.Black;
             // 
             // tab2DPlot
             // 
@@ -976,6 +979,8 @@
             this.visPopulation.BackColor = System.Drawing.Color.White;
             this.table2DPlot.SetColumnSpan(this.visPopulation, 2);
             this.visPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.visPopulation.GridColor = System.Drawing.Color.Gray;
+            this.visPopulation.HorizontalAxisColor = System.Drawing.Color.Black;
             this.visPopulation.HorizontalOffset = -100000D;
             this.visPopulation.HorizontalRange = 1000000D;
             this.visPopulation.Location = new System.Drawing.Point(3, 32);
@@ -983,6 +988,7 @@
             this.visPopulation.ShowMouseCoordinates = true;
             this.visPopulation.Size = new System.Drawing.Size(619, 425);
             this.visPopulation.TabIndex = 2;
+            this.visPopulation.VerticalAxisColor = System.Drawing.Color.Black;
             this.visPopulation.VerticalOffset = -7.2505224288324825D;
             this.visPopulation.VerticalRange = 1000000D;
             // 

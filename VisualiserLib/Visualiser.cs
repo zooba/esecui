@@ -582,6 +582,37 @@ namespace VisualiserLib
             }
         }
 
+        const double DefaultHorizontalAxisThickness = 1.0;
+        private double _HorizontalAxisThickness = DefaultHorizontalAxisThickness;
+        [Browsable(true), DefaultValue(DefaultHorizontalAxisThickness)]
+        [Description("The number of pixels tall to make the horizontal axis.")]
+        public double HorizontalAxisThickness
+        {
+            get { return _HorizontalAxisThickness; }
+            set
+            {
+                _HorizontalAxisThickness = value;
+                Refresh();
+            }
+        }
+
+
+        static readonly Color DefaultHorizontalAxisColor = Color.Black;
+        private Color _HorizontalAxisColor = DefaultHorizontalAxisColor;
+        [Browsable(true)]
+        [Description("The color of the horizontal axis.")]
+        public Color HorizontalAxisColor
+        {
+            get { return _HorizontalAxisColor; }
+            set
+            {
+                _HorizontalAxisColor = value;
+                Refresh();
+            }
+        }
+        private bool ShouldSerializeHorizontalAxisColor() { return _HorizontalAxisColor == DefaultHorizontalAxisColor; }
+        private void ResetHorizontalAxisColor() { HorizontalAxisColor = DefaultHorizontalAxisColor; }
+
         const bool DefaultVerticalAxisTicks = true;
         private bool _VerticalAxisTicks = DefaultVerticalAxisTicks;
         [Browsable(true), DefaultValue(DefaultVerticalAxisTicks)]
@@ -626,20 +657,6 @@ namespace VisualiserLib
         }
 
 
-        const double DefaultHorizontalAxisThickness = 1.0;
-        private double _HorizontalAxisThickness = DefaultHorizontalAxisThickness;
-        [Browsable(true), DefaultValue(DefaultHorizontalAxisThickness)]
-        [Description("The number of pixels tall to make the horizontal axis.")]
-        public double HorizontalAxisThickness
-        {
-            get { return _HorizontalAxisThickness; }
-            set
-            {
-                _HorizontalAxisThickness = value;
-            }
-        }
-
-
         const double DefaultVerticalAxisThickness = 1.0;
         private double _VerticalAxisThickness = DefaultVerticalAxisThickness;
         [Browsable(true), DefaultValue(DefaultVerticalAxisThickness)]
@@ -650,6 +667,53 @@ namespace VisualiserLib
             set
             {
                 _VerticalAxisThickness = value;
+                Refresh();
+            }
+        }
+
+
+        static readonly Color DefaultVerticalAxisColor = Color.Black;
+        private Color _VerticalAxisColor = DefaultVerticalAxisColor;
+        [Browsable(true)]
+        [Description("The color of the vertical axis.")]
+        public Color VerticalAxisColor
+        {
+            get { return _VerticalAxisColor; }
+            set
+            {
+                _VerticalAxisColor = value;
+            }
+        }
+        private bool ShouldSerializeVerticalAxisColor() { return _VerticalAxisColor == DefaultVerticalAxisColor; }
+        private void ResetVerticalAxisColor() { VerticalAxisColor = DefaultVerticalAxisColor; }
+
+
+        static readonly Color DefaultGridColor = Color.Gray;
+        private Color _GridColor = DefaultGridColor;
+        [Browsable(true)]
+        [Description("The color of the grid. Set to Color.Transparent to hide.")]
+        public Color GridColor
+        {
+            get { return _GridColor; }
+            set
+            {
+                _GridColor = value;
+            }
+        }
+        private bool ShouldSerializeGridColor() { return _GridColor == DefaultGridColor; }
+        private void ResetGridColor() { GridColor = DefaultGridColor; }
+
+
+        const double DefaultGridThickness = 1.0;
+        private double _GridThickness = DefaultGridThickness;
+        [Browsable(true), DefaultValue(DefaultGridThickness)]
+        [Description("The thickness of the grid lines.")]
+        public double GridThickness
+        {
+            get { return _GridThickness; }
+            set
+            {
+                _GridThickness = value;
             }
         }
 
@@ -994,7 +1058,8 @@ namespace VisualiserLib
 
             using (var horizontalAxisPen = new Pen(ForeColor, (float)_HorizontalAxisThickness))
             using (var verticalAxisPen = new Pen(ForeColor, (float)_VerticalAxisThickness))
-                DrawAxes(e.Graphics, horizontalAxisPen, verticalAxisPen, scale);
+            using (var gridPen = new Pen(GridColor, (float)_GridThickness))
+                DrawAxes(e.Graphics, horizontalAxisPen, verticalAxisPen, gridPen, scale);
 
             var visibleSeries = Series.Where(s => s.Visible).ToList();
 
@@ -1126,7 +1191,7 @@ namespace VisualiserLib
             }
         }
 
-        private void DrawAxes(Graphics g, Pen horizontalAxisPen, Pen verticalAxisPen, RectangleF scale)
+        private void DrawAxes(Graphics g, Pen horizontalAxisPen, Pen verticalAxisPen, Pen gridPen, RectangleF scale)
         {
             if (!_HorizontalAxis && !_VerticalAxis) return;
 
@@ -1157,9 +1222,15 @@ namespace VisualiserLib
                     y += (float)_HorizontalAxisThickness * 0.5f;
                     float d = (float)(tickInterval * scale.Width);
                     for (int step = 1; x - step * d > 0; step += 1)
+                    {
+                        g.DrawLine(gridPen, x - step * d, 0, x - step * d, ClientSize.Height);
                         g.DrawLine(horizontalAxisPen, x - step * d, y, x - step * d, y + tickSize);
+                    }
                     for (int step = 1; x + step * d < ClientSize.Width; step += 1)
+                    {
+                        g.DrawLine(gridPen, x + step * d, 0, x + step * d, ClientSize.Height);
                         g.DrawLine(horizontalAxisPen, x + step * d, y, x + step * d, y + tickSize);
+                    }
                     y -= (float)_HorizontalAxisThickness * 0.5f;
                 }
             }
@@ -1184,9 +1255,15 @@ namespace VisualiserLib
                     x += (float)_VerticalAxisThickness * 0.5f;
                     float d = (float)(tickInterval * scale.Height);
                     for (int step = 1; y - step * d > 0; step += 1)
+                    {
+                        g.DrawLine(gridPen, 0, y - step * d, ClientSize.Width, y - step * d);
                         g.DrawLine(verticalAxisPen, x, y - step * d, x + tickSize, y - step * d);
+                    }
                     for (int step = 1; y + step * d < ClientSize.Height; step += 1)
+                    {
+                        g.DrawLine(gridPen, 0, y + step * d, ClientSize.Width, y + step * d);
                         g.DrawLine(verticalAxisPen, x, y + step * d, x + tickSize, y + step * d);
+                    }
                     x -= (float)_VerticalAxisThickness * 0.5f;
                 }
             }
