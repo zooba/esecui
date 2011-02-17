@@ -5,7 +5,7 @@
     <pylibSource Include="..\pylib\**\*.py"><Visible>false</Visible></pylibSource>
   </ItemGroup>
   <Target Name="AfterBuild">
-    <Copy SourceFiles="@(esecSource)" DestinationFiles="@(esecSource->'%(TargetDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(pylibSource)" DestinationFiles="@(pylibSource->'%(TargetDir)lib\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(esecSource)" DestinationFiles="@(esecSource->'$(OutDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(pylibSource)" DestinationFiles="@(pylibSource->'$(OutDir)lib\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
 </Project>
