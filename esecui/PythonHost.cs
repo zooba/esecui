@@ -47,8 +47,6 @@ namespace esecui
         public IDictionary<object, object> Dict()
         {
             return new IronPython.Runtime.PythonDictionary();
-            //return new Dictionary<object, object>();
-            //return (IDictionary<object, object>)Eval("dict()");
         }
 
         public IDictionary<object, object> Dict(string contents)
