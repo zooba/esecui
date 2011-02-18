@@ -14,7 +14,7 @@ namespace esecui
             esec.species._pairs = new Func<object, IEnumerable<object>>(_Pairs);
         }
         
-        public static IEnumerable<PythonTuple> _Pairs(object source)
+        public static IEnumerable<object> _Pairs(object source)
         {
             object[] objs = new object[2];
             System.Collections.IEnumerator e;
