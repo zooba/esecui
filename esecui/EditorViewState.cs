@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace esecui
@@ -207,23 +206,36 @@ namespace esecui
             Image oldImage = null;
             if (picDimmer.Visible) oldImage = picDimmer.Image;
 
+            bool success = false;
             var dimmed = new Bitmap(ClientSize.Width, ClientSize.Height);
-            DrawPanelToBitmap(panelMenu, dimmed);
-            DrawPanelToBitmap(panelSystem, dimmed);
-            DrawPanelToBitmap(panelLandscape, dimmed);
-            DrawPanelToBitmap(panelResults, dimmed);
-            DrawPanelToBitmap(panelLog, dimmed);
-            using (var g = Graphics.FromImage(dimmed))
-            using (var brush = new SolidBrush(Color.FromArgb(64, 128, 128, 128)))
+            try
             {
-                g.FillRectangle(brush, ClientRectangle);
-            }
-            picDimmer.Image = dimmed;
-            picDimmer.BringToFront();
-            picDimmer.SetBounds(0, 0, ClientSize.Width, ClientSize.Height);
-            picDimmer.Visible = true;
+                DrawPanelToBitmap(panelMenu, dimmed);
+                DrawPanelToBitmap(panelSystem, dimmed);
+                DrawPanelToBitmap(panelLandscape, dimmed);
+                DrawPanelToBitmap(panelResults, dimmed);
+                DrawPanelToBitmap(panelLog, dimmed);
+                using (var g = Graphics.FromImage(dimmed))
+                using (var brush = new SolidBrush(Color.FromArgb(64, 128, 128, 128)))
+                {
+                    g.FillRectangle(brush, ClientRectangle);
+                }
+                picDimmer.Image = dimmed;
+                picDimmer.BringToFront();
+                picDimmer.SetBounds(0, 0, ClientSize.Width, ClientSize.Height);
+                picDimmer.Visible = true;
 
-            if (oldImage != null) oldImage.Dispose();
+                if (oldImage != null) oldImage.Dispose();
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    picDimmer.Image = null;
+                    dimmed.Dispose();
+                }
+            }
         }
 
         private void LookEnabled()

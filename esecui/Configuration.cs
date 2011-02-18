@@ -13,8 +13,12 @@ namespace esecui
         public Configuration() { }
 
         public Configuration(byte[] sourceData)
-            : this(new MemoryStream(sourceData))
-        { }
+        {
+            using (var source = new MemoryStream(sourceData))
+            {
+                Read(source);
+            }
+        }
 
         public Configuration(Stream source)
         {
@@ -75,32 +79,33 @@ namespace esecui
         private static string ToPythonCode(string source, string indent)
         {
             var dict = new Dictionary<string, object>();
-            var reader = new StringReader(source);
-            for (var line = reader.ReadLine(); line != null; line = reader.ReadLine())
+            using (var reader = new StringReader(source))
             {
-                int i1 = line.IndexOf('='), i2 = line.IndexOf(':');
-                if (i2 >= 0 && i2 < i1) i1 = i2;
-                if (i1 < 0)
+                for (var line = reader.ReadLine(); line != null; line = reader.ReadLine())
                 {
-                    dict[line] = "True";
-                }
-                else
-                {
-                    var name = line.Substring(0, i1);
-                    var value = line.Substring(i1 + 1);
-                    var subdict = dict;
-                    var parts = name.Split('.');
-                    if (parts.Length > 1)
+                    int i1 = line.IndexOf('='), i2 = line.IndexOf(':');
+                    if (i2 >= 0 && i2 < i1) i1 = i2;
+                    if (i1 < 0)
                     {
-                        foreach (var part in parts.Take(parts.Length - 1))
-                        {
-                            if (!subdict.ContainsKey(part)) subdict[part] = new Dictionary<string, string>();
-                        }
+                        dict[line] = "True";
                     }
-                    subdict[parts[parts.Length - 1]] = value;
+                    else
+                    {
+                        var name = line.Substring(0, i1);
+                        var value = line.Substring(i1 + 1);
+                        var subdict = dict;
+                        var parts = name.Split('.');
+                        if (parts.Length > 1)
+                        {
+                            foreach (var part in parts.Take(parts.Length - 1))
+                            {
+                                if (!subdict.ContainsKey(part)) subdict[part] = new Dictionary<string, string>();
+                            }
+                        }
+                        subdict[parts[parts.Length - 1]] = value;
+                    }
                 }
             }
-
 
             return ToPythonCode(dict, indent);
         }

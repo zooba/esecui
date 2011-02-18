@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 using IronPython.Runtime;
-using Microsoft.Scripting.Hosting;
 
 namespace esecui
 {
     [PythonType]
-    public class Monitor
+    public class Monitor : IDisposable
     {
         private Editor Owner;
 
@@ -55,12 +49,12 @@ namespace esecui
         public Monitor(Editor owner)
         {
             Owner = owner;
-            
+
             PausedChanged = new AutoResetEvent(false);
             IsPaused = false;
 
             IsCancelled = false;
-            
+
             MainGroup = null;
             Iterations = 0;
             Evaluations = 0;
@@ -215,12 +209,27 @@ namespace esecui
             if (EvaluationLimit.HasValue && EvaluationLimit <= Evaluations) return true;
             if (TimeLimit.HasValue && TimeLimit <= DateTime.Now.Subtract(StartTime)) return true;
             if (FitnessLimit.HasValue && BestSolution.fitness.should_terminate(FitnessLimit.Value)) return true;
-            
-            return !(IterationLimit.HasValue || 
-                EvaluationLimit.HasValue || 
-                TimeLimit.HasValue || 
+
+            return !(IterationLimit.HasValue ||
+                EvaluationLimit.HasValue ||
+                TimeLimit.HasValue ||
                 FitnessLimit.HasValue);
         }
 
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (PausedChanged != null) PausedChanged.Close();
+                PausedChanged = null;
+            }
+        }
     }
 }

@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
 using IronPython.Runtime;
-using Microsoft.Scripting.Hosting;
 using VisualiserLib;
 
 namespace esecui
@@ -46,6 +41,19 @@ namespace esecui
             InitialiseDisplay(false);
         }
 
+        private void DoDispose(bool disposing)
+        {
+            if (IsDisposed || !disposing) return;
+
+            DisposeDisplay();
+
+            if (CompileTask != null) CompileTask.Dispose();
+            if (CurrentExperiment != null) CurrentExperiment.Dispose();
+            if (CurrentMonitor != null) CurrentMonitor.Dispose();
+            if (InitialisationTask != null) InitialisationTask.Dispose();
+            if (InitialisationTaskCTS != null) InitialisationTaskCTS.Dispose();
+        }
+
         private void menuAbout_Click(object sender, EventArgs e)
         {
             if (!menuStrip.Enabled) return;
@@ -61,254 +69,6 @@ namespace esecui
         {
             Close();
         }
-
-        #region Projector Mode
-
-        private static readonly string[] Styles = new[] { "BestFitness", "CurrentBest", "CurrentMean", "CurrentWorst" };
-
-        private Font UIFont;
-        private Font ProjectorUIFont;
-        private Font CodeFont;
-        private Font ProjectorCodeFont;
-        private double AxisThickness;
-        private double ProjectorAxisThickness;
-        private Color GridColor;
-        private Color ProjectorGridColor;
-        private double GridThickness;
-        private double ProjectorGridThickness;
-
-        private void InitialiseDisplay(bool projectorMode)
-        {
-            var settings = Properties.Settings.Default;
-
-            // Initialise the UI font
-            UIFont = new Font("Segoe UI", 9.0f);
-            if (UIFont.Name != UIFont.OriginalFontName)
-            {
-                UIFont = new Font("Tahoma", 9.0f);
-            }
-            if (UIFont.Name != UIFont.OriginalFontName)
-            {
-                UIFont = new Font(FontFamily.GenericSansSerif, 9.0f);
-            }
-            ProjectorUIFont = new Font(UIFont.Name, 18.0f);
-
-            // Force some controls to always use the smaller font
-            panelMenu.Font = UIFont;
-            tabSourceView.Font = UIFont;
-            tabResultView.Font = UIFont;
-            lblPlotExpression.Font = UIFont;
-            lblBestIndividualExpression.Font = UIFont;
-            btnStart.Font = UIFont;
-            btnPause.Font = UIFont;
-            btnStop.Font = UIFont;
-
-            // Initialise the code font
-            CodeFont = new Font("Consolas", 10.0f);
-            if (CodeFont.Name != CodeFont.OriginalFontName)
-            {
-                CodeFont = new Font(FontFamily.GenericMonospace, 10.0f);
-            }
-            ProjectorCodeFont = new Font(CodeFont.Name, 20.0f);
-
-            // Initialise the chart styles
-            AxisThickness = settings.AxisThickness;
-            ProjectorAxisThickness = settings.AxisThicknessProjector;
-
-            GridColor = settings.GridColor;
-            ProjectorGridColor = settings.GridColorProjector;
-            GridThickness = settings.GridThickness;
-            ProjectorGridThickness = settings.GridThicknessProjector;
-
-            SeriesNames = new Dictionary<string, int>();
-            NormalChartStyles = new Dictionary<string, VisualiserPointStyle>();
-            ProjectorChartStyles = new Dictionary<string, VisualiserPointStyle>();
-            int seriesNumber = 0;
-
-            foreach (var style in Styles)
-            {
-                SeriesNames[style] = seriesNumber++;
-
-                NormalChartStyles[style] = new VisualiserPointStyle
-                {
-                    LineColor = (Color)settings[style + "LineColor"],
-                    LineThickness = (double)settings[style + "LineThickness"]
-                };
-
-                ProjectorChartStyles[style] = new VisualiserPointStyle
-                {
-                    LineColor = (Color)settings[style + "LineColorProjector"],
-                    LineThickness = (double)settings[style + "LineThicknessProjector"]
-                };
-            }
-
-            // Initialise the visualiser styles
-            NormalVisualiserStyle = new VisualiserPointStyle
-            {
-                BorderColor = settings.VisualiserBorderColor,
-                BorderThickness = settings.VisualiserBorderThickness,
-                FillColor = settings.VisualiserFillColor,
-                Size = settings.VisualiserSize,
-                ScaleMode = VisualiserPointScaleMode.Pixels,
-                Shape = settings.VisualiserShape
-            };
-
-            ProjectorVisualiserStyle = new VisualiserPointStyle
-            {
-                BorderColor = settings.VisualiserBorderColorProjector,
-                BorderThickness = settings.VisualiserBorderThicknessProjector,
-                FillColor = settings.VisualiserFillColorProjector,
-                Size = settings.VisualiserSizeProjector,
-                ScaleMode = VisualiserPointScaleMode.Pixels,
-                Shape = settings.VisualiserShapeProjector
-            };
-
-            // Set the mode to the specified parameter
-            _ProjectorMode = !projectorMode;
-            ProjectorMode = projectorMode;
-        }
-
-        private FormWindowState NormalWindowState = FormWindowState.Normal;
-        private bool _ProjectorMode;
-        public bool ProjectorMode
-        {
-            get { return _ProjectorMode; }
-            set
-            {
-                if (_ProjectorMode == value) return;
-
-                _ProjectorMode = value;
-
-                SuspendLayout();
-                visPopulation.BeginUpdate();
-                chartResults.BeginUpdate();
-                try
-                {
-                    if (!value)
-                    {
-                        Font = UIFont;
-
-                        txtSystemESDL.Font = CodeFont;
-                        txtSystemPython.Font = CodeFont;
-                        txtSystemVariables.Font = CodeFont;
-                        txtLandscapeParameters.Font = CodeFont;
-                        txtEvaluatorCode.Font = CodeFont;
-                        txtLog.Font = CodeFont;
-                        txtBestIndividual.Font = CodeFont;
-
-                        txtPlotExpression.Font = CodeFont;
-                        txtBestIndividualExpression.Font = CodeFont;
-
-                        lblStopAfter.Visible = true;
-                        lblOr1.Visible = true;
-                        lblOr2.Visible = true;
-                        lblOr3.Visible = true;
-
-                        ActiveChartStyles = NormalChartStyles;
-                        ActiveVisualiserStyle = NormalVisualiserStyle;
-                        chartResults.HorizontalAxisThickness = AxisThickness;
-                        chartResults.VerticalAxisThickness = AxisThickness;
-                        chartResults.GridColor = GridColor;
-                        chartResults.GridThickness = GridThickness;
-                        visPopulation.HorizontalAxisThickness = AxisThickness;
-                        visPopulation.VerticalAxisThickness = AxisThickness;
-                        visPopulation.GridColor = GridColor;
-                        visPopulation.GridThickness = GridThickness;
-
-
-                        WindowState = NormalWindowState;
-                    }
-                    else
-                    {
-                        NormalWindowState = WindowState;
-
-                        Font = ProjectorUIFont;
-
-                        txtSystemESDL.Font = ProjectorCodeFont;
-                        txtSystemPython.Font = ProjectorCodeFont;
-                        txtSystemVariables.Font = ProjectorCodeFont;
-                        txtLandscapeParameters.Font = ProjectorCodeFont;
-                        txtEvaluatorCode.Font = ProjectorCodeFont;
-                        txtLog.Font = ProjectorCodeFont;
-                        txtBestIndividual.Font = ProjectorCodeFont;
-
-                        txtPlotExpression.Font = CodeFont;
-                        txtBestIndividualExpression.Font = CodeFont;
-
-                        lblStopAfter.Visible = false;
-                        lblOr1.Visible = false;
-                        lblOr2.Visible = false;
-                        lblOr3.Visible = false;
-
-                        ActiveChartStyles = ProjectorChartStyles;
-                        ActiveVisualiserStyle = ProjectorVisualiserStyle;
-                        chartResults.HorizontalAxisThickness = ProjectorAxisThickness;
-                        chartResults.VerticalAxisThickness = ProjectorAxisThickness;
-                        chartResults.GridColor = ProjectorGridColor;
-                        chartResults.GridThickness = ProjectorGridThickness;
-                        visPopulation.HorizontalAxisThickness = ProjectorAxisThickness;
-                        visPopulation.VerticalAxisThickness = ProjectorAxisThickness;
-                        visPopulation.GridColor = ProjectorGridColor;
-                        visPopulation.GridThickness = ProjectorGridThickness;
-
-                        WindowState = FormWindowState.Maximized;
-                    }
-                }
-                finally
-                {
-                    visPopulation.EndUpdate();
-                    chartResults.EndUpdate();
-                    ResumeLayout(true);
-                    Editor_ClientSizeChanged(this, EventArgs.Empty);
-                    Refresh();
-                }
-            }
-        }
-
-        private void menuViewProjectorMode_Click(object sender, EventArgs e)
-        {
-            ProjectorMode = !ProjectorMode;
-            menuViewProjectorMode.Checked = ProjectorMode;
-        }
-
-        #endregion
-
-        #region Chart Styles
-
-        private VisualiserPointStyle ActiveVisualiserStyle
-        {
-            set { visPopulation.SetSeriesStyle(0, value); }
-        }
-        private VisualiserPointStyle NormalVisualiserStyle;
-        private VisualiserPointStyle ProjectorVisualiserStyle;
-
-        private IDictionary<string, VisualiserPointStyle> ActiveChartStyles
-        {
-            set
-            {
-                foreach (var kv in value)
-                {
-                    chartResults.Series[SeriesNames[kv.Key]].Style = kv.Value;
-                    foreach (var cb in new[] { chkChartBestFitness, chkChartCurrentBest, chkChartCurrentMean, chkChartCurrentWorst })
-                    {
-                        if ((string)cb.Tag == kv.Key) cb.BackColor = kv.Value.LineColor;
-                    }
-                }
-                chartResults.Refresh();
-            }
-        }
-
-        private Dictionary<string, VisualiserPointStyle> NormalChartStyles;
-        private Dictionary<string, VisualiserPointStyle> ProjectorChartStyles;
-        private Dictionary<string, int> SeriesNames;
-
-        private void chkChartSeries_CheckedChanged(object sender, EventArgs e)
-        {
-            var checkbox = (CheckBox)sender;
-            chartResults.ShowSeries(SeriesNames[(string)checkbox.Tag], checkbox.Checked);
-        }
-
-        #endregion
 
         #region Startup and early termination
 
@@ -638,6 +398,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             CheckSyntax();
         }
 
+        private Task<dynamic> CompileTask;
         private void CheckSyntax()
         {
             var state = EditorViewState.Busy(this);
@@ -660,15 +421,15 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
-            var compileTask = new Task<dynamic>(Task_CheckSyntaxCompile,
+            CompileTask = new Task<dynamic>(Task_CheckSyntaxCompile,
                 new object[] { txtSystemESDL.Text, txtSystemPython.Text, externs });
 
-            var errorTask = compileTask.ContinueWith(Task_CheckSyntax_Error,
+            var errorTask = CompileTask.ContinueWith(Task_CheckSyntax_Error,
                 CancellationToken.None,
                 TaskContinuationOptions.NotOnRanToCompletion,
                 guiScheduler);
 
-            var successTask = compileTask.ContinueWith(Task_CheckSyntax_Success,
+            var successTask = CompileTask.ContinueWith(Task_CheckSyntax_Success,
                 CancellationToken.None,
                 TaskContinuationOptions.OnlyOnRanToCompletion,
                 guiScheduler);
@@ -677,7 +438,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             errorTask.ContinueWith(finallyTask, guiScheduler);
             successTask.ContinueWith(finallyTask, guiScheduler);
 
-            compileTask.Start();
+            CompileTask.Start();
         }
 
         private dynamic Task_CheckSyntaxCompile(object state_obj)
@@ -735,6 +496,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtSystemPython.Refresh();
             txtSystemVariables.EndUpdate();
             txtSystemVariables.Refresh();
+
+            if (CompileTask != null) CompileTask.Dispose();
+            CompileTask = null;
         }
 
         #endregion
@@ -1080,8 +844,12 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 if (!completed)
                 {
-                    CurrentExperimentView.Dispose();
+                    if (CurrentExperimentView != null) CurrentExperimentView.Dispose();
                     CurrentExperimentView = null;
+                    if (CurrentMonitor != null) CurrentMonitor.Dispose();
+                    CurrentMonitor = null;
+                    if (CurrentExperiment != null) CurrentExperiment.Dispose();
+                    CurrentExperiment = null;
                 }
             }
         }
@@ -1270,23 +1038,6 @@ class CustomEvaluator(esec.landscape.Landscape):
                 - lstConfigurations.Left
                 - lstConfigurations.Margin.Right - panelMenu.Padding.Right;
             lstConfigurations.DropDownWidth = Math.Max(lstConfigurations.Width, 200);
-        }
-
-
-        private void txtExpression_Enter(object sender, EventArgs e)
-        {
-            if (ProjectorMode)
-            {
-                ((TextBox)sender).Font = ProjectorCodeFont;
-            }
-        }
-
-        private void txtExpression_Leave(object sender, EventArgs e)
-        {
-            if (ProjectorMode)
-            {
-                ((TextBox)sender).Font = CodeFont;
-            }
         }
 
         #endregion
@@ -1486,31 +1237,27 @@ class CustomEvaluator(esec.landscape.Landscape):
             CurrentConfiguration.FitnessLimit = chkFitness.Checked ? double.Parse(txtFitness.Text) : (double?)null;
         }
 
+        private void Set(ICSharpCode.TextEditor.TextEditorControl control, string text)
+        {
+            control.ResetText();
+            control.Document.MarkerStrategy.RemoveAll(_ => true);
+            control.Refresh();
+            control.Text = text;
+            control.Refresh();
+        }
+
         private void UpdateEditor(Configuration config)
         {
-            txtSystemESDL.Text = config.Definition;
-            txtSystemESDL.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtSystemESDL.Refresh();
-
-            txtSystemPython.Text = config.Support;
-            txtSystemPython.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtSystemPython.Refresh();
-
-            txtSystemVariables.Text = config.SystemParameters;
-            txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtSystemVariables.Refresh();
-
+            Set(txtSystemESDL, config.Definition);
+            Set(txtSystemPython, config.Support);
+            Set(txtSystemVariables, config.SystemParameters);
+            
             lstLandscapes.SelectedNode = lstLandscapes.Nodes.Find(config.Landscape, true).FirstOrDefault();
             lstLandscapes.Refresh();
 
-            txtLandscapeParameters.Text = config.LandscapeParameters;
-            txtLandscapeParameters.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtLandscapeParameters.Refresh();
-
-            txtEvaluatorCode.Text = config.CustomEvaluator;
-            txtEvaluatorCode.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtEvaluatorCode.Refresh();
-
+            Set(txtLandscapeParameters, config.LandscapeParameters);
+            Set(txtEvaluatorCode, config.CustomEvaluator);
+            
             txtPlotExpression.Text = config.PlotExpression;
             txtBestIndividualExpression.Text = config.BestIndividualExpression;
 
@@ -1528,29 +1275,16 @@ class CustomEvaluator(esec.landscape.Landscape):
             CurrentConfiguration = null;
             lstConfigurations.SelectedIndex = -1;
 
-            txtSystemESDL.ResetText();
-            txtSystemESDL.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtSystemESDL.Refresh();
-
-            txtSystemPython.ResetText();
-            txtSystemPython.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtSystemPython.Refresh();
-
-            txtSystemVariables.ResetText();
-            txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtSystemVariables.Refresh();
-
+            Set(txtSystemESDL, string.Empty);
+            Set(txtSystemPython, string.Empty);
+            Set(txtSystemVariables, string.Empty);
+            
             lstLandscapes.SelectedNode = lstLandscapes.Nodes["Custom"];
             lstLandscapes.Refresh();
 
-            txtLandscapeParameters.ResetText();
-            txtLandscapeParameters.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtLandscapeParameters.Refresh();
-
-            txtEvaluatorCode.Text = DefaultCustomEvaluator;
-            txtEvaluatorCode.Document.MarkerStrategy.RemoveAll(_ => true);
-            txtEvaluatorCode.Refresh();
-
+            Set(txtLandscapeParameters, string.Empty);
+            Set(txtEvaluatorCode, string.Empty);
+            
             txtPlotExpression.Text = Configuration.DefaultPlotExpression;
             txtBestIndividualExpression.Text = Configuration.DefaultBestIndividualExpression;
 
@@ -1609,7 +1343,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             if (!menuStrip.Enabled) return;
 
             if (CurrentConfiguration == null || CurrentConfiguration.Source == null ||
-                CurrentConfiguration.Source.EndsWith("py", StringComparison.InvariantCultureIgnoreCase))
+                CurrentConfiguration.Source.EndsWith(".py", StringComparison.InvariantCultureIgnoreCase))
             {
                 menuSaveAs.PerformClick();
                 return;
@@ -1724,49 +1458,51 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 lstPythonDefinitions.Items.Clear();
 
-                var sr = new StringReader(e.Document.TextContent);
-                int lineNo = 0;
-                for (var line = sr.ReadLine(); line != null; line = sr.ReadLine(), lineNo += 1)
+                using (var sr = new StringReader(e.Document.TextContent))
                 {
-                    if (line.Length == 0) continue;
-                    if (char.IsWhiteSpace(line[0])) continue;
-
-                    if (line.StartsWith("def ") || line.StartsWith("class "))
+                    int lineNo = 0;
+                    for (var line = sr.ReadLine(); line != null; line = sr.ReadLine(), lineNo += 1)
                     {
-                        var text = line;
-                        int i = text.IndexOf('(');
-                        if (i > 0) text = text.Substring(0, i).Trim();
-                        i = text.IndexOf(':');
-                        if (i > 0) text = text.Substring(0, i).Trim();
-                        i = text.IndexOf(' ');
-                        if (i > 0) text = text.Substring(i + 1).Trim();
+                        if (line.Length == 0) continue;
+                        if (char.IsWhiteSpace(line[0])) continue;
 
-                        lstPythonDefinitions.Items.Add(new ListViewItem
+                        if (line.StartsWith("def ") || line.StartsWith("class "))
                         {
-                            Name = line,
-                            Text = text,
-                            ImageKey = line.StartsWith("def ") ? "VSObject_Method.bmp" : "VSObject_Class.bmp",
-                            Tag = lineNo
-                        });
-                    }
-                    else if (line.StartsWith("#"))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        int i = line.IndexOf('=');
-                        if (i < 0) continue;
+                            var text = line;
+                            int i = text.IndexOf('(');
+                            if (i > 0) text = text.Substring(0, i).Trim();
+                            i = text.IndexOf(':');
+                            if (i > 0) text = text.Substring(0, i).Trim();
+                            i = text.IndexOf(' ');
+                            if (i > 0) text = text.Substring(i + 1).Trim();
 
-                        line = line.Substring(0, i).Trim();
-
-                        lstPythonDefinitions.Items.Add(new ListViewItem
+                            lstPythonDefinitions.Items.Add(new ListViewItem
+                            {
+                                Name = line,
+                                Text = text,
+                                ImageKey = line.StartsWith("def ") ? "VSObject_Method.bmp" : "VSObject_Class.bmp",
+                                Tag = lineNo
+                            });
+                        }
+                        else if (line.StartsWith("#"))
                         {
-                            Name = line,
-                            Text = line,
-                            ImageKey = "VSObject_Constant.bmp",
-                            Tag = lineNo
-                        });
+                            continue;
+                        }
+                        else
+                        {
+                            int i = line.IndexOf('=');
+                            if (i < 0) continue;
+
+                            line = line.Substring(0, i).Trim();
+
+                            lstPythonDefinitions.Items.Add(new ListViewItem
+                            {
+                                Name = line,
+                                Text = line,
+                                ImageKey = "VSObject_Constant.bmp",
+                                Tag = lineNo
+                            });
+                        }
                     }
                 }
             }
