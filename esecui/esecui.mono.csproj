@@ -119,6 +119,7 @@
     <Compile Include="Editor.Designer.cs">
       <DependentUpon>Editor.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditorViewState.cs" />
     <Compile Include="ErrorItem.cs" />
     <Compile Include="EsecOverrides.cs" />
     <Compile Include="Monitor.cs" />

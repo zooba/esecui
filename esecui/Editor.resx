@@ -141,24 +141,6 @@
   <metadata name="menuViewSeparator5.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <data name="txtSystemESDL.Text" xml:space="preserve">
-    <value># Genetic Algorithm
-#
-# Uses binary individuals, fitness proportional selection,
-# single point crossover and bitflip mutation.
-#
-
-FROM random_binary(length=12) SELECT (size) population
-YIELD population
-
-BEGIN generation
-    FROM population SELECT (size) offspring USING fitness_proportional
-    FROM offspring  SELECT population \
-        USING crossover_one(per_pair_rate=0.8, two_children), \
-              mutate_bitflip(per_indiv_rate=(1.0/size))
-    YIELD population
-END generation</value>
-  </data>
   <metadata name="imlPythonDefinitions.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>344, 17</value>
   </metadata>
@@ -167,7 +149,7 @@ END generation</value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAC0
-        CAAAAk1TRnQBSQFMAgEBAwEAAWABAQFgAQEBEAEAARABAAT/ARkBAAj/AUIBTQE2BwABNgMAASgDAAFA
+        CAAAAk1TRnQBSQFMAgEBAwEAAYABAQGAAQEBEAEAARABAAT/ARkBAAj/AUIBTQE2BwABNgMAASgDAAFA
         AwABEAMAAQEBAAEYBgABDDMAAfgB7gHjugAB+AHuAeMBmQEzAQAB+AHuAeO0AAH4Ae4B4wG1AWMBNQHY
         AZsBWwGZATMBAAH4Ae4B46sAAZcBgAFvAZcBgAFvAdgBmwFbAf8BzQGZAekBtAF8AdgBmwFbAZkBMwEA
         AfgB7gHjDAAByAG9AbUBiAFwAV0BgwFqAVgBfgFlAVIBegFgAU4BdQFcAUgBcQFXAUMBbQFTAT4BagFP
@@ -207,10 +189,28 @@ END generation</value>
         BP8B7wIAAfEF/wIACw==
 </value>
   </data>
-  <metadata name="toolTips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>509, 17</value>
-  </metadata>
   <metadata name="menuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>236, 17</value>
+  </metadata>
+  <data name="txtSystemESDL.Text" xml:space="preserve">
+    <value># Genetic Algorithm
+#
+# Uses binary individuals, fitness proportional selection,
+# single point crossover and bitflip mutation.
+#
+
+FROM random_binary(length=12) SELECT (size) population
+YIELD population
+
+BEGIN generation
+    FROM population SELECT (size) offspring USING fitness_proportional
+    FROM offspring  SELECT population \
+        USING crossover_one(per_pair_rate=0.8, two_children), \
+              mutate_bitflip(per_indiv_rate=(1.0/size))
+    YIELD population
+END generation</value>
+  </data>
+  <metadata name="toolTips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>509, 17</value>
   </metadata>
 </root>

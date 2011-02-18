@@ -41,6 +41,38 @@
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Example assignment", "VSObject_Constant.bmp");
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Example class", "VSObject_Class.bmp");
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Example function", "VSObject_Method.bmp");
+            this.imlPythonDefinitions = new System.Windows.Forms.ImageList(this.components);
+            this.lstConfigurations = new System.Windows.Forms.ComboBox();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.menuConfiguration = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuNew = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuOpen = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSaveAs = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuExport = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuCheckSyntax = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuView = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewSystem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewLandscape = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewResults = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewLog = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewSubview1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewSubview2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewSubview3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuViewProjectorMode = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuControl = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuControlStartPause = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuControlStop = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuControlStep = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelMenu = new System.Windows.Forms.FlowLayoutPanel();
+            this.chkSystem = new System.Windows.Forms.RadioButton();
+            this.chkLandscape = new System.Windows.Forms.RadioButton();
+            this.chkResults = new System.Windows.Forms.RadioButton();
+            this.chkLog = new System.Windows.Forms.RadioButton();
+            this.panelSystem = new System.Windows.Forms.Panel();
             this.splitSystemErrors = new esecui.CompatibleSplitContainer();
             this.tabSourceView = new System.Windows.Forms.TabControl();
             this.tabSourceESDL = new System.Windows.Forms.TabPage();
@@ -51,12 +83,11 @@
             this.splitPythonDefinitions = new esecui.CompatibleSplitContainer();
             this.txtSystemPython = new ICSharpCode.TextEditor.TextEditorControl();
             this.lstPythonDefinitions = new System.Windows.Forms.ListView();
-            this.imlPythonDefinitions = new System.Windows.Forms.ImageList(this.components);
             this.lstErrors = new System.Windows.Forms.ListView();
             this.colLocation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colCode = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lstConfigurations = new System.Windows.Forms.ComboBox();
+            this.panelLandscape = new System.Windows.Forms.Panel();
             this.splitLandscape = new esecui.CompatibleSplitContainer();
             this.lstLandscapes = new System.Windows.Forms.TreeView();
             this.tableLandscape = new System.Windows.Forms.TableLayoutPanel();
@@ -68,6 +99,7 @@
             this.lblLandscapeParameters = new System.Windows.Forms.Label();
             this.txtLandscapeParameters = new ICSharpCode.TextEditor.TextEditorControl();
             this.lblEvaluatorCode = new System.Windows.Forms.Label();
+            this.panelResults = new System.Windows.Forms.Panel();
             this.splitLimitsGraph = new esecui.CompatibleSplitContainer();
             this.tableResults = new System.Windows.Forms.TableLayoutPanel();
             this.tableControls = new System.Windows.Forms.TableLayoutPanel();
@@ -123,38 +155,6 @@
             this.chkChartCurrentMean = new System.Windows.Forms.CheckBox();
             this.chkChartCurrentBest = new System.Windows.Forms.CheckBox();
             this.chkChartBestFitness = new System.Windows.Forms.CheckBox();
-            this.menuStrip = new System.Windows.Forms.MenuStrip();
-            this.menuConfiguration = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuNew = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuOpen = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuSaveAs = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuExport = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuCheckSyntax = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuHelp = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuView = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuViewSystem = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuViewLandscape = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuViewResults = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuViewLog = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuViewSubview1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuViewSubview2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuViewSubview3 = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuViewProjectorMode = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuControl = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuControlStartPause = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuControlStop = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuControlStep = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelMenu = new System.Windows.Forms.FlowLayoutPanel();
-            this.chkSystem = new System.Windows.Forms.RadioButton();
-            this.chkLandscape = new System.Windows.Forms.RadioButton();
-            this.chkResults = new System.Windows.Forms.RadioButton();
-            this.chkLog = new System.Windows.Forms.RadioButton();
-            this.panelSystem = new System.Windows.Forms.Panel();
-            this.panelLandscape = new System.Windows.Forms.Panel();
-            this.panelResults = new System.Windows.Forms.Panel();
             this.panelLog = new System.Windows.Forms.Panel();
             this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
             this.picDimmer = new System.Windows.Forms.PictureBox();
@@ -167,6 +167,9 @@
             menuViewSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             menuViewSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             menuViewSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuStrip.SuspendLayout();
+            this.panelMenu.SuspendLayout();
+            this.panelSystem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitSystemErrors)).BeginInit();
             this.splitSystemErrors.Panel1.SuspendLayout();
             this.splitSystemErrors.Panel2.SuspendLayout();
@@ -182,11 +185,13 @@
             this.splitPythonDefinitions.Panel1.SuspendLayout();
             this.splitPythonDefinitions.Panel2.SuspendLayout();
             this.splitPythonDefinitions.SuspendLayout();
+            this.panelLandscape.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLandscape)).BeginInit();
             this.splitLandscape.Panel1.SuspendLayout();
             this.splitLandscape.Panel2.SuspendLayout();
             this.splitLandscape.SuspendLayout();
             this.tableLandscape.SuspendLayout();
+            this.panelResults.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLimitsGraph)).BeginInit();
             this.splitLimitsGraph.Panel1.SuspendLayout();
             this.splitLimitsGraph.Panel2.SuspendLayout();
@@ -205,11 +210,6 @@
             this.tabBestIndividual.SuspendLayout();
             this.tableBestIndividual.SuspendLayout();
             this.tableStats.SuspendLayout();
-            this.menuStrip.SuspendLayout();
-            this.panelMenu.SuspendLayout();
-            this.panelSystem.SuspendLayout();
-            this.panelLandscape.SuspendLayout();
-            this.panelResults.SuspendLayout();
             this.panelLog.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDimmer)).BeginInit();
             this.SuspendLayout();
@@ -253,6 +253,336 @@
             // 
             menuViewSeparator5.Name = "menuViewSeparator5";
             menuViewSeparator5.Size = new System.Drawing.Size(178, 6);
+            // 
+            // imlPythonDefinitions
+            // 
+            this.imlPythonDefinitions.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imlPythonDefinitions.ImageStream")));
+            this.imlPythonDefinitions.TransparentColor = System.Drawing.Color.Magenta;
+            this.imlPythonDefinitions.Images.SetKeyName(0, "VSObject_Class.bmp");
+            this.imlPythonDefinitions.Images.SetKeyName(1, "VSObject_Constant.bmp");
+            this.imlPythonDefinitions.Images.SetKeyName(2, "VSObject_Method.bmp");
+            // 
+            // lstConfigurations
+            // 
+            this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstConfigurations.FormattingEnabled = true;
+            this.lstConfigurations.Location = new System.Drawing.Point(552, 4);
+            this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
+            this.lstConfigurations.Name = "lstConfigurations";
+            this.lstConfigurations.Size = new System.Drawing.Size(376, 23);
+            this.lstConfigurations.TabIndex = 1;
+            this.lstConfigurations.SelectedIndexChanged += new System.EventHandler(this.lstConfigurations_SelectedIndexChanged);
+            this.lstConfigurations.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.lstConfigurations_Format);
+            // 
+            // menuStrip
+            // 
+            this.menuStrip.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuConfiguration,
+            this.menuHelp,
+            this.menuView,
+            this.menuControl});
+            this.menuStrip.Location = new System.Drawing.Point(0, 3);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Padding = new System.Windows.Forms.Padding(6, 2, 6, 2);
+            this.menuStrip.Size = new System.Drawing.Size(151, 24);
+            this.menuStrip.TabIndex = 1;
+            this.menuStrip.Text = "Main Menu";
+            // 
+            // menuConfiguration
+            // 
+            this.menuConfiguration.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuNew,
+            this.menuOpen,
+            this.menuSave,
+            this.menuSaveAs,
+            menuConfigurationSeparator1,
+            this.menuExport,
+            menuConfigurationSeparator2,
+            this.menuCheckSyntax,
+            menuConfigurationSeparator3,
+            this.menuExit});
+            this.menuConfiguration.Name = "menuConfiguration";
+            this.menuConfiguration.Size = new System.Drawing.Size(93, 20);
+            this.menuConfiguration.Text = "&Configuration";
+            // 
+            // menuNew
+            // 
+            this.menuNew.Name = "menuNew";
+            this.menuNew.Size = new System.Drawing.Size(195, 22);
+            this.menuNew.Text = "&New";
+            this.menuNew.Click += new System.EventHandler(this.menuNew_Click);
+            // 
+            // menuOpen
+            // 
+            this.menuOpen.Name = "menuOpen";
+            this.menuOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.menuOpen.Size = new System.Drawing.Size(195, 22);
+            this.menuOpen.Text = "&Open...";
+            this.menuOpen.Click += new System.EventHandler(this.menuOpen_Click);
+            // 
+            // menuSave
+            // 
+            this.menuSave.Name = "menuSave";
+            this.menuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.menuSave.Size = new System.Drawing.Size(195, 22);
+            this.menuSave.Text = "&Save";
+            this.menuSave.Click += new System.EventHandler(this.menuSave_Click);
+            // 
+            // menuSaveAs
+            // 
+            this.menuSaveAs.Name = "menuSaveAs";
+            this.menuSaveAs.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
+                        | System.Windows.Forms.Keys.S)));
+            this.menuSaveAs.Size = new System.Drawing.Size(195, 22);
+            this.menuSaveAs.Text = "Save &As...";
+            this.menuSaveAs.Click += new System.EventHandler(this.menuSaveAs_Click);
+            // 
+            // menuExport
+            // 
+            this.menuExport.Enabled = false;
+            this.menuExport.Name = "menuExport";
+            this.menuExport.Size = new System.Drawing.Size(195, 22);
+            this.menuExport.Text = "&Export...";
+            // 
+            // menuCheckSyntax
+            // 
+            this.menuCheckSyntax.Name = "menuCheckSyntax";
+            this.menuCheckSyntax.ShortcutKeys = System.Windows.Forms.Keys.F4;
+            this.menuCheckSyntax.Size = new System.Drawing.Size(195, 22);
+            this.menuCheckSyntax.Text = "&Check Syntax";
+            this.menuCheckSyntax.Click += new System.EventHandler(this.menuCheckSyntax_Click);
+            // 
+            // menuExit
+            // 
+            this.menuExit.Name = "menuExit";
+            this.menuExit.Size = new System.Drawing.Size(195, 22);
+            this.menuExit.Text = "E&xit";
+            this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
+            // 
+            // menuHelp
+            // 
+            this.menuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuAbout});
+            this.menuHelp.Name = "menuHelp";
+            this.menuHelp.Size = new System.Drawing.Size(44, 20);
+            this.menuHelp.Text = "&Help";
+            // 
+            // menuAbout
+            // 
+            this.menuAbout.Name = "menuAbout";
+            this.menuAbout.Size = new System.Drawing.Size(107, 22);
+            this.menuAbout.Text = "&About";
+            this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
+            // 
+            // menuView
+            // 
+            this.menuView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuViewSystem,
+            menuViewSeparator1,
+            this.menuViewLandscape,
+            menuViewSeparator2,
+            this.menuViewResults,
+            menuViewSeparator3,
+            this.menuViewLog,
+            menuViewSeparator4,
+            this.menuViewSubview1,
+            this.menuViewSubview2,
+            this.menuViewSubview3,
+            menuViewSeparator5,
+            this.menuViewProjectorMode});
+            this.menuView.Name = "menuView";
+            this.menuView.Size = new System.Drawing.Size(44, 20);
+            this.menuView.Text = "&View";
+            this.menuView.Visible = false;
+            // 
+            // menuViewSystem
+            // 
+            this.menuViewSystem.Name = "menuViewSystem";
+            this.menuViewSystem.ShortcutKeys = System.Windows.Forms.Keys.F1;
+            this.menuViewSystem.Size = new System.Drawing.Size(181, 22);
+            this.menuViewSystem.Text = "&System";
+            this.menuViewSystem.Click += new System.EventHandler(this.menuViewSystem_Click);
+            // 
+            // menuViewLandscape
+            // 
+            this.menuViewLandscape.Name = "menuViewLandscape";
+            this.menuViewLandscape.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.menuViewLandscape.Size = new System.Drawing.Size(181, 22);
+            this.menuViewLandscape.Text = "&Landscape";
+            this.menuViewLandscape.Click += new System.EventHandler(this.menuViewLandscape_Click);
+            // 
+            // menuViewResults
+            // 
+            this.menuViewResults.Name = "menuViewResults";
+            this.menuViewResults.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.menuViewResults.Size = new System.Drawing.Size(181, 22);
+            this.menuViewResults.Text = "&Results";
+            this.menuViewResults.Click += new System.EventHandler(this.menuViewResults_Click);
+            // 
+            // menuViewLog
+            // 
+            this.menuViewLog.Name = "menuViewLog";
+            this.menuViewLog.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.menuViewLog.Size = new System.Drawing.Size(181, 22);
+            this.menuViewLog.Text = "Lo&g";
+            this.menuViewLog.Click += new System.EventHandler(this.menuViewLog_Click);
+            // 
+            // menuViewSubview1
+            // 
+            this.menuViewSubview1.Name = "menuViewSubview1";
+            this.menuViewSubview1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D1)));
+            this.menuViewSubview1.Size = new System.Drawing.Size(181, 22);
+            this.menuViewSubview1.Text = "Subview &1";
+            this.menuViewSubview1.Click += new System.EventHandler(this.menuViewSubview1_Click);
+            // 
+            // menuViewSubview2
+            // 
+            this.menuViewSubview2.Name = "menuViewSubview2";
+            this.menuViewSubview2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D2)));
+            this.menuViewSubview2.Size = new System.Drawing.Size(181, 22);
+            this.menuViewSubview2.Text = "Subview &2";
+            this.menuViewSubview2.Click += new System.EventHandler(this.menuViewSubview2_Click);
+            // 
+            // menuViewSubview3
+            // 
+            this.menuViewSubview3.Name = "menuViewSubview3";
+            this.menuViewSubview3.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D3)));
+            this.menuViewSubview3.Size = new System.Drawing.Size(181, 22);
+            this.menuViewSubview3.Text = "Subview &3";
+            this.menuViewSubview3.Click += new System.EventHandler(this.menuViewSubview3_Click);
+            // 
+            // menuViewProjectorMode
+            // 
+            this.menuViewProjectorMode.Name = "menuViewProjectorMode";
+            this.menuViewProjectorMode.ShortcutKeys = System.Windows.Forms.Keys.F11;
+            this.menuViewProjectorMode.Size = new System.Drawing.Size(181, 22);
+            this.menuViewProjectorMode.Text = "&Projector Mode";
+            this.menuViewProjectorMode.Click += new System.EventHandler(this.menuViewProjectorMode_Click);
+            // 
+            // menuControl
+            // 
+            this.menuControl.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuControlStartPause,
+            this.menuControlStop,
+            this.menuControlStep});
+            this.menuControl.Name = "menuControl";
+            this.menuControl.Size = new System.Drawing.Size(59, 20);
+            this.menuControl.Text = "&Control";
+            this.menuControl.Visible = false;
+            // 
+            // menuControlStartPause
+            // 
+            this.menuControlStartPause.Name = "menuControlStartPause";
+            this.menuControlStartPause.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.menuControlStartPause.Size = new System.Drawing.Size(153, 22);
+            this.menuControlStartPause.Text = "Start/Pause";
+            this.menuControlStartPause.Click += new System.EventHandler(this.menuControlStartPause_Click);
+            // 
+            // menuControlStop
+            // 
+            this.menuControlStop.Name = "menuControlStop";
+            this.menuControlStop.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F5)));
+            this.menuControlStop.Size = new System.Drawing.Size(153, 22);
+            this.menuControlStop.Text = "Stop";
+            this.menuControlStop.Click += new System.EventHandler(this.menuControlStop_Click);
+            // 
+            // menuControlStep
+            // 
+            this.menuControlStep.Name = "menuControlStep";
+            this.menuControlStep.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.menuControlStep.Size = new System.Drawing.Size(153, 22);
+            this.menuControlStep.Text = "Step";
+            this.menuControlStep.Click += new System.EventHandler(this.menuControlStep_Click);
+            // 
+            // panelMenu
+            // 
+            this.panelMenu.AutoSize = true;
+            this.panelMenu.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelMenu.Controls.Add(this.menuStrip);
+            this.panelMenu.Controls.Add(this.chkSystem);
+            this.panelMenu.Controls.Add(this.chkLandscape);
+            this.panelMenu.Controls.Add(this.chkResults);
+            this.panelMenu.Controls.Add(this.chkLog);
+            this.panelMenu.Controls.Add(this.lstConfigurations);
+            this.panelMenu.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelMenu.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.panelMenu.Location = new System.Drawing.Point(0, 0);
+            this.panelMenu.Name = "panelMenu";
+            this.panelMenu.Size = new System.Drawing.Size(963, 31);
+            this.panelMenu.TabIndex = 3;
+            this.panelMenu.WrapContents = false;
+            this.panelMenu.SizeChanged += new System.EventHandler(this.panelMenu_SizeChanged);
+            this.panelMenu.Layout += new System.Windows.Forms.LayoutEventHandler(this.panelMenu_Layout);
+            // 
+            // chkSystem
+            // 
+            this.chkSystem.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkSystem.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkSystem.AutoSize = true;
+            this.chkSystem.Checked = true;
+            this.chkSystem.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkSystem.Location = new System.Drawing.Point(154, 3);
+            this.chkSystem.Name = "chkSystem";
+            this.chkSystem.Size = new System.Drawing.Size(78, 25);
+            this.chkSystem.TabIndex = 2;
+            this.chkSystem.TabStop = true;
+            this.chkSystem.Text = "System (F1)";
+            this.chkSystem.UseVisualStyleBackColor = true;
+            this.chkSystem.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
+            // 
+            // chkLandscape
+            // 
+            this.chkLandscape.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkLandscape.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkLandscape.AutoSize = true;
+            this.chkLandscape.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkLandscape.Location = new System.Drawing.Point(238, 3);
+            this.chkLandscape.Name = "chkLandscape";
+            this.chkLandscape.Size = new System.Drawing.Size(96, 25);
+            this.chkLandscape.TabIndex = 2;
+            this.chkLandscape.Text = "Landscape (F2)";
+            this.chkLandscape.UseVisualStyleBackColor = true;
+            this.chkLandscape.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
+            // 
+            // chkResults
+            // 
+            this.chkResults.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkResults.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkResults.AutoSize = true;
+            this.chkResults.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkResults.Location = new System.Drawing.Point(340, 3);
+            this.chkResults.Name = "chkResults";
+            this.chkResults.Size = new System.Drawing.Size(77, 25);
+            this.chkResults.TabIndex = 2;
+            this.chkResults.Text = "Results (F3)";
+            this.chkResults.UseVisualStyleBackColor = true;
+            this.chkResults.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
+            // 
+            // chkLog
+            // 
+            this.chkLog.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkLog.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkLog.AutoSize = true;
+            this.chkLog.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkLog.Location = new System.Drawing.Point(423, 3);
+            this.chkLog.Name = "chkLog";
+            this.chkLog.Size = new System.Drawing.Size(120, 25);
+            this.chkLog.TabIndex = 2;
+            this.chkLog.Text = "Log Messages (F12)";
+            this.chkLog.UseVisualStyleBackColor = true;
+            this.chkLog.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
+            // 
+            // panelSystem
+            // 
+            this.panelSystem.Controls.Add(this.splitSystemErrors);
+            this.panelSystem.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelSystem.Location = new System.Drawing.Point(0, 31);
+            this.panelSystem.Name = "panelSystem";
+            this.panelSystem.Size = new System.Drawing.Size(963, 661);
+            this.panelSystem.TabIndex = 4;
             // 
             // splitSystemErrors
             // 
@@ -402,14 +732,6 @@
             this.lstPythonDefinitions.View = System.Windows.Forms.View.List;
             this.lstPythonDefinitions.ItemActivate += new System.EventHandler(this.lstPythonDefinitions_ItemActivate);
             // 
-            // imlPythonDefinitions
-            // 
-            this.imlPythonDefinitions.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imlPythonDefinitions.ImageStream")));
-            this.imlPythonDefinitions.TransparentColor = System.Drawing.Color.Magenta;
-            this.imlPythonDefinitions.Images.SetKeyName(0, "VSObject_Class.bmp");
-            this.imlPythonDefinitions.Images.SetKeyName(1, "VSObject_Constant.bmp");
-            this.imlPythonDefinitions.Images.SetKeyName(2, "VSObject_Method.bmp");
-            // 
             // lstErrors
             // 
             this.lstErrors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -440,19 +762,15 @@
             this.colMessage.Text = "Message";
             this.colMessage.Width = 400;
             // 
-            // lstConfigurations
+            // panelLandscape
             // 
-            this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.lstConfigurations.Enabled = false;
-            this.lstConfigurations.FormattingEnabled = true;
-            this.lstConfigurations.Location = new System.Drawing.Point(552, 4);
-            this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
-            this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
-            this.lstConfigurations.Name = "lstConfigurations";
-            this.lstConfigurations.Size = new System.Drawing.Size(376, 23);
-            this.lstConfigurations.TabIndex = 1;
-            this.lstConfigurations.SelectedIndexChanged += new System.EventHandler(this.lstConfigurations_SelectedIndexChanged);
-            this.lstConfigurations.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.lstConfigurations_Format);
+            this.panelLandscape.Controls.Add(this.splitLandscape);
+            this.panelLandscape.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelLandscape.Location = new System.Drawing.Point(0, 31);
+            this.panelLandscape.Name = "panelLandscape";
+            this.panelLandscape.Size = new System.Drawing.Size(963, 661);
+            this.panelLandscape.TabIndex = 5;
+            this.panelLandscape.Visible = false;
             // 
             // splitLandscape
             // 
@@ -598,6 +916,16 @@
             this.lblEvaluatorCode.TabIndex = 4;
             this.lblEvaluatorCode.Text = "Python Code:";
             this.lblEvaluatorCode.Visible = false;
+            // 
+            // panelResults
+            // 
+            this.panelResults.Controls.Add(this.splitLimitsGraph);
+            this.panelResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelResults.Location = new System.Drawing.Point(0, 31);
+            this.panelResults.Name = "panelResults";
+            this.panelResults.Size = new System.Drawing.Size(963, 661);
+            this.panelResults.TabIndex = 6;
+            this.panelResults.Visible = false;
             // 
             // splitLimitsGraph
             // 
@@ -1339,335 +1667,6 @@
             this.chkChartBestFitness.UseVisualStyleBackColor = false;
             this.chkChartBestFitness.CheckedChanged += new System.EventHandler(this.chkChartSeries_CheckedChanged);
             // 
-            // menuStrip
-            // 
-            this.menuStrip.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
-            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuConfiguration,
-            this.menuHelp,
-            this.menuView,
-            this.menuControl});
-            this.menuStrip.Location = new System.Drawing.Point(0, 3);
-            this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Padding = new System.Windows.Forms.Padding(6, 2, 6, 2);
-            this.menuStrip.Size = new System.Drawing.Size(151, 24);
-            this.menuStrip.TabIndex = 1;
-            this.menuStrip.Text = "Main Menu";
-            // 
-            // menuConfiguration
-            // 
-            this.menuConfiguration.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuNew,
-            this.menuOpen,
-            this.menuSave,
-            this.menuSaveAs,
-            menuConfigurationSeparator1,
-            this.menuExport,
-            menuConfigurationSeparator2,
-            this.menuCheckSyntax,
-            menuConfigurationSeparator3,
-            this.menuExit});
-            this.menuConfiguration.Name = "menuConfiguration";
-            this.menuConfiguration.Size = new System.Drawing.Size(93, 20);
-            this.menuConfiguration.Text = "&Configuration";
-            // 
-            // menuNew
-            // 
-            this.menuNew.Name = "menuNew";
-            this.menuNew.Size = new System.Drawing.Size(195, 22);
-            this.menuNew.Text = "&New";
-            this.menuNew.Click += new System.EventHandler(this.menuNew_Click);
-            // 
-            // menuOpen
-            // 
-            this.menuOpen.Name = "menuOpen";
-            this.menuOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.menuOpen.Size = new System.Drawing.Size(195, 22);
-            this.menuOpen.Text = "&Open...";
-            this.menuOpen.Click += new System.EventHandler(this.menuOpen_Click);
-            // 
-            // menuSave
-            // 
-            this.menuSave.Name = "menuSave";
-            this.menuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.menuSave.Size = new System.Drawing.Size(195, 22);
-            this.menuSave.Text = "&Save";
-            this.menuSave.Click += new System.EventHandler(this.menuSave_Click);
-            // 
-            // menuSaveAs
-            // 
-            this.menuSaveAs.Name = "menuSaveAs";
-            this.menuSaveAs.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
-                        | System.Windows.Forms.Keys.S)));
-            this.menuSaveAs.Size = new System.Drawing.Size(195, 22);
-            this.menuSaveAs.Text = "Save &As...";
-            this.menuSaveAs.Click += new System.EventHandler(this.menuSaveAs_Click);
-            // 
-            // menuExport
-            // 
-            this.menuExport.Enabled = false;
-            this.menuExport.Name = "menuExport";
-            this.menuExport.Size = new System.Drawing.Size(195, 22);
-            this.menuExport.Text = "&Export...";
-            // 
-            // menuCheckSyntax
-            // 
-            this.menuCheckSyntax.Name = "menuCheckSyntax";
-            this.menuCheckSyntax.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.menuCheckSyntax.Size = new System.Drawing.Size(195, 22);
-            this.menuCheckSyntax.Text = "&Check Syntax";
-            this.menuCheckSyntax.Click += new System.EventHandler(this.menuCheckSyntax_Click);
-            // 
-            // menuExit
-            // 
-            this.menuExit.Name = "menuExit";
-            this.menuExit.Size = new System.Drawing.Size(195, 22);
-            this.menuExit.Text = "E&xit";
-            this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
-            // 
-            // menuHelp
-            // 
-            this.menuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuAbout});
-            this.menuHelp.Name = "menuHelp";
-            this.menuHelp.Size = new System.Drawing.Size(44, 20);
-            this.menuHelp.Text = "&Help";
-            // 
-            // menuAbout
-            // 
-            this.menuAbout.Name = "menuAbout";
-            this.menuAbout.Size = new System.Drawing.Size(107, 22);
-            this.menuAbout.Text = "&About";
-            this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
-            // 
-            // menuView
-            // 
-            this.menuView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuViewSystem,
-            menuViewSeparator1,
-            this.menuViewLandscape,
-            menuViewSeparator2,
-            this.menuViewResults,
-            menuViewSeparator3,
-            this.menuViewLog,
-            menuViewSeparator4,
-            this.menuViewSubview1,
-            this.menuViewSubview2,
-            this.menuViewSubview3,
-            menuViewSeparator5,
-            this.menuViewProjectorMode});
-            this.menuView.Name = "menuView";
-            this.menuView.Size = new System.Drawing.Size(44, 20);
-            this.menuView.Text = "&View";
-            this.menuView.Visible = false;
-            // 
-            // menuViewSystem
-            // 
-            this.menuViewSystem.Name = "menuViewSystem";
-            this.menuViewSystem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.menuViewSystem.Size = new System.Drawing.Size(181, 22);
-            this.menuViewSystem.Text = "&System";
-            this.menuViewSystem.Click += new System.EventHandler(this.menuViewSystem_Click);
-            // 
-            // menuViewLandscape
-            // 
-            this.menuViewLandscape.Name = "menuViewLandscape";
-            this.menuViewLandscape.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.menuViewLandscape.Size = new System.Drawing.Size(181, 22);
-            this.menuViewLandscape.Text = "&Landscape";
-            this.menuViewLandscape.Click += new System.EventHandler(this.menuViewLandscape_Click);
-            // 
-            // menuViewResults
-            // 
-            this.menuViewResults.Name = "menuViewResults";
-            this.menuViewResults.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.menuViewResults.Size = new System.Drawing.Size(181, 22);
-            this.menuViewResults.Text = "&Results";
-            this.menuViewResults.Click += new System.EventHandler(this.menuViewResults_Click);
-            // 
-            // menuViewLog
-            // 
-            this.menuViewLog.Name = "menuViewLog";
-            this.menuViewLog.ShortcutKeys = System.Windows.Forms.Keys.F12;
-            this.menuViewLog.Size = new System.Drawing.Size(181, 22);
-            this.menuViewLog.Text = "Lo&g";
-            this.menuViewLog.Click += new System.EventHandler(this.menuViewLog_Click);
-            // 
-            // menuViewSubview1
-            // 
-            this.menuViewSubview1.Name = "menuViewSubview1";
-            this.menuViewSubview1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D1)));
-            this.menuViewSubview1.Size = new System.Drawing.Size(181, 22);
-            this.menuViewSubview1.Text = "Subview &1";
-            this.menuViewSubview1.Click += new System.EventHandler(this.menuViewSubview1_Click);
-            // 
-            // menuViewSubview2
-            // 
-            this.menuViewSubview2.Name = "menuViewSubview2";
-            this.menuViewSubview2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D2)));
-            this.menuViewSubview2.Size = new System.Drawing.Size(181, 22);
-            this.menuViewSubview2.Text = "Subview &2";
-            this.menuViewSubview2.Click += new System.EventHandler(this.menuViewSubview2_Click);
-            // 
-            // menuViewSubview3
-            // 
-            this.menuViewSubview3.Name = "menuViewSubview3";
-            this.menuViewSubview3.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D3)));
-            this.menuViewSubview3.Size = new System.Drawing.Size(181, 22);
-            this.menuViewSubview3.Text = "Subview &3";
-            this.menuViewSubview3.Click += new System.EventHandler(this.menuViewSubview3_Click);
-            // 
-            // menuViewProjectorMode
-            // 
-            this.menuViewProjectorMode.Name = "menuViewProjectorMode";
-            this.menuViewProjectorMode.ShortcutKeys = System.Windows.Forms.Keys.F11;
-            this.menuViewProjectorMode.Size = new System.Drawing.Size(181, 22);
-            this.menuViewProjectorMode.Text = "&Projector Mode";
-            this.menuViewProjectorMode.Click += new System.EventHandler(this.menuViewProjectorMode_Click);
-            // 
-            // menuControl
-            // 
-            this.menuControl.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuControlStartPause,
-            this.menuControlStop,
-            this.menuControlStep});
-            this.menuControl.Name = "menuControl";
-            this.menuControl.Size = new System.Drawing.Size(59, 20);
-            this.menuControl.Text = "&Control";
-            this.menuControl.Visible = false;
-            // 
-            // menuControlStartPause
-            // 
-            this.menuControlStartPause.Name = "menuControlStartPause";
-            this.menuControlStartPause.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.menuControlStartPause.Size = new System.Drawing.Size(153, 22);
-            this.menuControlStartPause.Text = "Start/Pause";
-            this.menuControlStartPause.Click += new System.EventHandler(this.menuControlStartPause_Click);
-            // 
-            // menuControlStop
-            // 
-            this.menuControlStop.Name = "menuControlStop";
-            this.menuControlStop.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F5)));
-            this.menuControlStop.Size = new System.Drawing.Size(153, 22);
-            this.menuControlStop.Text = "Stop";
-            this.menuControlStop.Click += new System.EventHandler(this.menuControlStop_Click);
-            // 
-            // menuControlStep
-            // 
-            this.menuControlStep.Name = "menuControlStep";
-            this.menuControlStep.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.menuControlStep.Size = new System.Drawing.Size(153, 22);
-            this.menuControlStep.Text = "Step";
-            this.menuControlStep.Click += new System.EventHandler(this.menuControlStep_Click);
-            // 
-            // panelMenu
-            // 
-            this.panelMenu.AutoSize = true;
-            this.panelMenu.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelMenu.Controls.Add(this.menuStrip);
-            this.panelMenu.Controls.Add(this.chkSystem);
-            this.panelMenu.Controls.Add(this.chkLandscape);
-            this.panelMenu.Controls.Add(this.chkResults);
-            this.panelMenu.Controls.Add(this.chkLog);
-            this.panelMenu.Controls.Add(this.lstConfigurations);
-            this.panelMenu.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelMenu.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.panelMenu.Location = new System.Drawing.Point(0, 0);
-            this.panelMenu.Name = "panelMenu";
-            this.panelMenu.Size = new System.Drawing.Size(963, 31);
-            this.panelMenu.TabIndex = 3;
-            this.panelMenu.WrapContents = false;
-            this.panelMenu.SizeChanged += new System.EventHandler(this.panelMenu_SizeChanged);
-            this.panelMenu.Layout += new System.Windows.Forms.LayoutEventHandler(this.panelMenu_Layout);
-            // 
-            // chkSystem
-            // 
-            this.chkSystem.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.chkSystem.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkSystem.AutoSize = true;
-            this.chkSystem.Checked = true;
-            this.chkSystem.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.chkSystem.Location = new System.Drawing.Point(154, 3);
-            this.chkSystem.Name = "chkSystem";
-            this.chkSystem.Size = new System.Drawing.Size(78, 25);
-            this.chkSystem.TabIndex = 2;
-            this.chkSystem.TabStop = true;
-            this.chkSystem.Text = "System (F1)";
-            this.chkSystem.UseVisualStyleBackColor = true;
-            this.chkSystem.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
-            // 
-            // chkLandscape
-            // 
-            this.chkLandscape.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.chkLandscape.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkLandscape.AutoSize = true;
-            this.chkLandscape.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.chkLandscape.Location = new System.Drawing.Point(238, 3);
-            this.chkLandscape.Name = "chkLandscape";
-            this.chkLandscape.Size = new System.Drawing.Size(96, 25);
-            this.chkLandscape.TabIndex = 2;
-            this.chkLandscape.Text = "Landscape (F2)";
-            this.chkLandscape.UseVisualStyleBackColor = true;
-            this.chkLandscape.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
-            // 
-            // chkResults
-            // 
-            this.chkResults.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.chkResults.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkResults.AutoSize = true;
-            this.chkResults.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.chkResults.Location = new System.Drawing.Point(340, 3);
-            this.chkResults.Name = "chkResults";
-            this.chkResults.Size = new System.Drawing.Size(77, 25);
-            this.chkResults.TabIndex = 2;
-            this.chkResults.Text = "Results (F3)";
-            this.chkResults.UseVisualStyleBackColor = true;
-            this.chkResults.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
-            // 
-            // chkLog
-            // 
-            this.chkLog.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.chkLog.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkLog.AutoSize = true;
-            this.chkLog.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.chkLog.Location = new System.Drawing.Point(423, 3);
-            this.chkLog.Name = "chkLog";
-            this.chkLog.Size = new System.Drawing.Size(120, 25);
-            this.chkLog.TabIndex = 2;
-            this.chkLog.Text = "Log Messages (F12)";
-            this.chkLog.UseVisualStyleBackColor = true;
-            this.chkLog.CheckedChanged += new System.EventHandler(this.chkTabs_CheckedChanged);
-            // 
-            // panelSystem
-            // 
-            this.panelSystem.Controls.Add(this.splitSystemErrors);
-            this.panelSystem.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSystem.Location = new System.Drawing.Point(0, 31);
-            this.panelSystem.Name = "panelSystem";
-            this.panelSystem.Size = new System.Drawing.Size(963, 661);
-            this.panelSystem.TabIndex = 4;
-            // 
-            // panelLandscape
-            // 
-            this.panelLandscape.Controls.Add(this.splitLandscape);
-            this.panelLandscape.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelLandscape.Location = new System.Drawing.Point(0, 31);
-            this.panelLandscape.Name = "panelLandscape";
-            this.panelLandscape.Size = new System.Drawing.Size(963, 661);
-            this.panelLandscape.TabIndex = 5;
-            this.panelLandscape.Visible = false;
-            // 
-            // panelResults
-            // 
-            this.panelResults.Controls.Add(this.splitLimitsGraph);
-            this.panelResults.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelResults.Location = new System.Drawing.Point(0, 31);
-            this.panelResults.Name = "panelResults";
-            this.panelResults.Size = new System.Drawing.Size(963, 661);
-            this.panelResults.TabIndex = 6;
-            this.panelResults.Visible = false;
-            // 
             // panelLog
             // 
             this.panelLog.Controls.Add(this.txtLog);
@@ -1723,6 +1722,11 @@
             this.ResizeBegin += new System.EventHandler(this.Editor_ResizeBegin);
             this.ResizeEnd += new System.EventHandler(this.Editor_ResizeEnd);
             this.ClientSizeChanged += new System.EventHandler(this.Editor_ClientSizeChanged);
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
+            this.panelMenu.ResumeLayout(false);
+            this.panelMenu.PerformLayout();
+            this.panelSystem.ResumeLayout(false);
             this.splitSystemErrors.Panel1.ResumeLayout(false);
             this.splitSystemErrors.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitSystemErrors)).EndInit();
@@ -1738,12 +1742,14 @@
             this.splitPythonDefinitions.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitPythonDefinitions)).EndInit();
             this.splitPythonDefinitions.ResumeLayout(false);
+            this.panelLandscape.ResumeLayout(false);
             this.splitLandscape.Panel1.ResumeLayout(false);
             this.splitLandscape.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitLandscape)).EndInit();
             this.splitLandscape.ResumeLayout(false);
             this.tableLandscape.ResumeLayout(false);
             this.tableLandscape.PerformLayout();
+            this.panelResults.ResumeLayout(false);
             this.splitLimitsGraph.Panel1.ResumeLayout(false);
             this.splitLimitsGraph.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitLimitsGraph)).EndInit();
@@ -1768,13 +1774,6 @@
             this.tableBestIndividual.PerformLayout();
             this.tableStats.ResumeLayout(false);
             this.tableStats.PerformLayout();
-            this.menuStrip.ResumeLayout(false);
-            this.menuStrip.PerformLayout();
-            this.panelMenu.ResumeLayout(false);
-            this.panelMenu.PerformLayout();
-            this.panelSystem.ResumeLayout(false);
-            this.panelLandscape.ResumeLayout(false);
-            this.panelResults.ResumeLayout(false);
             this.panelLog.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picDimmer)).EndInit();
             this.ResumeLayout(false);

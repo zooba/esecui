@@ -48,9 +48,13 @@ namespace esecui
 
         private void menuAbout_Click(object sender, EventArgs e)
         {
-            LookDisabled();
-            using (var about = new About()) about.ShowDialog(this);
-            LookEnabled();
+            if (!menuStrip.Enabled) return;
+
+            using (EditorViewState.Lock(this))
+            using (var about = new About())
+            {
+                about.ShowDialog(this);
+            }
         }
 
         private void menuExit_Click(object sender, EventArgs e)
@@ -320,10 +324,6 @@ namespace esecui
 
             Text = "esec Experiment Designer - Loading...";
 
-            LookDisabled();
-            UseWaitCursor = true;
-            menuStrip.Enabled = false;
-
             var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
             InitialisationTaskCTS = new CancellationTokenSource();
 
@@ -332,8 +332,11 @@ namespace esecui
                 CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, guiScheduler);
             var onError = InitialisationTask.ContinueWith(Task_Init_NotCompleted,
                 CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, guiScheduler);
-            onSuccess.ContinueWith(Task_Init_Finally, guiScheduler);
-            onError.ContinueWith(Task_Init_Finally, guiScheduler);
+
+            var state = EditorViewState.Loading(this);
+            Action<Task> finallyTask = (t => Task_Init_Finally(t, state));
+            onSuccess.ContinueWith(finallyTask, guiScheduler);
+            onError.ContinueWith(finallyTask, guiScheduler);
 
             InitialisationTask.Start();
         }
@@ -380,20 +383,15 @@ namespace esecui
             }
         }
 
-        private void Task_Init_Finally(Task task)
+        private void Task_Init_Finally(Task task, EditorViewState state)
         {
             if (InitialisationTask != null) InitialisationTask.Dispose();
             InitialisationTask = null;
             if (InitialisationTaskCTS != null) InitialisationTaskCTS.Dispose();
             InitialisationTaskCTS = null;
 
-            LookEnabled();
-            UseWaitCursor = false;
-            lstConfigurations.Enabled = true;
-            menuStrip.Enabled = true;
-            menuSave.Enabled = true;
-            menuSaveAs.Enabled = true;
-
+            state.Dispose();
+            
             if (chkLog.Checked) chkTabs_CheckedChanged(chkLog, EventArgs.Empty);
         }
 
@@ -635,12 +633,14 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void menuCheckSyntax_Click(object sender, EventArgs e)
         {
+            if (!menuStrip.Enabled) return;
+
             CheckSyntax();
         }
 
         private void CheckSyntax()
         {
-            UseWaitCursor = true;
+            var state = EditorViewState.Busy(this);
 
             // Reset everything
             lstErrors.Items.Clear();
@@ -673,8 +673,9 @@ class CustomEvaluator(esec.landscape.Landscape):
                 TaskContinuationOptions.OnlyOnRanToCompletion,
                 guiScheduler);
 
-            errorTask.ContinueWith(Task_CheckSyntax_Finally, guiScheduler);
-            successTask.ContinueWith(Task_CheckSyntax_Finally, guiScheduler);
+            Action<Task> finallyTask = (t => Task_CheckSyntax_Finally(t, state));
+            errorTask.ContinueWith(finallyTask, guiScheduler);
+            successTask.ContinueWith(finallyTask, guiScheduler);
 
             compileTask.Start();
         }
@@ -725,9 +726,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
         }
 
-        private void Task_CheckSyntax_Finally(Task task)
+        private void Task_CheckSyntax_Finally(Task task, EditorViewState state)
         {
-            UseWaitCursor = false;
+            state.Dispose();
             txtSystemESDL.EndUpdate();
             txtSystemESDL.Refresh();
             txtSystemPython.EndUpdate();
@@ -900,10 +901,11 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private Task CurrentExperiment;
         private Monitor CurrentMonitor;
+        private EditorViewState CurrentExperimentView;
 
         private void menuControlStartPause_Click(object sender, EventArgs e)
         {
-            if (picDimmer.Visible) return;
+            if (!menuStrip.Enabled) return;
 
             if (IsExperimentRunning)
             {
@@ -918,6 +920,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void menuControlStep_Click(object sender, EventArgs e)
         {
+            if (!menuStrip.Enabled) return;
+
             if (IsExperimentRunning)
             {
                 CurrentMonitor.SingleStep();
@@ -932,6 +936,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void menuControlStop_Click(object sender, EventArgs e)
         {
+            if (!menuStrip.Enabled) return;
+
             if (IsExperimentRunning)
             {
                 StopExperiment();
@@ -940,11 +946,15 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            if (!panelResults.Enabled) return;
+
             StartExperiment();
         }
 
         private void btnPause_CheckedChanged(object sender, EventArgs e)
         {
+            if (!panelResults.Enabled) return;
+            
             if (IsExperimentRunning)
             {
                 CurrentMonitor.IsPaused = btnPause.Checked;
@@ -953,6 +963,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void btnStop_Click(object sender, EventArgs e)
         {
+            if (!panelResults.Enabled) return;
+            
             if (IsExperimentRunning)
             {
                 StopExperiment();
@@ -975,8 +987,7 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void StartExperiment(bool singleStep = false)
         {
-            UseWaitCursor = true;
-            btnStart.Enabled = false;
+            CurrentExperimentView = EditorViewState.Busy(this);
             bool completed = false;
 
             try
@@ -1021,6 +1032,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                     landscape["class"] = lstLandscapes.SelectedNode.Tag;
                 }
 
+                // Experiment parameters
                 var state = new Dictionary<string, object>();
                 state["landscape"] = landscape;
                 state["landscape.evaluator"] = GetCustomEvaluator();
@@ -1030,16 +1042,18 @@ class CustomEvaluator(esec.landscape.Landscape):
                 state["random_seed"] = 12345;       // TODO: Settable random seed
                 state["preamble"] = txtSystemPython.Text;
 
+                // Reset chart
                 chartResults.ClearAll(true);
                 chartResults.ShowSeries(0, chkChartBestFitness.Checked);
                 chartResults.ShowSeries(1, chkChartCurrentBest.Checked);
                 chartResults.ShowSeries(2, chkChartCurrentMean.Checked);
                 chartResults.ShowSeries(3, chkChartCurrentWorst.Checked);
 
-                txtPlotExpression.Enabled = false;
+                // Reset 2D plot
                 DisableVisualisation = false;
                 visPopulation.ClearAll(true);
 
+                // Initialise the experiment tasks
                 CurrentExperiment = new Task(Task_RunExperiment, state,
                     CancellationToken.None,
                     TaskCreationOptions.LongRunning);
@@ -1051,13 +1065,12 @@ class CustomEvaluator(esec.landscape.Landscape):
                     CancellationToken.None,
                     TaskContinuationOptions.NotOnRanToCompletion,
                     TaskScheduler.FromCurrentSynchronizationContext());
+
+                // Assign the clean-up task
                 noErrTask.ContinueWith(Task_RunExperiment_Finally, TaskScheduler.FromCurrentSynchronizationContext());
                 errTask.ContinueWith(Task_RunExperiment_Finally, TaskScheduler.FromCurrentSynchronizationContext());
 
-                lstConfigurations.Enabled = false;
-                btnPause.Enabled = true;
-                btnStop.Enabled = true;
-
+                // Display the results panel and start the experiment.
                 chkResults.Checked = true;
                 CurrentExperiment.Start();
 
@@ -1067,11 +1080,10 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 if (!completed)
                 {
-                    UseWaitCursor = false;  // wait cursor is disabled after initialistion
-                    btnStart.Enabled = true;
+                    CurrentExperimentView.Dispose();
+                    CurrentExperimentView = null;
                 }
             }
-
         }
 
         private void Task_RunExperiment(object state_obj)
@@ -1125,8 +1137,12 @@ class CustomEvaluator(esec.landscape.Landscape):
                 throw new Exception("Experiment.__init__", ex);
             }
 
-            UseWaitCursor = false;
-            if (!CurrentMonitor.IsCancelled) exp.run();
+            if (!CurrentMonitor.IsCancelled)
+            {
+                if (CurrentExperimentView != null) CurrentExperimentView.Dispose();
+                CurrentExperimentView = EditorViewState.Experiment(this);
+                exp.run();
+            }
         }
 
         private void Task_RunExperiment_Completed(Task task)
@@ -1163,12 +1179,9 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void Task_RunExperiment_Finally(Task task)
         {
-            txtPlotExpression.Enabled = true;
-            lstConfigurations.Enabled = true;
-
-            btnStart.Enabled = true;
-            btnPause.Enabled = false;
-            btnStop.Enabled = false;
+            if (CurrentExperimentView != null) CurrentExperimentView.Dispose();
+            CurrentExperimentView = null;
+            
             CurrentMonitor = null;
             if (CurrentExperiment != null) CurrentExperiment.Dispose();
             CurrentExperiment = null;
@@ -1259,97 +1272,6 @@ class CustomEvaluator(esec.landscape.Landscape):
             lstConfigurations.DropDownWidth = Math.Max(lstConfigurations.Width, 200);
         }
 
-
-#if MONO
-        private void LookDisabled()
-        {
-            panelMenu.Enabled = false;
-            panelSystem.Enabled = false;
-            panelLandscape.Enabled = false;
-            panelResults.Enabled = false;
-            panelLog.Enabled = false;
-            picDimmer.SendToBack();
-            picDimmer.Visible = true;
-        }
-
-        private void LookEnabled()
-        {
-            panelMenu.Enabled = true;
-            panelSystem.Enabled = true;
-            panelLandscape.Enabled = true;
-            panelResults.Enabled = true;
-            panelLog.Enabled = true;
-            picDimmer.Visible = false;
-        }
-
-        private void Editor_ClientSizeChanged(object sender, EventArgs e)
-        { }
-
-        private void Editor_ResizeBegin(object sender, EventArgs e)
-        { }
-
-        private void Editor_ResizeEnd(object sender, EventArgs e)
-        { }
-
-#else
-        // Exclude the entire function from Mono builds to get an error if we try and use it.
-        private void DrawPanelToBitmap(Panel panel, Bitmap bitmap)
-        {
-            if (panel.Visible) panel.DrawToBitmap(bitmap, new Rectangle(panel.Location, panel.Size));
-        }
-
-        private void LookDisabled()
-        {
-            Image oldImage = null;
-            if (picDimmer.Visible) oldImage = picDimmer.Image;
-
-            var dimmed = new Bitmap(ClientSize.Width, ClientSize.Height);
-            DrawPanelToBitmap(panelMenu, dimmed);
-            DrawPanelToBitmap(panelSystem, dimmed);
-            DrawPanelToBitmap(panelLandscape, dimmed);
-            DrawPanelToBitmap(panelResults, dimmed);
-            DrawPanelToBitmap(panelLog, dimmed);
-            using (var g = Graphics.FromImage(dimmed))
-            using (var brush = new SolidBrush(Color.FromArgb(64, 128, 128, 128)))
-            {
-                g.FillRectangle(brush, ClientRectangle);
-            }
-            picDimmer.Image = dimmed;
-            picDimmer.BringToFront();
-            picDimmer.SetBounds(0, 0, ClientSize.Width, ClientSize.Height);
-            picDimmer.Visible = true;
-
-            if (oldImage != null) oldImage.Dispose();
-        }
-
-        private void LookEnabled()
-        {
-            var dimmed = picDimmer.Image;
-            picDimmer.Image = null;
-            picDimmer.Visible = false;
-            if (dimmed != null) dimmed.Dispose();
-        }
-
-        bool Resizing = false;
-        private void Editor_ClientSizeChanged(object sender, EventArgs e)
-        {
-            picDimmer.SetBounds(0, 0, ClientSize.Width, ClientSize.Height);
-            if (!Resizing && picDimmer.Visible) LookDisabled();
-        }
-
-        private void Editor_ResizeBegin(object sender, EventArgs e)
-        {
-            Resizing = true;
-        }
-
-        private void Editor_ResizeEnd(object sender, EventArgs e)
-        {
-            Resizing = false;
-            Editor_ClientSizeChanged(sender, e);
-            //PerformLayout();
-        }
-
-#endif
 
         private void txtExpression_Enter(object sender, EventArgs e)
         {
@@ -1601,6 +1523,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void menuNew_Click(object sender, EventArgs e)
         {
+            if (!menuStrip.Enabled) return;
+
             CurrentConfiguration = null;
             lstConfigurations.SelectedIndex = -1;
 
@@ -1639,6 +1563,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void menuOpen_Click(object sender, EventArgs e)
         {
+            if (!menuStrip.Enabled) return;
+
             FileInfo path;
 
             using (var ofd = new OpenFileDialog())
@@ -1680,6 +1606,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void menuSave_Click(object sender, EventArgs e)
         {
+            if (!menuStrip.Enabled) return;
+
             if (CurrentConfiguration == null || CurrentConfiguration.Source == null ||
                 CurrentConfiguration.Source.EndsWith("py", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -1697,6 +1625,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void menuSaveAs_Click(object sender, EventArgs e)
         {
+            if (!menuStrip.Enabled) return;
+
             if (CurrentConfiguration == null)
             {
                 CurrentConfiguration = new Configuration();
