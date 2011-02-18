@@ -181,7 +181,7 @@ namespace ICSharpCode.TextEditor
 		{
 			Debug.Assert(lineNumber >= 0);
 			Brush bgColorBrush    = GetBgColorBrush(lineNumber);
-			Brush backgroundBrush = textArea.Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
+			Brush backgroundBrush = bgColorBrush;
 			
 			if (lineNumber >= textArea.Document.TotalNumberOfLines) {
 				g.FillRectangle(backgroundBrush, lineRectangle);
@@ -286,7 +286,7 @@ namespace ICSharpCode.TextEditor
 			// TODO: get font and color from the highlighting file
 			HighlightColor      selectionColor  = textArea.Document.HighlightingStrategy.GetColorFor("Selection");
 			Brush               bgColorBrush    = drawSelected ? BrushRegistry.GetBrush(selectionColor.BackgroundColor) : GetBgColorBrush(lineNumber);
-			Brush               backgroundBrush = textArea.Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
+			Brush               backgroundBrush = bgColorBrush;
 			
 			Font font = textArea.TextEditorProperties.FontContainer.RegularFont;
 			
@@ -376,7 +376,7 @@ namespace ICSharpCode.TextEditor
 		int PaintLinePart(Graphics g, int lineNumber, int startColumn, int endColumn, Rectangle lineRectangle, int physicalXPos)
 		{
 			bool  drawLineMarker  = DrawLineMarkerAtLine(lineNumber);
-			Brush backgroundBrush = textArea.Enabled ? GetBgColorBrush(lineNumber) : SystemBrushes.InactiveBorder;
+			Brush backgroundBrush = GetBgColorBrush(lineNumber);
 			
 			HighlightColor selectionColor = textArea.Document.HighlightingStrategy.GetColorFor("Selection");
 			ColumnRange    selectionRange = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
