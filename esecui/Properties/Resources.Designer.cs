@@ -81,6 +81,13 @@ namespace esecui.Properties {
             }
         }
         
+        internal static byte[] ParticleSwarmOptimisation {
+            get {
+                object obj = ResourceManager.GetObject("ParticleSwarmOptimisation", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap pause {
             get {
                 object obj = ResourceManager.GetObject("pause", resourceCulture);

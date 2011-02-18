@@ -1074,6 +1074,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                     lstConfigurations.Items.Add(new Configuration(Properties.Resources.GeneticAlgorithm));
                 lstConfigurations.Items.Add(new Configuration(Properties.Resources.EvolutionaryProgramming));
                 lstConfigurations.Items.Add(new Configuration(Properties.Resources.GeneticProgramming));
+                lstConfigurations.Items.Add(new Configuration(Properties.Resources.ParticleSwarmOptimisation));
                 lstConfigurations.Items.Add(new Configuration(Properties.Resources.SteadyStateGA));
 
                 if (newSelection == "FirstRunDefault")

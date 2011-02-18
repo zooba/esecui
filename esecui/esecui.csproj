@@ -161,6 +161,7 @@
     <None Include="Resources\EvolutionaryProgramming.esec" />
     <None Include="Resources\GeneticAlgorithm.esec" />
     <None Include="Resources\GeneticProgramming.esec" />
+    <None Include="Resources\ParticleSwarmOptimisation.esec" />
     <None Include="Resources\SteadyStateGA.esec" />
   </ItemGroup>
   <ItemGroup>
