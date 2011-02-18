@@ -61,6 +61,7 @@ namespace esecui
             }
 
             private List<Control> ToEnable, ToDisable;
+            private List<CheckBox> ToUncheck;
             private void Begin()
             {
                 if (IsDimmed)
@@ -70,6 +71,7 @@ namespace esecui
 
                 ToEnable = null;
                 ToDisable = null;
+                ToUncheck = null;
                 if (IsLocked)
                 {
                     ToEnable = new List<Control>();
@@ -100,11 +102,15 @@ namespace esecui
 
                     if (Locked.HasFlag(LockSet.RunExperiment))
                     {
-                        ToDisable = new List<Control>();
                         ToEnable.Add(Owner.btnStart);
                         ToEnable.Add(Owner.txtPlotExpression);
+                        
+                        ToDisable = new List<Control>();
                         ToDisable.Add(Owner.btnPause);
                         ToDisable.Add(Owner.btnStop);
+
+                        ToUncheck = new List<CheckBox>();
+                        ToUncheck.Add(Owner.btnPause);
                     }
 
                     ToEnable.RemoveAll(c => c.Enabled == false);
@@ -130,6 +136,10 @@ namespace esecui
                 if (ToDisable != null && ToDisable.Any())
                 {
                     foreach (var c in ToDisable) c.Enabled = false;
+                }
+                if (ToUncheck != null && ToUncheck.Any())
+                {
+                    foreach (var c in ToUncheck) c.Checked = false;
                 }
 
                 if (IsDimmed)

@@ -47,10 +47,10 @@ namespace esecui
 
             DisposeDisplay();
 
-            if (CompileTask != null) CompileTask.Dispose();
-            if (CurrentExperiment != null) CurrentExperiment.Dispose();
+            if (CompileTask != null && CompileTask.IsCompleted) CompileTask.Dispose();
+            if (CurrentExperiment != null && CurrentExperiment.IsCompleted) CurrentExperiment.Dispose();
             if (CurrentMonitor != null) CurrentMonitor.Dispose();
-            if (InitialisationTask != null) InitialisationTask.Dispose();
+            if (InitialisationTask != null && InitialisationTask.IsCompleted) InitialisationTask.Dispose();
             if (InitialisationTaskCTS != null) InitialisationTaskCTS.Dispose();
         }
 
@@ -289,15 +289,15 @@ from esec.fitness import FitnessMaximise, FitnessMinimise
 # Don't change the class name from CustomEvaluator
 class CustomEvaluator(esec.landscape.Landscape):
     def eval(self, indiv):
-        
 ";
+        private const string EvaluatorTemplateIndent = "        ";
 
         private string GetCustomEvaluator()
         {
             if (lstLandscapes.SelectedNode.Name == "Custom")
             {
                 var codeLines = txtEvaluatorCode.Text.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => "        " + s)
+                    .Select(s => EvaluatorTemplateIndent + s)
                     .Aggregate((sum, s) => sum + "\r\n" + s);
 
                 var code = EvaluatorTemplate + codeLines;
@@ -408,9 +408,11 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtSystemESDL.BeginUpdate();
             txtSystemPython.BeginUpdate();
             txtSystemVariables.BeginUpdate();
+            txtEvaluatorCode.BeginUpdate();
             txtSystemESDL.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystemPython.Document.MarkerStrategy.RemoveAll(_ => true);
             txtSystemVariables.Document.MarkerStrategy.RemoveAll(_ => true);
+            txtEvaluatorCode.Document.MarkerStrategy.RemoveAll(_ => true);
 
             var variables = Python.ConfigDict(txtSystemVariables);
 
@@ -422,7 +424,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
             CompileTask = new Task<dynamic>(Task_CheckSyntaxCompile,
-                new object[] { txtSystemESDL.Text, txtSystemPython.Text, externs });
+                new object[] { txtSystemPython.Text, GetCustomEvaluator(), txtSystemESDL.Text, externs });
 
             var errorTask = CompileTask.ContinueWith(Task_CheckSyntax_Error,
                 CancellationToken.None,
@@ -447,19 +449,48 @@ class CustomEvaluator(esec.landscape.Landscape):
             dynamic scope = Python.CreateScope();
             scope.esec = esec;
             scope.esdlc = esdlc;
-            Python.Exec((string)state[1], scope);
+            try { Python.Exec((string)state[0], scope); }
+            catch (Exception ex) { throw new PythonCompilationException(ex); }
+            try { Python.Exec((string)state[1], scope); }
+            catch (Exception ex) { throw new EvaluatorCompilationException(ex); }
 
-            dynamic ast = scope.esdlc.compileESDL((string)state[0], (List<string>)state[2]);
-            return ast;
+            try
+            {
+                dynamic ast = scope.esdlc.compileESDL((string)state[2], (List<string>)state[3]);
+                return ast;
+            }
+            catch (Exception ex) { throw new ESDLCompilationException(ex); }
         }
 
         private void Task_CheckSyntax_Error(Task<dynamic> task)
         {
-            lstErrors.Items.Add(ErrorItem.FromIronPythonException(txtSystemPython, task.Exception.InnerException));
+            var pce = task.Exception.InnerException as PythonCompilationException;
+            var ece = task.Exception.InnerException as EvaluatorCompilationException;
+            var esdlce = task.Exception.InnerException as ESDLCompilationException;
+            if (pce != null)
+            {
+                lstErrors.Items.Add(ErrorItem.FromIronPythonException(txtSystemPython, pce.InnerException));
+            }
+            else if (ece != null)
+            {
+                var ei = ErrorItem.FromIronPythonException(txtEvaluatorCode, ece.InnerException,
+                    -(EvaluatorTemplate.Split('\n').Length - 1), -EvaluatorTemplateIndent.Length);
+                lstErrors.Items.Add(ei);
+            }
+            else if (esdlce != null)
+            {
+                lstErrors.Items.Add(ErrorItem.FromIronPythonException(txtSystemESDL, esdlce.InnerException));
+            }
+            else
+            {
+                Log("Unexpected error while checking syntax:\n\n{0}", task.Exception.InnerException);
+            }
         }
 
         private void Task_CheckSyntax_Success(Task<dynamic> task)
         {
+            if (task.Result == null) return;
+
             dynamic ast = task.Result;
             foreach (var error in ast._errors)
             {
@@ -496,6 +527,8 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtSystemPython.Refresh();
             txtSystemVariables.EndUpdate();
             txtSystemVariables.Refresh();
+            txtEvaluatorCode.EndUpdate();
+            txtEvaluatorCode.Refresh();
 
             if (CompileTask != null) CompileTask.Dispose();
             CompileTask = null;
@@ -743,14 +776,12 @@ class CustomEvaluator(esec.landscape.Landscape):
         private void StopExperiment()
         {
             CurrentMonitor.Cancel();
-            btnStart.Enabled = true;
-            btnPause.Enabled = false;
-            btnPause.Checked = false;
-            btnStop.Enabled = false;
         }
 
         private void StartExperiment(bool singleStep = false)
         {
+            if (IsExperimentRunning) return;
+            
             CurrentExperimentView = EditorViewState.Busy(this);
             bool completed = false;
 
@@ -870,8 +901,15 @@ class CustomEvaluator(esec.landscape.Landscape):
             var evaluator = state["landscape.evaluator"] as string;
             if (!string.IsNullOrEmpty(evaluator))
             {
-                Python.Exec(evaluator, scope);
-                ((dynamic)config["landscape"])["instance"] = scope.CustomEvaluator;
+                try
+                {
+                    Python.Exec(evaluator, scope);
+                    ((dynamic)config["landscape"])["instance"] = scope.CustomEvaluator;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("landscape.evaluator", ex);
+                }
             }
 
             var systemDict = Python.Dict();
@@ -933,6 +971,18 @@ class CustomEvaluator(esec.landscape.Landscape):
                     CheckSyntax();
                 }
             }
+            else if (ex.Message == "landscape.evaluator")
+            {
+                ex = ex.InnerException;
+
+                chkLandscape.Checked = true;
+                CheckSyntax();
+            }
+            else if (task.Exception.InnerException.Message == "EvaluatorError")
+            {
+                Log("Error in evaluator:\n\n{0}", task.Exception.InnerException);
+                chkLog.Checked = true;
+            }
             else
             {
                 Log("Unhandled exception.\n" + ex.ToString());
@@ -951,7 +1001,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             CurrentExperimentView = null;
             
             CurrentMonitor = null;
-            if (CurrentExperiment != null) CurrentExperiment.Dispose();
+            if (CurrentExperiment != null && CurrentExperiment.IsCompleted) CurrentExperiment.Dispose();
             CurrentExperiment = null;
         }
 
@@ -1257,7 +1307,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             lstLandscapes.Refresh();
 
             Set(txtLandscapeParameters, config.LandscapeParameters);
-            Set(txtEvaluatorCode, config.CustomEvaluator);
+            Set(txtEvaluatorCode, string.IsNullOrWhiteSpace(config.CustomEvaluator) ? DefaultCustomEvaluator : config.CustomEvaluator);
             
             txtPlotExpression.Text = config.PlotExpression;
             txtBestIndividualExpression.Text = config.BestIndividualExpression;
@@ -1528,7 +1578,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
             catch (Exception ex)
             {
-                Log("Error selecting definition:\r\n{0}", ex.ToString());
+                Log("Error selecting definition:\n{0}", ex.ToString());
             }
         }
 

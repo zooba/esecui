@@ -127,6 +127,7 @@
     </Compile>
     <Compile Include="ErrorItem.cs" />
     <Compile Include="EsecOverrides.cs" />
+    <Compile Include="Exceptions.cs" />
     <Compile Include="Monitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

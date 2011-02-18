@@ -73,7 +73,8 @@ namespace esecui
             Text = string.Format("{0}:{1}", Line + 1, Column + 1);
         }
 
-        public static ErrorItem FromIronPythonException(TextEditorControl source, Exception error)
+        public static ErrorItem FromIronPythonException(TextEditorControl source, Exception error,
+            int adjustLine = 0, int adjustCol = 0)
         {
             var ifi = error.Data[typeof(InterpretedFrameInfo)] as InterpretedFrameInfo[];
             var se = error as Microsoft.Scripting.SyntaxErrorException;
@@ -82,13 +83,15 @@ namespace esecui
                 var offset = ifi[0].DebugInfo.Index;
                 var line = source.Document.GetLineNumberForOffset(offset);
                 return new ErrorItem(source,
-                    line, 0, line, source.Document.GetLineSegment(line).Length,
+                    line + adjustLine, adjustCol,
+                    line + adjustLine, source.Document.GetLineSegment(line).Length + adjustCol,
                     error.Message, "", false);
             }
             else if (se != null)
             {
                 return new ErrorItem(source,
-                    se.Line - 1, se.Column - 1, se.Line - 1, se.Column - 1 + se.RawSpan.Length,
+                    se.Line - 1 + adjustLine, se.Column - 1 + adjustCol,
+                    se.Line - 1 + adjustLine, se.Column - 1 + adjustCol + se.RawSpan.Length,
                     se.Message, se.ErrorCode.ToString(), se.Severity == Microsoft.Scripting.Severity.Warning);
             }
             else
