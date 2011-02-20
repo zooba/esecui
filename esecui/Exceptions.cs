@@ -28,4 +28,11 @@ namespace esecui
         { }
     }
 
+    class ExperimentInitialisationException : Exception
+    {
+        public ExperimentInitialisationException(Exception innerException)
+            : base("Error initialising experiment", innerException)
+        { }
+    }
+
 }

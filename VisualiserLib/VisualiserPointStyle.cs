@@ -276,11 +276,6 @@ namespace VisualiserLib
                 YOffset = yOffset;
                 XScale = xScale;
                 YScale = yScale;
-                //if (source.ScaleMode == VisualiserPointScaleMode.Pixels)
-                //    EdgeLength = (float)source.Size;
-                //else if (source.ScaleMode == VisualiserPointScaleMode.Real)
-                //    EdgeLength = (float)Math.Min(source.Size * minScale, 1);
-                //Radius = 2.0f * (float)Math.Sqrt(0.5 * EdgeLength);
             }
 
             public PointF GetCenterPoint(VisualiserPoint point)

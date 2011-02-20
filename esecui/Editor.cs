@@ -151,7 +151,7 @@ namespace esecui
             InitialisationTaskCTS = null;
 
             state.Dispose();
-            
+
             if (chkLog.Checked) chkTabs_CheckedChanged(chkLog, EventArgs.Empty);
         }
 
@@ -306,7 +306,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
             else
             {
-                return null;
+                return string.Empty;
             }
         }
 
@@ -344,6 +344,19 @@ class CustomEvaluator(esec.landscape.Landscape):
             else
             {
                 txtLog.Document.Insert(txtLog.Document.TextLength, "\r\n");
+            }
+        }
+
+        public void LogBreak()
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)LogBreak);
+            }
+            else
+            {
+                txtLog.Document.Insert(txtLog.Document.TextLength,
+                    "================================================================\r\n");
             }
         }
 
@@ -423,7 +436,7 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
-            CompileTask = new Task<dynamic>(Task_CheckSyntaxCompile,
+            CompileTask = new Task<dynamic>(Task_CheckSyntax,
                 new object[] { txtSystemPython.Text, GetCustomEvaluator(), txtSystemESDL.Text, externs });
 
             var errorTask = CompileTask.ContinueWith(Task_CheckSyntax_Error,
@@ -443,7 +456,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             CompileTask.Start();
         }
 
-        private dynamic Task_CheckSyntaxCompile(object state_obj)
+        private dynamic Task_CheckSyntax(object state_obj)
         {
             var state = (object[])state_obj;
             dynamic scope = Python.CreateScope();
@@ -751,7 +764,7 @@ class CustomEvaluator(esec.landscape.Landscape):
         private void btnPause_CheckedChanged(object sender, EventArgs e)
         {
             if (!panelResults.Enabled) return;
-            
+
             if (IsExperimentRunning)
             {
                 CurrentMonitor.IsPaused = btnPause.Checked;
@@ -761,7 +774,7 @@ class CustomEvaluator(esec.landscape.Landscape):
         private void btnStop_Click(object sender, EventArgs e)
         {
             if (!panelResults.Enabled) return;
-            
+
             if (IsExperimentRunning)
             {
                 StopExperiment();
@@ -781,7 +794,7 @@ class CustomEvaluator(esec.landscape.Landscape):
         private void StartExperiment(bool singleStep = false)
         {
             if (IsExperimentRunning) return;
-            
+
             CurrentExperimentView = EditorViewState.Busy(this);
             bool completed = false;
 
@@ -908,7 +921,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("landscape.evaluator", ex);
+                    throw new EvaluatorCompilationException(ex);
                 }
             }
 
@@ -931,17 +944,24 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             config["random_seed"] = state["random_seed"];
 
-            dynamic exp;
+            dynamic exp = null;
+            Exception resultException = null;
             try
             {
                 exp = scope.esec.Experiment(config);
             }
+            catch (AggregateException ex)
+            {
+                resultException = new ESDLCompilationException(ex);
+            }
             catch (Exception ex)
             {
-                // If the debugger breaks here saying the exception is unhandled, continue (press F5).
-                // Alternatively, you can disable "Just My Code" in the debugging options.
-                throw new Exception("Experiment.__init__", ex);
+                resultException = new ExperimentInitialisationException(ex);
             }
+
+            // If the debugger breaks here saying the exception is unhandled, continue (press F5).
+            // Alternatively, you can disable "Just My Code" in the debugging options.
+            if (resultException != null) throw resultException;
 
             if (!CurrentMonitor.IsCancelled)
             {
@@ -956,41 +976,40 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void Task_RunExperiment_NotCompleted(Task task)
         {
-            Exception ex = task.Exception;
-            if (ex is AggregateException) ex = ((AggregateException)ex).InnerExceptions[0];
+            var ex = task.Exception.InnerException;
 
-            if (ex.Message == "Experiment.__init__")
+            if (ex is ESDLCompilationException)
             {
-                ex = ex.InnerException;
-
-                Log("Error creating experiment.\n" + ex.ToString());
-
-                if (ex.Message == "ExceptionGroup")
-                {
-                    chkSystem.Checked = true;
-                    CheckSyntax();
-                }
+                chkSystem.Checked = true;
+                CheckSyntax();
             }
-            else if (ex.Message == "landscape.evaluator")
+            else if (ex is ExperimentInitialisationException)
+            {
+                Log("Error creating experiment.\n" + ex.InnerException.ToString());
+                LogBreak();
+                chkLog.Checked = true;
+            }
+            else if (ex is EvaluatorCompilationException)
             {
                 ex = ex.InnerException;
 
                 chkLandscape.Checked = true;
                 CheckSyntax();
             }
-            else if (task.Exception.InnerException.Message == "EvaluatorError")
+            else if (ex.Message == "EvaluatorError")
             {
-                Log("Error in evaluator:\n\n{0}", task.Exception.InnerException);
+                Log("Error in evaluator:\n" + ex.ToString());
+                LogBreak();
                 chkLog.Checked = true;
             }
             else
             {
-                Log("Unhandled exception.\n" + ex.ToString());
+                Log("Unhandled exception:\n" + ex.ToString());
                 if (ex.InnerException != null)
                 {
-                    Log("Inner exception:\n" + ex.InnerException.ToString() + "\n");
+                    Log("Inner exception:\n" + ex.InnerException.ToString());
                 }
-
+                LogBreak();
                 chkLog.Checked = true;
             }
         }
@@ -999,7 +1018,7 @@ class CustomEvaluator(esec.landscape.Landscape):
         {
             if (CurrentExperimentView != null) CurrentExperimentView.Dispose();
             CurrentExperimentView = null;
-            
+
             CurrentMonitor = null;
             if (CurrentExperiment != null && CurrentExperiment.IsCompleted) CurrentExperiment.Dispose();
             CurrentExperiment = null;
@@ -1302,13 +1321,13 @@ class CustomEvaluator(esec.landscape.Landscape):
             Set(txtSystemESDL, config.Definition);
             Set(txtSystemPython, config.Support);
             Set(txtSystemVariables, config.SystemParameters);
-            
+
             lstLandscapes.SelectedNode = lstLandscapes.Nodes.Find(config.Landscape, true).FirstOrDefault();
             lstLandscapes.Refresh();
 
             Set(txtLandscapeParameters, config.LandscapeParameters);
             Set(txtEvaluatorCode, string.IsNullOrWhiteSpace(config.CustomEvaluator) ? DefaultCustomEvaluator : config.CustomEvaluator);
-            
+
             txtPlotExpression.Text = config.PlotExpression;
             txtBestIndividualExpression.Text = config.BestIndividualExpression;
 
@@ -1329,13 +1348,13 @@ class CustomEvaluator(esec.landscape.Landscape):
             Set(txtSystemESDL, string.Empty);
             Set(txtSystemPython, string.Empty);
             Set(txtSystemVariables, string.Empty);
-            
+
             lstLandscapes.SelectedNode = lstLandscapes.Nodes["Custom"];
             lstLandscapes.Refresh();
 
             Set(txtLandscapeParameters, string.Empty);
             Set(txtEvaluatorCode, string.Empty);
-            
+
             txtPlotExpression.Text = Configuration.DefaultPlotExpression;
             txtBestIndividualExpression.Text = Configuration.DefaultBestIndividualExpression;
 

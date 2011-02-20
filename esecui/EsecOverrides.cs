@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using IronPython.Runtime;
 
 namespace esecui
@@ -9,6 +10,7 @@ namespace esecui
         public static void AddOverrides(dynamic esec)
         {
             esec.species._pairs = new Func<object, IEnumerable<object>>(_Pairs);
+            esec.compiler.ExceptionGroup = new Func<string, IEnumerable<dynamic>, object>(ExceptionGroup);
         }
         
         public static IEnumerable<object> _Pairs(object source)
@@ -25,6 +27,11 @@ namespace esecui
                 objs[1] = e.Current;
                 yield return new PythonTuple(objs);
             }
+        }
+
+        public static AggregateException ExceptionGroup(string source, IEnumerable<dynamic> exceptions)
+        {
+            return new AggregateException(source, exceptions.Select(ex => (Exception)ex.clsException));
         }
 
     }
