@@ -90,7 +90,7 @@
             this.colMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panelLandscape = new System.Windows.Forms.Panel();
             this.splitLandscape = new esecui.CompatibleSplitContainer();
-            this.lstLandscapes = new System.Windows.Forms.TreeView();
+            this.lstLandscapes = new NativeTreeView();
             this.tableLandscape = new System.Windows.Forms.TableLayoutPanel();
             this.txtEvaluatorCode = new ICSharpCode.TextEditor.TextEditorControl();
             this.lblLandscapeInternalName = new System.Windows.Forms.Label();
