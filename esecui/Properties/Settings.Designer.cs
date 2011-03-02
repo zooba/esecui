@@ -360,7 +360,7 @@ namespace esecui.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        [global::System.Configuration.DefaultSettingValueAttribute("12")]
         public double VisualiserSizeProjector {
             get {
                 return ((double)(this["VisualiserSizeProjector"]));
@@ -415,6 +415,54 @@ namespace esecui.Properties {
             }
             set {
                 this["GridThicknessProjector"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        public float UIFontSize {
+            get {
+                return ((float)(this["UIFontSize"]));
+            }
+            set {
+                this["UIFontSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        public float UIFontSizeProjector {
+            get {
+                return ((float)(this["UIFontSizeProjector"]));
+            }
+            set {
+                this["UIFontSizeProjector"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        public float CodeFontSize {
+            get {
+                return ((float)(this["CodeFontSize"]));
+            }
+            set {
+                this["CodeFontSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("18")]
+        public float CodeFontSizeProjector {
+            get {
+                return ((float)(this["CodeFontSizeProjector"]));
+            }
+            set {
+                this["CodeFontSizeProjector"] = value;
             }
         }
     }

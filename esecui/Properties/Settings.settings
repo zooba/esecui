@@ -87,7 +87,7 @@
       <Value Profile="(Default)">32, 0, 0, 255</Value>
     </Setting>
     <Setting Name="VisualiserSizeProjector" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">16</Value>
+      <Value Profile="(Default)">12</Value>
     </Setting>
     <Setting Name="GridColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">LightGray</Value>
@@ -100,6 +100,18 @@
     </Setting>
     <Setting Name="GridThicknessProjector" Type="System.Double" Scope="User">
       <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="UIFontSize" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">9</Value>
+    </Setting>
+    <Setting Name="UIFontSizeProjector" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">16</Value>
+    </Setting>
+    <Setting Name="CodeFontSize" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">9</Value>
+    </Setting>
+    <Setting Name="CodeFontSizeProjector" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">18</Value>
     </Setting>
   </Settings>
 </SettingsFile>

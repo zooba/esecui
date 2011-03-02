@@ -37,16 +37,16 @@ namespace esecui
             NormalBorderStyle = FormBorderStyle;
 
             // Initialise the UI font
-            UIFont = new Font("Segoe UI", 9.0f);
+            UIFont = new Font("Segoe UI", settings.UIFontSize);
             if (UIFont.Name != UIFont.OriginalFontName)
             {
-                UIFont = new Font("Tahoma", 9.0f);
+                UIFont = new Font("Tahoma", settings.UIFontSize);
             }
             if (UIFont.Name != UIFont.OriginalFontName)
             {
-                UIFont = new Font(FontFamily.GenericSansSerif, 9.0f);
+                UIFont = new Font(FontFamily.GenericSansSerif, settings.UIFontSize);
             }
-            ProjectorUIFont = new Font(UIFont.Name, 18.0f);
+            ProjectorUIFont = new Font(UIFont.Name, settings.UIFontSizeProjector);
 
             // Force some controls to always use the smaller font
             panelMenu.Font = UIFont;
@@ -59,12 +59,12 @@ namespace esecui
             btnStop.Font = UIFont;
 
             // Initialise the code font
-            CodeFont = new Font("Consolas", 10.0f);
+            CodeFont = new Font("Consolas", settings.CodeFontSize);
             if (CodeFont.Name != CodeFont.OriginalFontName)
             {
-                CodeFont = new Font(FontFamily.GenericMonospace, 10.0f);
+                CodeFont = new Font(FontFamily.GenericMonospace, settings.CodeFontSize);
             }
-            ProjectorCodeFont = new Font(CodeFont.Name, 20.0f);
+            ProjectorCodeFont = new Font(CodeFont.Name, settings.CodeFontSizeProjector);
 
             // Specify which controls use the bigger/smaller font
             CodeFontControls = new List<Control>()

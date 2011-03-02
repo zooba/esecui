@@ -90,7 +90,7 @@
             this.colMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panelLandscape = new System.Windows.Forms.Panel();
             this.splitLandscape = new esecui.CompatibleSplitContainer();
-            this.lstLandscapes = new NativeTreeView();
+            this.lstLandscapes = new esecui.NativeTreeView();
             this.tableLandscape = new System.Windows.Forms.TableLayoutPanel();
             this.txtEvaluatorCode = new ICSharpCode.TextEditor.TextEditorControl();
             this.lblLandscapeInternalName = new System.Windows.Forms.Label();
@@ -267,7 +267,7 @@
             // 
             this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lstConfigurations.FormattingEnabled = true;
-            this.lstConfigurations.Location = new System.Drawing.Point(552, 4);
+            this.lstConfigurations.Location = new System.Drawing.Point(552, 5);
             this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
             this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
             this.lstConfigurations.Name = "lstConfigurations";
@@ -1791,7 +1791,6 @@
         private System.Windows.Forms.ColumnHeader colCode;
         private System.Windows.Forms.ColumnHeader colMessage;
         private esecui.CompatibleSplitContainer splitLandscape;
-        private System.Windows.Forms.TreeView lstLandscapes;
         private System.Windows.Forms.TableLayoutPanel tableLandscape;
         private System.Windows.Forms.Label lblLandscapeInternalName;
         private System.Windows.Forms.TextBox txtLandscapeInternalName;
@@ -1902,6 +1901,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuControlStop;
         private System.Windows.Forms.ToolTip toolTips;
         private System.Windows.Forms.ToolStripMenuItem menuControlStep;
+        private NativeTreeView lstLandscapes;
     }
 }
 
