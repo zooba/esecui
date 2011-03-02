@@ -254,6 +254,7 @@ return FitnessMinimise(fitness)";
                 txtLandscapeParameters.ResetText();
                 lblLandscapeParameters.Enabled = false;
                 txtLandscapeParameters.Enabled = false;
+                txtLandscapeParameters.Refresh();
                 return;
             }
             else if (txtEvaluatorCode.Visible)
@@ -262,6 +263,7 @@ return FitnessMinimise(fitness)";
                 txtEvaluatorCode.Visible = false;
                 lblLandscapeParameters.Enabled = true;
                 txtLandscapeParameters.Enabled = true;
+                txtLandscapeParameters.Refresh();
             }
 
             if (e.Node.Tag != null)
@@ -273,6 +275,7 @@ return FitnessMinimise(fitness)";
                 {
                     txtLandscapeParameters.ResetText();
                     txtLandscapeParameters.Text = Python.FromSyntaxDefaults((object)landscape).ToText(Python);
+                    txtLandscapeParameters.Refresh();
                 }
             }
             else
@@ -280,6 +283,7 @@ return FitnessMinimise(fitness)";
                 txtLandscapeInternalName.ResetText();
                 txtLandscapeDescription.ResetText();
                 txtLandscapeParameters.ResetText();
+                txtLandscapeParameters.Refresh();
             }
         }
 
