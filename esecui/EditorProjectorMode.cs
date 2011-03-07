@@ -239,7 +239,7 @@ namespace esecui
 
         #region Projector Mode Dynamic Controls
 
-        private void txtExpression_Enter(object sender, EventArgs e)
+        private void Expression_Enter(object sender, EventArgs e)
         {
             if (ProjectorMode)
             {
@@ -247,7 +247,7 @@ namespace esecui
             }
         }
 
-        private void txtExpression_Leave(object sender, EventArgs e)
+        private void Expression_Leave(object sender, EventArgs e)
         {
             var tb = (TextBox)sender;
             if (tb.Font != CodeFont)
@@ -288,7 +288,7 @@ namespace esecui
         private Dictionary<string, VisualiserPointStyle> ProjectorChartStyles;
         private Dictionary<string, int> SeriesNames;
 
-        private void chkChartSeries_CheckedChanged(object sender, EventArgs e)
+        private void ChartSeries_CheckedChanged(object sender, EventArgs e)
         {
             var checkbox = (CheckBox)sender;
             chartResults.ShowSeries(SeriesNames[(string)checkbox.Tag], checkbox.Checked);

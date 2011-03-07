@@ -582,8 +582,8 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtStatsCurrentMean.Text = currentMean;
             txtStatsCurrentWorst.Text = currentWorst;
 
-            double min = chartResults.MinimumVerticalOffset;
-            double max = chartResults.MaximumVerticalOffset + chartResults.MaximumVerticalRange;
+            double min = double.NegativeInfinity; // chartResults.View.Bottom;
+            double max = double.PositiveInfinity; // chartResults.View.Top;
 
             if (bestFitness != null)
             {
@@ -1607,6 +1607,23 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         #endregion
 
+        #region Event-handlers that redirect but have to be here otherwise the designer gets upset
 
+        private void txtExpression_Enter(object sender, EventArgs e)
+        {
+            Expression_Enter(sender, e);
+        }
+
+        private void txtExpression_Leave(object sender, EventArgs e)
+        {
+            Expression_Leave(sender, e);
+        }
+
+        private void chkChartSeries_CheckedChanged(object sender, EventArgs e)
+        {
+            ChartSeries_CheckedChanged(sender, e);
+        }
+
+        #endregion
     }
 }

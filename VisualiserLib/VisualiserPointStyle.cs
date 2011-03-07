@@ -142,11 +142,11 @@ namespace VisualiserLib
         /// to <see cref="BeginRender"/> requires a matching call to
         /// <see cref="EndRender"/>.
         /// </summary>
-        public void BeginRender(double xOffset, double yOffset, double xScale, double yScale)
+        public void BeginRender(Rectangle client, ViewRectangle view)
         {
             if (RenderObjects == null)
             {
-                var newObj = new VisualiserPointStyleObjects(this, xOffset, yOffset, xScale, yScale);
+                var newObj = new VisualiserPointStyleObjects(this, client, view);
                 if (Interlocked.CompareExchange(ref RenderObjects, newObj, null) != null)
                 {
                     newObj.Dispose();
@@ -204,21 +204,17 @@ namespace VisualiserLib
 
             public double Size { get; private set; }
             public VisualiserPointScaleMode ScaleMode { get; private set; }
-            public double XOffset { get; private set; }
-            public double YOffset { get; private set; }
-            public double XScale { get; private set; }
-            public double YScale { get; private set; }
+            public Rectangle ClientRectangle { get; private set; }
+            public ViewRectangle View { get; private set; }
 
             /// <summary>
             /// Initialises state values for rendering.
             /// </summary>
-            /// <param name="source"></param>
-            /// <param name="xOffset"></param>
-            /// <param name="yOffset"></param>
-            /// <param name="xScale"></param>
-            /// <param name="yScale"></param>
+            /// <param name="source">The style to initialise.</param>
+            /// <param name="client">The destination rectangle.</param>
+            /// <param name="view">The view rectangle.</param>
             public VisualiserPointStyleObjects(VisualiserPointStyle source,
-                double xOffset, double yOffset, double xScale, double yScale)
+                Rectangle client, ViewRectangle view)
             {
                 ReferenceCount = 0;
 
@@ -227,7 +223,7 @@ namespace VisualiserLib
                     throw new NotSupportedException("Unsupported scale mode: " + source.ScaleMode.ToString());
                 }
 
-                double minScale = Math.Min(xScale, yScale);
+                double minScale = 1.0;  // TODO: Replace constant with calculation based on view
 
                 // Initialise LinePen
                 if (source.LineColor != Color.Transparent && source.LineThickness > 0.0)
@@ -272,34 +268,42 @@ namespace VisualiserLib
                 // Initialise scaling values
                 Size = source.Size;
                 ScaleMode = source.ScaleMode;
-                XOffset = xOffset;
-                YOffset = yOffset;
-                XScale = xScale;
-                YScale = yScale;
+                ClientRectangle = client;
+                View = view;
             }
 
             public PointF GetCenterPoint(VisualiserPoint point)
             {
-                return new PointF(
-                    (float)((point.X - XOffset) * XScale),
-                    (float)((point.Y - YOffset) * YScale));
+                return View.Map(ClientRectangle, point.X, point.Y);
             }
 
             public RectangleF GetRectangle(VisualiserPoint point)
             {
                 var sx = (point.Z > 0.0) ? point.Z : Size;
                 var sy = sx;
-                if (ScaleMode == VisualiserPointScaleMode.Real)
+                if (ScaleMode == VisualiserPointScaleMode.Pixels)
                 {
-                    sx = Math.Max(1.0, sx * XScale);
-                    sy = Math.Max(1.0, sy * YScale);
+                    var pt = View.Map(ClientRectangle, point.X, point.Y);
+                    return new RectangleF(
+                        (float)(pt.X - sx * 0.5f),
+                        (float)(pt.Y - sy * 0.5f),
+                        (float)sx,
+                        (float)sy
+                    );
                 }
-
-                return new RectangleF(
-                    (float)((point.X - XOffset) * XScale - sx * 0.5f),
-                    (float)((point.Y - YOffset) * YScale - sy * 0.5f),
-                    (float)sx,
-                    (float)sy);
+                else if (ScaleMode == VisualiserPointScaleMode.Real)
+                {
+                    return View.Map(ClientRectangle,
+                        point.X - sx * 0.5,
+                        point.Y - sy * 0.5,
+                        sx,
+                        sy
+                    );
+                }
+                else
+                {
+                    throw new NotSupportedException("Unsupported scale mode: " + ScaleMode.ToString());
+                }
             }
 
             public void Dispose()

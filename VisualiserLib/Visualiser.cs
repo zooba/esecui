@@ -64,30 +64,8 @@ namespace VisualiserLib
                 return;
             }
 
-            if (MaintainSquareAspect)
-            {
-                var xscale = ClientSize.Width / _HorizontalRange;
-                var yscale = ClientSize.Height / _VerticalRange;
-                var scale = Math.Min(xscale, yscale);
-                if (scale <= 0.0) scale = 1.0;  // should never happen, but we don't want to crash if it does
-                var xcentre = _HorizontalOffset + 0.5 * _HorizontalRange;
-                var ycentre = _VerticalOffset + 0.5 * _VerticalRange;
-                _HorizontalRange = ClientSize.Width / scale;
-                _VerticalRange = ClientSize.Height / scale;
-                _HorizontalOffset = xcentre - 0.5 * _HorizontalRange;
-                _VerticalOffset = ycentre - 0.5 * _VerticalRange;
-            }
-
-            if (_HorizontalOffset < _MinimumHorizontalOffset) _HorizontalOffset = _MinimumHorizontalOffset;
-            if (_HorizontalOffset > _MaximumHorizontalOffset) _HorizontalOffset = _MaximumHorizontalOffset;
-            if (_HorizontalRange < _MinimumHorizontalRange) _HorizontalRange = _MinimumHorizontalRange;
-            if (_HorizontalRange > _MaximumHorizontalRange) _HorizontalRange = _MaximumHorizontalRange;
-            if (_VerticalOffset < _MinimumVerticalOffset) _VerticalOffset = _MinimumVerticalOffset;
-            if (_VerticalOffset > _MaximumVerticalOffset) _VerticalOffset = _MaximumVerticalOffset;
-            if (_VerticalRange < _MinimumVerticalRange) _VerticalRange = _MinimumVerticalRange;
-            if (_VerticalRange > _MaximumVerticalRange) _VerticalRange = _MaximumVerticalRange;
-
-
+            if (MaintainSquareAspect) View.GrowToSquare();
+            
             base.Refresh();
         }
 
@@ -97,20 +75,8 @@ namespace VisualiserLib
 
         const bool DefaultAutoRange = false;
         const AutoSizeMode DefaultAutoRangeMode = AutoSizeMode.GrowOnly;
-        const double DefaultHorizontalOffset = 0.0;
-        const double DefaultHorizontalRange = 100.0;
-        const bool DefaultFlipHorizontal = false;
-        const double DefaultMinimumHorizontalOffset = -1.0e5;
-        const double DefaultMaximumHorizontalOffset = 1.0e5;
-        const double DefaultMinimumHorizontalRange = 0.0;
-        const double DefaultMaximumHorizontalRange = 1.0e6;
-        const double DefaultVerticalOffset = 0.0;
-        const double DefaultVerticalRange = 100.0;
-        const bool DefaultFlipVertical = false;
-        const double DefaultMinimumVerticalOffset = -1.0e5;
-        const double DefaultMaximumVerticalOffset = 1.0e5;
-        const double DefaultMinimumVerticalRange = 0.0;
-        const double DefaultMaximumVerticalRange = 1.0e6;
+        static readonly ViewRectangle DefaultView = new ViewRectangle();
+        static readonly ViewRectangle DefaultMaximumView = new ViewRectangle(-1.0e5, -1.0e5, 1.0e5, 1.0e5);
         const bool DefaultMustIncludeHorizontalZero = false;
         const bool DefaultMustIncludeVerticalZero = false;
         const bool DefaultMaintainSquareAspect = false;
@@ -144,223 +110,42 @@ namespace VisualiserLib
             }
         }
 
-        private double _HorizontalOffset = DefaultHorizontalOffset;
-        [Browsable(true), DefaultValue(DefaultHorizontalOffset)]
-        [Description("The value to map to the left-hand side of the control.")]
-        public double HorizontalOffset
+        private ViewRectangle _View = DefaultView;
+        [Browsable(true)]
+        [Description("Specify the viewable untransformed values.")]
+        public ViewRectangle View
         {
-            get { return _HorizontalOffset; }
+            get { return _View; }
             set
             {
-                _HorizontalOffset = value;
+                if (value == _View) return;
+                if (_View != null)
+                {
+                    _View.PropertyChanged -= View_PropertyChanged;
+                }
+                _View = value;
+                _View.PropertyChanged += new PropertyChangedEventHandler(View_PropertyChanged);
                 Refresh();
             }
         }
+        private bool ShouldSerializeView() { return _View == DefaultView; }
+        private void ResetView() { View = DefaultView; }
+        private void View_PropertyChanged(object sender, PropertyChangedEventArgs e) { Refresh(); }
 
-        private double _HorizontalRange = DefaultHorizontalRange;
-        [Browsable(true), DefaultValue(DefaultHorizontalRange)]
-        [Description("The value greater than HorizontalOffset to map to the right-hand side of the control.")]
-        public double HorizontalRange
+        private ViewRectangle _MaximumView = DefaultMaximumView;
+        [Browsable(true)]
+        [Description("Specify the maximum viewable untransformed values.")]
+        public ViewRectangle MaximumView
         {
-            get { return _HorizontalRange; }
+            get { return _MaximumView; }
             set
             {
-                if (value < _MinimumHorizontalRange) _HorizontalRange = _MinimumHorizontalRange;
-                else if (value > _MinimumHorizontalRange) _HorizontalRange = _MaximumHorizontalRange;
-                _HorizontalRange = value;
-                Refresh();
+                _MaximumView = value;
+                View.ShrinkToWithin(_MaximumView);
             }
         }
-
-        private bool _FlipHorizontal = DefaultFlipHorizontal;
-        [Browsable(true), DefaultValue(DefaultFlipHorizontal)]
-        [Description("True to invert values against the horizontal axis.")]
-        public bool FlipHorizontal
-        {
-            get { return _FlipHorizontal; }
-            set
-            {
-                _FlipHorizontal = value;
-                Refresh();
-            }
-        }
-
-        private double _MinimumHorizontalOffset = DefaultMinimumHorizontalOffset;
-        [Browsable(true), DefaultValue(DefaultMinimumHorizontalOffset)]
-        [Description("The minimum value to allow HorizontalOffset to take.")]
-        public double MinimumHorizontalOffset
-        {
-            get { return _MinimumHorizontalOffset; }
-            set
-            {
-                _MinimumHorizontalOffset = value;
-                if (HorizontalOffset < value)
-                {
-                    HorizontalOffset = value;
-                    Refresh();
-                }
-            }
-        }
-
-        private double _MaximumHorizontalOffset = DefaultMaximumHorizontalOffset;
-        [Browsable(true), DefaultValue(DefaultMaximumHorizontalOffset)]
-        [Description("The maximum value to allow HorizontalOffset to take.")]
-        public double MaximumHorizontalOffset
-        {
-            get { return _MaximumHorizontalOffset; }
-            set
-            {
-                _MaximumHorizontalOffset = value;
-                if (HorizontalOffset > value)
-                {
-                    HorizontalOffset = value;
-                    Refresh();
-                }
-            }
-        }
-
-        private double _MinimumHorizontalRange = DefaultMinimumHorizontalRange;
-        [Browsable(true), DefaultValue(DefaultMinimumHorizontalRange)]
-        [Description("The minimum value to allow HorizontalRange to take.")]
-        public double MinimumHorizontalRange
-        {
-            get { return _MinimumHorizontalRange; }
-            set
-            {
-                _MinimumHorizontalRange = value;
-                if (HorizontalRange < value)
-                {
-                    HorizontalRange = value;
-                    Refresh();
-                }
-            }
-        }
-
-        private double _MaximumHorizontalRange = DefaultMaximumHorizontalRange;
-        [Browsable(true), DefaultValue(DefaultMaximumHorizontalRange)]
-        [Description("The maximum value to allow HorizontalRange to take.")]
-        public double MaximumHorizontalRange
-        {
-            get { return _MaximumHorizontalRange; }
-            set
-            {
-                _MaximumHorizontalRange = value;
-                if (HorizontalRange > value)
-                {
-                    HorizontalRange = value;
-                    Refresh();
-                }
-            }
-        }
-
-        private double _VerticalOffset = DefaultVerticalOffset;
-        [Browsable(true), DefaultValue(DefaultVerticalOffset)]
-        [Description("The value to map to the top of the control.")]
-        public double VerticalOffset
-        {
-            get { return _VerticalOffset; }
-            set
-            {
-                _VerticalOffset = value;
-                Refresh();
-            }
-        }
-
-        private double _VerticalRange = DefaultVerticalRange;
-        [Browsable(true), DefaultValue(DefaultVerticalRange)]
-        [Description("The value greater than VerticalOffset to map to the bottom of the control.")]
-        public double VerticalRange
-        {
-            get { return _VerticalRange; }
-            set
-            {
-                if (value < _MinimumVerticalRange) _VerticalRange = _MinimumVerticalRange;
-                else if (value > _MinimumVerticalRange) _VerticalRange = _MaximumVerticalRange;
-                else _VerticalRange = value;
-                Refresh();
-            }
-        }
-
-        private bool _FlipVertical = DefaultFlipVertical;
-        [Browsable(true), DefaultValue(DefaultFlipVertical)]
-        [Description("True to invert values against the vertical axis.")]
-        public bool FlipVertical
-        {
-            get { return _FlipVertical; }
-            set
-            {
-                _FlipVertical = value;
-                Refresh();
-            }
-        }
-
-        private double _MinimumVerticalRange = DefaultMinimumVerticalRange;
-        [Browsable(true), DefaultValue(DefaultMinimumVerticalRange)]
-        [Description("The minimum value to allow VerticalRange to take.")]
-        public double MinimumVerticalRange
-        {
-            get { return _MinimumVerticalRange; }
-            set
-            {
-                _MinimumVerticalRange = value;
-                if (VerticalRange < value)
-                {
-                    VerticalRange = value;
-                    Refresh();
-                }
-            }
-        }
-
-        private double _MaximumVerticalRange = DefaultMaximumVerticalRange;
-        [Browsable(true), DefaultValue(DefaultMaximumVerticalRange)]
-        [Description("The maximum value to allow VerticalRange to take.")]
-        public double MaximumVerticalRange
-        {
-            get { return _MaximumVerticalRange; }
-            set
-            {
-                _MaximumVerticalRange = value;
-                if (VerticalRange > value)
-                {
-                    VerticalRange = value;
-                    Refresh();
-                }
-            }
-        }
-
-        private double _MinimumVerticalOffset = DefaultMinimumVerticalOffset;
-        [Browsable(true), DefaultValue(DefaultMinimumVerticalOffset)]
-        [Description("The minimum value to allow VerticalOffset to take.")]
-        public double MinimumVerticalOffset
-        {
-            get { return _MinimumVerticalOffset; }
-            set
-            {
-                _MinimumVerticalOffset = value;
-                if (VerticalOffset < value)
-                {
-                    VerticalOffset = value;
-                    Refresh();
-                }
-            }
-        }
-
-        private double _MaximumVerticalOffset = DefaultMaximumVerticalOffset;
-        [Browsable(true), DefaultValue(DefaultMaximumVerticalOffset)]
-        [Description("The maximum value to allow VerticalOffset to take.")]
-        public double MaximumVerticalOffset
-        {
-            get { return _MaximumVerticalOffset; }
-            set
-            {
-                _MaximumVerticalOffset = value;
-                if (VerticalOffset > value)
-                {
-                    VerticalOffset = value;
-                    Refresh();
-                }
-            }
-        }
+        private bool ShouldSerializeMaximumView() { return _MaximumView == DefaultMaximumView; }
+        private void ResetMaximumView() { MaximumView = DefaultMaximumView; }
 
         private bool _MustIncludeHorizontalZero = DefaultMustIncludeHorizontalZero;
         [Browsable(true), DefaultValue(DefaultMustIncludeHorizontalZero)]
@@ -371,17 +156,7 @@ namespace VisualiserLib
             set
             {
                 _MustIncludeHorizontalZero = value;
-                if (value && HorizontalOffset > 0.0)
-                {
-                    _HorizontalRange += HorizontalOffset;
-                    HorizontalOffset = 0.0;
-                    Refresh();
-                }
-                else if (value && HorizontalOffset + HorizontalRange < 0.0)
-                {
-                    HorizontalRange = -HorizontalOffset;
-                    Refresh();
-                }
+                if (value) Refresh();
             }
         }
 
@@ -394,17 +169,7 @@ namespace VisualiserLib
             set
             {
                 _MustIncludeVerticalZero = value;
-                if (value && VerticalOffset > 0.0)
-                {
-                    _VerticalRange += VerticalOffset;
-                    VerticalOffset = 0.0;
-                    Refresh();
-                }
-                else if (value && VerticalOffset + VerticalRange < 0.0)
-                {
-                    VerticalRange = -VerticalOffset;
-                    Refresh();
-                }
+                if (value) Refresh();
             }
         }
 
@@ -439,69 +204,33 @@ namespace VisualiserLib
                 return;
             }
 
-            double horizontalMin = 0, horizontalMax = 0, verticalMin = 0, verticalMax = 0;
+            if (!Series.AnyPoints()) return;
+            var firstPoint = Series.First().Points[0];
+            var newView = new ViewRectangle(firstPoint.X, firstPoint.Y, firstPoint.X, firstPoint.Y);
 
-            bool firstPoint = true;
             foreach (var pt in Series.Where(s => s.Visible).SelectMany(s => s.Points))
             {
-                horizontalMin = (firstPoint || pt.X < horizontalMin) ? pt.X : horizontalMin;
-                horizontalMax = (firstPoint || pt.X > horizontalMax) ? pt.X : horizontalMax;
-                verticalMin = (firstPoint || pt.Y < verticalMin) ? pt.Y : verticalMin;
-                verticalMax = (firstPoint || pt.Y > verticalMax) ? pt.Y : verticalMax;
-                firstPoint = false;
+                newView.GrowToInclude(pt.X, pt.Y, !View.FlippedHorizontally, !View.FlippedVertically);
             }
-            if (firstPoint) return;
 
-            bool adjusted = false;
-            if (AutoRangeMode == System.Windows.Forms.AutoSizeMode.GrowOnly)
+            if (AutoRangeMode == AutoSizeMode.GrowOnly)
             {
-                double origHorizontalMin = _HorizontalOffset;
-                double origVerticalMin = _VerticalOffset;
-                double origHorizontalMax = _HorizontalRange + _HorizontalOffset;
-                double origVerticalMax = _VerticalRange + _VerticalOffset;
-
-                if (horizontalMin > origHorizontalMin) { horizontalMin = origHorizontalMin; adjusted = true; }
-                if (horizontalMax < origHorizontalMax) { horizontalMax = origHorizontalMax; adjusted = true; }
-                if (verticalMin > origVerticalMin) { verticalMin = origVerticalMin; adjusted = true; }
-                if (verticalMax < origVerticalMax) { verticalMax = origVerticalMax; adjusted = true; }
+                _View.GrowToInclude(newView);
             }
-
-            _HorizontalOffset = horizontalMin;
-            _HorizontalRange = horizontalMax - horizontalMin;
-            _VerticalOffset = verticalMin;
-            _VerticalRange = verticalMax - verticalMin;
-
-            if (_MustIncludeHorizontalZero)
+            else
             {
-                if (_HorizontalOffset > 0.0)
-                {
-                    _HorizontalRange += _HorizontalOffset;
-                    _HorizontalOffset = 0.0;
-                    adjusted = true;
-                }
-                else if (_HorizontalOffset + _HorizontalRange < 0.0)
-                {
-                    _HorizontalRange = -_HorizontalOffset;
-                    adjusted = true;
-                }
+                _View = newView;
             }
-
-            if (_MustIncludeVerticalZero)
+            
+            if (MustIncludeHorizontalZero || MustIncludeHorizontalZero)
             {
-                if (_VerticalOffset > 0.0)
-                {
-                    _VerticalRange += _VerticalOffset;
-                    _VerticalOffset = 0.0;
-                    adjusted = true;
-                }
-                else if (_VerticalOffset + _VerticalRange < 0.0)
-                {
-                    _VerticalRange = -_VerticalOffset;
-                    adjusted = true;
-                }
+                _View.GrowToInclude(
+                    MustIncludeVerticalZero ? (double?)0.0 : null,
+                    MustIncludeHorizontalZero ? (double?)0.0 : null);
             }
 
-            if (adjusted && !suppressRefresh) Refresh();
+
+            if (!suppressRefresh) Refresh();
         }
 
         #endregion
@@ -1023,56 +752,32 @@ namespace VisualiserLib
 
         #region Rendering
 
-        private RectangleF GetScaledRange()
-        {
-            double horizontalPadding = _HorizontalRange * 0.1;
-            double verticalPadding = _VerticalRange * 0.1;
-
-            float horizontalOffset = (float)(_HorizontalOffset - horizontalPadding);
-            float verticalOffset = (float)(_VerticalOffset - verticalPadding);
-            float horizontalScale = (float)(ClientSize.Width / (_HorizontalRange + horizontalPadding * 2));
-            float verticalScale = (float)(ClientSize.Height / (_VerticalRange + verticalPadding * 2));
-            if (float.IsInfinity(horizontalScale)) horizontalScale = 1.0f;
-            if (float.IsInfinity(verticalScale)) verticalScale = 1.0f;
-
-            return new RectangleF(horizontalOffset, verticalOffset, horizontalScale, verticalScale);
-        }
-
         protected override void OnPaint(PaintEventArgs e)
         {
             if (!AllowUpdate) return;
 
             if (!Series.AnyPoints(true)) return;
 
+            var view = View.Clone();
 
             e.Graphics.InterpolationMode = InterpolationMode.High;
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
 
-#if !MONO
-            if (FlipVertical)
-            {
-                e.Graphics.TranslateTransform(0.0f, ClientSize.Height);
-                e.Graphics.ScaleTransform(1.0f, -1.0f);
-            }
-#endif
-
-            var scale = GetScaledRange();
-
             using (var horizontalAxisPen = new Pen(ForeColor, (float)_HorizontalAxisThickness))
             using (var verticalAxisPen = new Pen(ForeColor, (float)_VerticalAxisThickness))
             using (var gridPen = new Pen(GridColor, (float)_GridThickness))
-                DrawAxes(e.Graphics, horizontalAxisPen, verticalAxisPen, gridPen, scale);
+                DrawAxes(e.Graphics, horizontalAxisPen, verticalAxisPen, gridPen, view);
 
             var visibleSeries = Series.Where(s => s.Visible).ToList();
 
             var defStyle = VisualiserPoint.DefaultStyle;
-            defStyle.BeginRender(scale.X, scale.Y, scale.Width, scale.Height);
+            defStyle.BeginRender(ClientRectangle, view);
             foreach (var s in visibleSeries)
             {
-                if (s.Style != null) s.Style.BeginRender(scale.X, scale.Y, scale.Width, scale.Height);
+                if (s.Style != null) s.Style.BeginRender(ClientRectangle, view);
                 foreach (var pt in s.Points)
                 {
-                    if (pt.Style != null) pt.Style.BeginRender(scale.X, scale.Y, scale.Width, scale.Height);
+                    if (pt.Style != null) pt.Style.BeginRender(ClientRectangle, view);
                 }
             }
 
@@ -1112,7 +817,7 @@ namespace VisualiserLib
             defStyle.EndRender();
             foreach (var s in visibleSeries)
             {
-                if(s.Style != null) s.Style.EndRender();
+                if (s.Style != null) s.Style.EndRender();
                 foreach (var pt in s.Points)
                 {
                     if (pt.Style != null) pt.Style.EndRender();
@@ -1124,27 +829,26 @@ namespace VisualiserLib
             e.Graphics.ResetTransform();
             using (var textBrush = new SolidBrush(ForeColor))
             {
-                DrawMouseLocation(e.Graphics, textBrush, scale);
+                DrawMouseLocation(e.Graphics, textBrush, view);
             }
         }
 
-        private void DrawMouseLocation(Graphics g, Brush textBrush, RectangleF scale)
+        private void DrawMouseLocation(Graphics g, Brush textBrush, ViewRectangle view)
         {
             if (_ShowMouseCoordinates && CurrentMouseLocation.HasValue)
             {
                 var cml = CurrentMouseLocation.Value;
 
-                int precisionX = (int)Math.Floor(Math.Log10(scale.Width));
-                int precisionY = (int)Math.Floor(Math.Log10(scale.Height));
+                int precisionX = (int)Math.Floor(Math.Log10(ClientSize.Width / Math.Abs(view.Width)));
+                int precisionY = (int)Math.Floor(Math.Log10(ClientSize.Height / Math.Abs(view.Height)));
 
-                double x = ((_FlipHorizontal) ? (ClientSize.Width - cml.X) : cml.X) / scale.Width + scale.X;
-                double y = ((_FlipVertical) ? (ClientSize.Height - cml.Y) : cml.Y) / scale.Height + scale.Y;
+                PointF pt = view.Unmap(ClientRectangle, new PointF(cml.X, cml.Y));
 
                 string formatX = (precisionX > 0) ? "." + new string('0', precisionX) : "";
                 string formatY = (precisionY > 0) ? "." + new string('0', precisionY) : "";
 
                 var formatString = "{0:0" + formatX + "}, {1:0" + formatY + "}";
-                var display = string.Format(formatString, x, y);
+                var display = string.Format(formatString, pt.X, pt.Y);
 
                 var sf = new StringFormat();
                 switch (MouseCoordinatesAlign)
@@ -1193,15 +897,26 @@ namespace VisualiserLib
             }
         }
 
-        private void DrawAxes(Graphics g, Pen horizontalAxisPen, Pen verticalAxisPen, Pen gridPen, RectangleF scale)
+        private IEnumerable<float> GetPointsBetween(int firstPixel, int lastPixel,
+            double firstValue, double lastValue, double padding, double step)
+        {
+            if (lastPixel < firstPixel || firstValue == lastValue) yield break;
+            double range = Math.Abs(lastValue - firstValue);
+            double min = Math.Min(lastValue, firstValue);
+
+            double pad = range * padding * 0.5;
+            double scale = (lastPixel - firstPixel) / (range + pad + pad);
+            double pixel = (pad - min) * scale;
+            double pixelStep = step * scale;
+            
+            for (; pixel > firstPixel; pixel -= pixelStep) { }
+            for (; pixel < (firstPixel - pixelStep); pixel += pixelStep) { }
+            for (; pixel <= lastPixel; pixel += pixelStep) { yield return (float)pixel; }
+        }
+
+        private void DrawAxes(Graphics g, Pen horizontalAxisPen, Pen verticalAxisPen, Pen gridPen, ViewRectangle view)
         {
             if (!_HorizontalAxis && !_VerticalAxis) return;
-
-            float x = -scale.X * scale.Width;
-            float y = -scale.Y * scale.Height;
-
-            if (_HorizontalAxis && y < ClientSize.Height) g.DrawLine(horizontalAxisPen, 0.0f, y, ClientSize.Width, y);
-            if (_VerticalAxis && x < ClientSize.Width) g.DrawLine(verticalAxisPen, x, 0.0f, x, ClientSize.Height);
 
             if (_HorizontalAxisTicks)
             {
@@ -1211,7 +926,7 @@ namespace VisualiserLib
                 int autoTickSize = 2;
                 if (tickInterval <= 0.0 || tickSize == 0)
                 {
-                    while (ClientSize.Width > 50 * (scale.Width * autoTickInterval) && autoTickInterval < 100000)
+                    while (Math.Abs(view.Width) > 50 * autoTickInterval && autoTickInterval < 100000)
                     {
                         autoTickInterval *= 10;
                         autoTickSize *= 2;
@@ -1221,19 +936,21 @@ namespace VisualiserLib
                 }
                 if (tickInterval < 100000)
                 {
-                    y += (float)_HorizontalAxisThickness * 0.5f;
-                    float d = (float)(tickInterval * scale.Width);
-                    for (int step = 1; x - step * d > 0; step += 1)
+                    var pt = view.Map(ClientRectangle, 0.0, 0.0);
+                    float y1 = pt.Y + (float)_HorizontalAxisThickness * 0.5f;
+                    float y2 = y1 + (float)tickSize;
+
+                    foreach (var x in GetPointsBetween(
+                        0,
+                        ClientRectangle.Width,
+                        view.Left,
+                        view.Right,
+                        view.Padding,
+                        tickInterval))
                     {
-                        g.DrawLine(gridPen, x - step * d, 0, x - step * d, ClientSize.Height);
-                        g.DrawLine(horizontalAxisPen, x - step * d, y, x - step * d, y + tickSize);
+                        g.DrawLine(gridPen, x, 0, x, ClientSize.Height);
+                        g.DrawLine(horizontalAxisPen, x, y1, x, y2);
                     }
-                    for (int step = 1; x + step * d < ClientSize.Width; step += 1)
-                    {
-                        g.DrawLine(gridPen, x + step * d, 0, x + step * d, ClientSize.Height);
-                        g.DrawLine(horizontalAxisPen, x + step * d, y, x + step * d, y + tickSize);
-                    }
-                    y -= (float)_HorizontalAxisThickness * 0.5f;
                 }
             }
             if (_VerticalAxisTicks)
@@ -1244,7 +961,7 @@ namespace VisualiserLib
                 int autoTickSize = 2;
                 if (tickInterval <= 0.0 || tickSize == 0)
                 {
-                    while (ClientSize.Height > 50 * (scale.Height * autoTickInterval) && autoTickInterval < 100000)
+                    while (Math.Abs(view.Height) > 50 * autoTickInterval && autoTickInterval < 100000)
                     {
                         autoTickInterval *= 10;
                         autoTickSize *= 2;
@@ -1252,23 +969,31 @@ namespace VisualiserLib
                     if (tickInterval <= 0.0) tickInterval = autoTickInterval;
                     if (tickSize == 0) tickSize = autoTickSize;
                 }
+
                 if (tickInterval < 100000)
                 {
-                    x += (float)_VerticalAxisThickness * 0.5f;
-                    float d = (float)(tickInterval * scale.Height);
-                    for (int step = 1; y - step * d > 0; step += 1)
+                    var pt = view.Map(ClientRectangle, 0.0, 0.0);
+                    float x1 = pt.X + (float)_VerticalAxisThickness * 0.5f;
+                    float x2 = x1 + (float)tickSize;
+
+                    foreach (var y in GetPointsBetween(
+                        0,
+                        ClientRectangle.Height,
+                        view.Top,
+                        view.Bottom,
+                        view.Padding,
+                        tickInterval))
                     {
-                        g.DrawLine(gridPen, 0, y - step * d, ClientSize.Width, y - step * d);
-                        g.DrawLine(verticalAxisPen, x, y - step * d, x + tickSize, y - step * d);
+                        g.DrawLine(gridPen, 0, y, ClientSize.Width, y);
+                        g.DrawLine(verticalAxisPen, x1, y, x2, y);
                     }
-                    for (int step = 1; y + step * d < ClientSize.Height; step += 1)
-                    {
-                        g.DrawLine(gridPen, 0, y + step * d, ClientSize.Width, y + step * d);
-                        g.DrawLine(verticalAxisPen, x, y + step * d, x + tickSize, y + step * d);
-                    }
-                    x -= (float)_VerticalAxisThickness * 0.5f;
                 }
             }
+
+            PointF zero = view.Map(ClientRectangle, PointF.Empty);
+
+            if (_HorizontalAxis && zero.Y < ClientSize.Height) g.DrawLine(horizontalAxisPen, 0.0f, zero.Y, ClientSize.Width, zero.Y);
+            if (_VerticalAxis && zero.X < ClientSize.Width) g.DrawLine(verticalAxisPen, zero.X, 0.0f, zero.X, ClientSize.Height);
         }
 
         #endregion
@@ -1278,8 +1003,7 @@ namespace VisualiserLib
         protected Point? ZoomStartLocation = null;
         protected Point? ZoomEndLocation = null;
         private bool CanUnzoom = false;
-        private double UnzoomHorizontalOffset, UnzoomVerticalOffset;
-        private double UnzoomHorizontalRange, UnzoomVerticalRange;
+        private ViewRectangle UnzoomView;
         private bool UnzoomAutoRange;
 
         protected Rectangle? GetZoomRect()
@@ -1292,14 +1016,6 @@ namespace VisualiserLib
                 int b = ZoomEndLocation.Value.Y;
                 if (r < l) l = Interlocked.Exchange(ref r, l);
                 if (b < t) t = Interlocked.Exchange(ref b, t);
-                if (FlipHorizontal)
-                {
-                    l = ClientSize.Width - Interlocked.Exchange(ref r, ClientSize.Width - l);
-                }
-                if (FlipVertical)
-                {
-                    t = ClientSize.Height - Interlocked.Exchange(ref b, ClientSize.Height - t);
-                }
                 return Rectangle.FromLTRB(l, t, r, b);
             }
             else
@@ -1328,10 +1044,7 @@ namespace VisualiserLib
             {
                 if (CanUnzoom)
                 {
-                    _HorizontalOffset = UnzoomHorizontalOffset;
-                    _HorizontalRange = UnzoomHorizontalRange;
-                    _VerticalOffset = UnzoomVerticalOffset;
-                    _VerticalRange = UnzoomVerticalRange;
+                    _View = UnzoomView;
                     _AutoRange = UnzoomAutoRange;
                     CanUnzoom = false;
                     Refresh();
@@ -1350,10 +1063,7 @@ namespace VisualiserLib
                 if (!CanUnzoom)
                 {
                     CanUnzoom = true;
-                    UnzoomHorizontalOffset = _HorizontalOffset;
-                    UnzoomHorizontalRange = _HorizontalRange;
-                    UnzoomVerticalOffset = _VerticalOffset;
-                    UnzoomVerticalRange = _VerticalRange;
+                    UnzoomView = View.Clone();
                     UnzoomAutoRange = _AutoRange;
                     _AutoRange = false;
                 }
@@ -1377,12 +1087,7 @@ namespace VisualiserLib
                 var zoomTo = GetZoomRect();
                 if (zoomTo.HasValue && zoomTo.Value.Width > 3 && zoomTo.Value.Height > 3)
                 {
-                    var scale = GetScaledRange();
-
-                    _HorizontalOffset = zoomTo.Value.Left / scale.Width + scale.X;
-                    _VerticalOffset = zoomTo.Value.Top / scale.Height + scale.Y;
-                    _HorizontalRange = Math.Abs(zoomTo.Value.Width / scale.Width);
-                    _VerticalRange = Math.Abs(zoomTo.Value.Height / scale.Height);
+                    _View = View.Unmap(ClientRectangle, zoomTo.Value);
                 }
                 ZoomStartLocation = null;
                 ZoomEndLocation = null;

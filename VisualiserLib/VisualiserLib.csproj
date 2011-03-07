@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewRectangle.cs" />
     <Compile Include="Visualiser.cs">
       <SubType>UserControl</SubType>
     </Compile>
