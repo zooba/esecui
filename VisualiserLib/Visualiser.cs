@@ -128,7 +128,7 @@ namespace VisualiserLib
                 Refresh();
             }
         }
-        private bool ShouldSerializeView() { return _View == DefaultView; }
+        private bool ShouldSerializeView() { return _View.Equals(DefaultView); }
         private void ResetView() { View = DefaultView; }
         private void View_PropertyChanged(object sender, PropertyChangedEventArgs e) { Refresh(); }
 
@@ -144,8 +144,35 @@ namespace VisualiserLib
                 View.ShrinkToWithin(_MaximumView);
             }
         }
-        private bool ShouldSerializeMaximumView() { return _MaximumView == DefaultMaximumView; }
+        private bool ShouldSerializeMaximumView() { return _MaximumView.Equals(DefaultMaximumView); }
         private void ResetMaximumView() { MaximumView = DefaultMaximumView; }
+
+
+        const bool DefaultHorizontalFlip = false;
+        private bool _HorizontalFlip = DefaultHorizontalFlip;
+        [Browsable(true), DefaultValue(DefaultHorizontalFlip)]
+        [Description("True to prefer positive values at the left of view when auto-ranging.")]
+        public bool HorizontalFlip
+        {
+            get { return _HorizontalFlip; }
+            set
+            {
+                _HorizontalFlip = value;
+            }
+        }
+
+        const bool DefaultVerticalFlip = false;
+        private bool _VerticalFlip = DefaultVerticalFlip;
+        [Browsable(true), DefaultValue(DefaultVerticalFlip)]
+        [Description("True to prefer positive values at the top of view when auto-ranging.")]
+        public bool VerticalFlip
+        {
+            get { return _VerticalFlip; }
+            set
+            {
+                _VerticalFlip = value;
+            }
+        }
 
         private bool _MustIncludeHorizontalZero = DefaultMustIncludeHorizontalZero;
         [Browsable(true), DefaultValue(DefaultMustIncludeHorizontalZero)]
@@ -210,7 +237,7 @@ namespace VisualiserLib
 
             foreach (var pt in Series.Where(s => s.Visible).SelectMany(s => s.Points))
             {
-                newView.GrowToInclude(pt.X, pt.Y, !View.FlippedHorizontally, !View.FlippedVertically);
+                newView.GrowToInclude(pt.X, pt.Y, !HorizontalFlip, !VerticalFlip);
             }
 
             if (AutoRangeMode == AutoSizeMode.GrowOnly)
@@ -904,9 +931,9 @@ namespace VisualiserLib
             double range = Math.Abs(lastValue - firstValue);
             double min = Math.Min(lastValue, firstValue);
 
-            double pad = range * padding * 0.5;
-            double scale = (lastPixel - firstPixel) / (range + pad + pad);
-            double pixel = (pad - min) * scale;
+            double pad = range * padding;
+            double scale = (lastPixel - firstPixel) / (range + pad);
+            double pixel = (-min + pad * 0.5) * scale;
             double pixelStep = step * scale;
             
             for (; pixel > firstPixel; pixel -= pixelStep) { }

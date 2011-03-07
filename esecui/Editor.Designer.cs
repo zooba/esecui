@@ -39,11 +39,12 @@
             System.Windows.Forms.ToolStripSeparator menuViewSeparator4;
             System.Windows.Forms.ToolStripSeparator menuViewSeparator5;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
-            VisualiserLib.ViewRectangle viewRectangle1 = new VisualiserLib.ViewRectangle();
-            VisualiserLib.ViewRectangle viewRectangle2 = new VisualiserLib.ViewRectangle();
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Example assignment", "VSObject_Constant.bmp");
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Example class", "VSObject_Class.bmp");
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Example function", "VSObject_Method.bmp");
+            VisualiserLib.ViewRectangle viewRectangle1 = new VisualiserLib.ViewRectangle();
+            VisualiserLib.ViewRectangle viewRectangle2 = new VisualiserLib.ViewRectangle();
+            VisualiserLib.ViewRectangle viewRectangle3 = new VisualiserLib.ViewRectangle();
             this.imlPythonDefinitions = new System.Windows.Forms.ImageList(this.components);
             this.lstConfigurations = new System.Windows.Forms.ComboBox();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -76,11 +77,33 @@
             this.chkResults = new System.Windows.Forms.RadioButton();
             this.chkLog = new System.Windows.Forms.RadioButton();
             this.panelSystem = new System.Windows.Forms.Panel();
+            this.splitSystemErrors = new esecui.CompatibleSplitContainer();
+            this.tabSourceView = new System.Windows.Forms.TabControl();
+            this.tabSourceESDL = new System.Windows.Forms.TabPage();
+            this.splitSystemVariables = new esecui.CompatibleSplitContainer();
+            this.txtSystemESDL = new ICSharpCode.TextEditor.TextEditorControl();
+            this.txtSystemVariables = new ICSharpCode.TextEditor.TextEditorControl();
+            this.tabSourcePython = new System.Windows.Forms.TabPage();
+            this.splitPythonDefinitions = new esecui.CompatibleSplitContainer();
+            this.txtSystemPython = new ICSharpCode.TextEditor.TextEditorControl();
+            this.lstPythonDefinitions = new System.Windows.Forms.ListView();
+            this.lstErrors = new System.Windows.Forms.ListView();
+            this.colLocation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colCode = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panelLandscape = new System.Windows.Forms.Panel();
+            this.splitLandscape = new esecui.CompatibleSplitContainer();
+            this.lstLandscapes = new esecui.NativeTreeView();
+            this.tableLandscape = new System.Windows.Forms.TableLayoutPanel();
+            this.txtEvaluatorCode = new ICSharpCode.TextEditor.TextEditorControl();
+            this.lblLandscapeInternalName = new System.Windows.Forms.Label();
+            this.txtLandscapeInternalName = new System.Windows.Forms.TextBox();
+            this.lblLandscapeDescription = new System.Windows.Forms.Label();
+            this.txtLandscapeDescription = new System.Windows.Forms.TextBox();
+            this.lblLandscapeParameters = new System.Windows.Forms.Label();
+            this.txtLandscapeParameters = new ICSharpCode.TextEditor.TextEditorControl();
+            this.lblEvaluatorCode = new System.Windows.Forms.Label();
             this.panelResults = new System.Windows.Forms.Panel();
-            this.panelLog = new System.Windows.Forms.Panel();
-            this.picDimmer = new System.Windows.Forms.PictureBox();
-            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.splitLimitsGraph = new esecui.CompatibleSplitContainer();
             this.tableResults = new System.Windows.Forms.TableLayoutPanel();
             this.tableControls = new System.Windows.Forms.TableLayoutPanel();
@@ -104,6 +127,9 @@
             this.splitGraphStats = new esecui.CompatibleSplitContainer();
             this.tabResultView = new System.Windows.Forms.TabControl();
             this.tabChart = new System.Windows.Forms.TabPage();
+            this.tableChart = new System.Windows.Forms.TableLayoutPanel();
+            this.lblChartExpression = new System.Windows.Forms.Label();
+            this.txtChartExpression = new System.Windows.Forms.TextBox();
             this.chartResults = new VisualiserLib.Visualiser();
             this.tab2DPlot = new System.Windows.Forms.TabPage();
             this.table2DPlot = new System.Windows.Forms.TableLayoutPanel();
@@ -136,32 +162,10 @@
             this.chkChartCurrentMean = new System.Windows.Forms.CheckBox();
             this.chkChartCurrentBest = new System.Windows.Forms.CheckBox();
             this.chkChartBestFitness = new System.Windows.Forms.CheckBox();
-            this.splitSystemErrors = new esecui.CompatibleSplitContainer();
-            this.tabSourceView = new System.Windows.Forms.TabControl();
-            this.tabSourceESDL = new System.Windows.Forms.TabPage();
-            this.splitSystemVariables = new esecui.CompatibleSplitContainer();
-            this.txtSystemESDL = new ICSharpCode.TextEditor.TextEditorControl();
-            this.txtSystemVariables = new ICSharpCode.TextEditor.TextEditorControl();
-            this.tabSourcePython = new System.Windows.Forms.TabPage();
-            this.splitPythonDefinitions = new esecui.CompatibleSplitContainer();
-            this.txtSystemPython = new ICSharpCode.TextEditor.TextEditorControl();
-            this.lstPythonDefinitions = new System.Windows.Forms.ListView();
-            this.lstErrors = new System.Windows.Forms.ListView();
-            this.colLocation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.colCode = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.colMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.panelLog = new System.Windows.Forms.Panel();
             this.txtLog = new ICSharpCode.TextEditor.TextEditorControl();
-            this.splitLandscape = new esecui.CompatibleSplitContainer();
-            this.lstLandscapes = new esecui.NativeTreeView();
-            this.tableLandscape = new System.Windows.Forms.TableLayoutPanel();
-            this.txtEvaluatorCode = new ICSharpCode.TextEditor.TextEditorControl();
-            this.lblLandscapeInternalName = new System.Windows.Forms.Label();
-            this.txtLandscapeInternalName = new System.Windows.Forms.TextBox();
-            this.lblLandscapeDescription = new System.Windows.Forms.Label();
-            this.txtLandscapeDescription = new System.Windows.Forms.TextBox();
-            this.lblLandscapeParameters = new System.Windows.Forms.Label();
-            this.txtLandscapeParameters = new ICSharpCode.TextEditor.TextEditorControl();
-            this.lblEvaluatorCode = new System.Windows.Forms.Label();
+            this.picDimmer = new System.Windows.Forms.PictureBox();
+            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             menuConfigurationSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             menuConfigurationSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -173,28 +177,6 @@
             this.menuStrip.SuspendLayout();
             this.panelMenu.SuspendLayout();
             this.panelSystem.SuspendLayout();
-            this.panelLandscape.SuspendLayout();
-            this.panelResults.SuspendLayout();
-            this.panelLog.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picDimmer)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitLimitsGraph)).BeginInit();
-            this.splitLimitsGraph.Panel1.SuspendLayout();
-            this.splitLimitsGraph.Panel2.SuspendLayout();
-            this.splitLimitsGraph.SuspendLayout();
-            this.tableResults.SuspendLayout();
-            this.tableControls.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).BeginInit();
-            this.splitGraphStats.Panel1.SuspendLayout();
-            this.splitGraphStats.Panel2.SuspendLayout();
-            this.splitGraphStats.SuspendLayout();
-            this.tabResultView.SuspendLayout();
-            this.tabChart.SuspendLayout();
-            this.tab2DPlot.SuspendLayout();
-            this.table2DPlot.SuspendLayout();
-            this.tabBestIndividual.SuspendLayout();
-            this.tableBestIndividual.SuspendLayout();
-            this.tableStats.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitSystemErrors)).BeginInit();
             this.splitSystemErrors.Panel1.SuspendLayout();
             this.splitSystemErrors.Panel2.SuspendLayout();
@@ -210,11 +192,34 @@
             this.splitPythonDefinitions.Panel1.SuspendLayout();
             this.splitPythonDefinitions.Panel2.SuspendLayout();
             this.splitPythonDefinitions.SuspendLayout();
+            this.panelLandscape.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLandscape)).BeginInit();
             this.splitLandscape.Panel1.SuspendLayout();
             this.splitLandscape.Panel2.SuspendLayout();
             this.splitLandscape.SuspendLayout();
             this.tableLandscape.SuspendLayout();
+            this.panelResults.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitLimitsGraph)).BeginInit();
+            this.splitLimitsGraph.Panel1.SuspendLayout();
+            this.splitLimitsGraph.Panel2.SuspendLayout();
+            this.splitLimitsGraph.SuspendLayout();
+            this.tableResults.SuspendLayout();
+            this.tableControls.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitGraphStats)).BeginInit();
+            this.splitGraphStats.Panel1.SuspendLayout();
+            this.splitGraphStats.Panel2.SuspendLayout();
+            this.splitGraphStats.SuspendLayout();
+            this.tabResultView.SuspendLayout();
+            this.tabChart.SuspendLayout();
+            this.tableChart.SuspendLayout();
+            this.tab2DPlot.SuspendLayout();
+            this.table2DPlot.SuspendLayout();
+            this.tabBestIndividual.SuspendLayout();
+            this.tableBestIndividual.SuspendLayout();
+            this.tableStats.SuspendLayout();
+            this.panelLog.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picDimmer)).BeginInit();
             this.SuspendLayout();
             // 
             // menuConfigurationSeparator1
@@ -269,7 +274,7 @@
             // 
             this.lstConfigurations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lstConfigurations.FormattingEnabled = true;
-            this.lstConfigurations.Location = new System.Drawing.Point(552, 4);
+            this.lstConfigurations.Location = new System.Drawing.Point(552, 5);
             this.lstConfigurations.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
             this.lstConfigurations.MinimumSize = new System.Drawing.Size(20, 0);
             this.lstConfigurations.Name = "lstConfigurations";
@@ -587,6 +592,184 @@
             this.panelSystem.Size = new System.Drawing.Size(963, 661);
             this.panelSystem.TabIndex = 4;
             // 
+            // splitSystemErrors
+            // 
+            this.splitSystemErrors.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitSystemErrors.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitSystemErrors.Location = new System.Drawing.Point(0, 0);
+            this.splitSystemErrors.Name = "splitSystemErrors";
+            this.splitSystemErrors.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitSystemErrors.Panel1
+            // 
+            this.splitSystemErrors.Panel1.Controls.Add(this.tabSourceView);
+            // 
+            // splitSystemErrors.Panel2
+            // 
+            this.splitSystemErrors.Panel2.Controls.Add(this.lstErrors);
+            this.splitSystemErrors.Size = new System.Drawing.Size(963, 661);
+            this.splitSystemErrors.SplitterDistance = 532;
+            this.splitSystemErrors.TabIndex = 0;
+            // 
+            // tabSourceView
+            // 
+            this.tabSourceView.Controls.Add(this.tabSourceESDL);
+            this.tabSourceView.Controls.Add(this.tabSourcePython);
+            this.tabSourceView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabSourceView.Location = new System.Drawing.Point(0, 0);
+            this.tabSourceView.Multiline = true;
+            this.tabSourceView.Name = "tabSourceView";
+            this.tabSourceView.SelectedIndex = 0;
+            this.tabSourceView.Size = new System.Drawing.Size(963, 532);
+            this.tabSourceView.TabIndex = 9;
+            // 
+            // tabSourceESDL
+            // 
+            this.tabSourceESDL.Controls.Add(this.splitSystemVariables);
+            this.tabSourceESDL.Location = new System.Drawing.Point(4, 24);
+            this.tabSourceESDL.Name = "tabSourceESDL";
+            this.tabSourceESDL.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSourceESDL.Size = new System.Drawing.Size(955, 504);
+            this.tabSourceESDL.TabIndex = 0;
+            this.tabSourceESDL.Text = "ESDL (Alt+1)";
+            this.tabSourceESDL.UseVisualStyleBackColor = true;
+            // 
+            // splitSystemVariables
+            // 
+            this.splitSystemVariables.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitSystemVariables.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitSystemVariables.Location = new System.Drawing.Point(3, 3);
+            this.splitSystemVariables.Name = "splitSystemVariables";
+            // 
+            // splitSystemVariables.Panel1
+            // 
+            this.splitSystemVariables.Panel1.Controls.Add(this.txtSystemESDL);
+            // 
+            // splitSystemVariables.Panel2
+            // 
+            this.splitSystemVariables.Panel2.Controls.Add(this.txtSystemVariables);
+            this.splitSystemVariables.Size = new System.Drawing.Size(949, 498);
+            this.splitSystemVariables.SplitterDistance = 652;
+            this.splitSystemVariables.TabIndex = 0;
+            // 
+            // txtSystemESDL
+            // 
+            this.txtSystemESDL.ConvertTabsToSpaces = true;
+            this.txtSystemESDL.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemESDL.EnableFolding = false;
+            this.txtSystemESDL.IsReadOnly = false;
+            this.txtSystemESDL.Location = new System.Drawing.Point(0, 0);
+            this.txtSystemESDL.Name = "txtSystemESDL";
+            this.txtSystemESDL.ShowVRuler = false;
+            this.txtSystemESDL.Size = new System.Drawing.Size(652, 498);
+            this.txtSystemESDL.TabIndex = 0;
+            this.txtSystemESDL.Text = resources.GetString("txtSystemESDL.Text");
+            // 
+            // txtSystemVariables
+            // 
+            this.txtSystemVariables.ConvertTabsToSpaces = true;
+            this.txtSystemVariables.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemVariables.EnableFolding = false;
+            this.txtSystemVariables.IndentStyle = ICSharpCode.TextEditor.Document.IndentStyle.None;
+            this.txtSystemVariables.IsReadOnly = false;
+            this.txtSystemVariables.Location = new System.Drawing.Point(0, 0);
+            this.txtSystemVariables.Name = "txtSystemVariables";
+            this.txtSystemVariables.ShowLineNumbers = false;
+            this.txtSystemVariables.ShowVRuler = false;
+            this.txtSystemVariables.Size = new System.Drawing.Size(293, 498);
+            this.txtSystemVariables.TabIndex = 0;
+            this.txtSystemVariables.Text = "size: 50";
+            // 
+            // tabSourcePython
+            // 
+            this.tabSourcePython.Controls.Add(this.splitPythonDefinitions);
+            this.tabSourcePython.Location = new System.Drawing.Point(4, 22);
+            this.tabSourcePython.Name = "tabSourcePython";
+            this.tabSourcePython.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSourcePython.Size = new System.Drawing.Size(955, 506);
+            this.tabSourcePython.TabIndex = 1;
+            this.tabSourcePython.Text = "Python (Alt+2)";
+            this.tabSourcePython.UseVisualStyleBackColor = true;
+            // 
+            // splitPythonDefinitions
+            // 
+            this.splitPythonDefinitions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitPythonDefinitions.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitPythonDefinitions.Location = new System.Drawing.Point(3, 3);
+            this.splitPythonDefinitions.Name = "splitPythonDefinitions";
+            // 
+            // splitPythonDefinitions.Panel1
+            // 
+            this.splitPythonDefinitions.Panel1.Controls.Add(this.txtSystemPython);
+            // 
+            // splitPythonDefinitions.Panel2
+            // 
+            this.splitPythonDefinitions.Panel2.Controls.Add(this.lstPythonDefinitions);
+            this.splitPythonDefinitions.Size = new System.Drawing.Size(949, 500);
+            this.splitPythonDefinitions.SplitterDistance = 726;
+            this.splitPythonDefinitions.TabIndex = 2;
+            // 
+            // txtSystemPython
+            // 
+            this.txtSystemPython.ConvertTabsToSpaces = true;
+            this.txtSystemPython.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSystemPython.EnableFolding = false;
+            this.txtSystemPython.IsReadOnly = false;
+            this.txtSystemPython.Location = new System.Drawing.Point(0, 0);
+            this.txtSystemPython.Name = "txtSystemPython";
+            this.txtSystemPython.ShowVRuler = false;
+            this.txtSystemPython.Size = new System.Drawing.Size(726, 500);
+            this.txtSystemPython.TabIndex = 1;
+            // 
+            // lstPythonDefinitions
+            // 
+            this.lstPythonDefinitions.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.lstPythonDefinitions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstPythonDefinitions.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1,
+            listViewItem2,
+            listViewItem3});
+            this.lstPythonDefinitions.LabelWrap = false;
+            this.lstPythonDefinitions.Location = new System.Drawing.Point(0, 0);
+            this.lstPythonDefinitions.MultiSelect = false;
+            this.lstPythonDefinitions.Name = "lstPythonDefinitions";
+            this.lstPythonDefinitions.Size = new System.Drawing.Size(219, 500);
+            this.lstPythonDefinitions.SmallImageList = this.imlPythonDefinitions;
+            this.lstPythonDefinitions.TabIndex = 0;
+            this.lstPythonDefinitions.UseCompatibleStateImageBehavior = false;
+            this.lstPythonDefinitions.View = System.Windows.Forms.View.List;
+            this.lstPythonDefinitions.ItemActivate += new System.EventHandler(this.lstPythonDefinitions_ItemActivate);
+            // 
+            // lstErrors
+            // 
+            this.lstErrors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colLocation,
+            this.colCode,
+            this.colMessage});
+            this.lstErrors.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstErrors.FullRowSelect = true;
+            this.lstErrors.Location = new System.Drawing.Point(0, 0);
+            this.lstErrors.Name = "lstErrors";
+            this.lstErrors.Size = new System.Drawing.Size(963, 125);
+            this.lstErrors.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lstErrors.TabIndex = 1;
+            this.lstErrors.UseCompatibleStateImageBehavior = false;
+            this.lstErrors.View = System.Windows.Forms.View.Details;
+            this.lstErrors.ItemActivate += new System.EventHandler(this.lstErrors_ItemActivate);
+            // 
+            // colLocation
+            // 
+            this.colLocation.Text = "Loc";
+            // 
+            // colCode
+            // 
+            this.colCode.Text = "Code";
+            // 
+            // colMessage
+            // 
+            this.colMessage.Text = "Message";
+            this.colMessage.Width = 400;
+            // 
             // panelLandscape
             // 
             this.panelLandscape.Controls.Add(this.splitLandscape);
@@ -597,6 +780,151 @@
             this.panelLandscape.TabIndex = 5;
             this.panelLandscape.Visible = false;
             // 
+            // splitLandscape
+            // 
+            this.splitLandscape.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitLandscape.Location = new System.Drawing.Point(0, 0);
+            this.splitLandscape.Name = "splitLandscape";
+            // 
+            // splitLandscape.Panel1
+            // 
+            this.splitLandscape.Panel1.Controls.Add(this.lstLandscapes);
+            // 
+            // splitLandscape.Panel2
+            // 
+            this.splitLandscape.Panel2.Controls.Add(this.tableLandscape);
+            this.splitLandscape.Size = new System.Drawing.Size(963, 661);
+            this.splitLandscape.SplitterDistance = 320;
+            this.splitLandscape.TabIndex = 0;
+            // 
+            // lstLandscapes
+            // 
+            this.lstLandscapes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstLandscapes.HideSelection = false;
+            this.lstLandscapes.Location = new System.Drawing.Point(0, 0);
+            this.lstLandscapes.Name = "lstLandscapes";
+            this.lstLandscapes.Size = new System.Drawing.Size(320, 661);
+            this.lstLandscapes.TabIndex = 0;
+            this.lstLandscapes.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstLandscapes_AfterSelect);
+            // 
+            // tableLandscape
+            // 
+            this.tableLandscape.ColumnCount = 2;
+            this.tableLandscape.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLandscape.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLandscape.Controls.Add(this.txtEvaluatorCode, 1, 3);
+            this.tableLandscape.Controls.Add(this.lblLandscapeInternalName, 0, 0);
+            this.tableLandscape.Controls.Add(this.txtLandscapeInternalName, 1, 0);
+            this.tableLandscape.Controls.Add(this.lblLandscapeDescription, 0, 1);
+            this.tableLandscape.Controls.Add(this.txtLandscapeDescription, 1, 1);
+            this.tableLandscape.Controls.Add(this.lblLandscapeParameters, 0, 2);
+            this.tableLandscape.Controls.Add(this.txtLandscapeParameters, 1, 2);
+            this.tableLandscape.Controls.Add(this.lblEvaluatorCode, 0, 3);
+            this.tableLandscape.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLandscape.Location = new System.Drawing.Point(0, 0);
+            this.tableLandscape.Name = "tableLandscape";
+            this.tableLandscape.RowCount = 4;
+            this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLandscape.Size = new System.Drawing.Size(639, 661);
+            this.tableLandscape.TabIndex = 0;
+            // 
+            // txtEvaluatorCode
+            // 
+            this.txtEvaluatorCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtEvaluatorCode.ConvertTabsToSpaces = true;
+            this.txtEvaluatorCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtEvaluatorCode.EnableFolding = false;
+            this.txtEvaluatorCode.IsReadOnly = false;
+            this.txtEvaluatorCode.Location = new System.Drawing.Point(92, 473);
+            this.txtEvaluatorCode.Name = "txtEvaluatorCode";
+            this.txtEvaluatorCode.ShowLineNumbers = false;
+            this.txtEvaluatorCode.ShowVRuler = false;
+            this.txtEvaluatorCode.Size = new System.Drawing.Size(544, 185);
+            this.txtEvaluatorCode.TabIndex = 6;
+            this.txtEvaluatorCode.Text = "fitness = 0.0\r\nfor x in indiv:\r\n    fitness += x**2\r\n\r\nreturn FitnessMinimise(fit" +
+                "ness)";
+            this.txtEvaluatorCode.Visible = false;
+            // 
+            // lblLandscapeInternalName
+            // 
+            this.lblLandscapeInternalName.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.lblLandscapeInternalName.AutoSize = true;
+            this.lblLandscapeInternalName.Location = new System.Drawing.Point(3, 7);
+            this.lblLandscapeInternalName.Name = "lblLandscapeInternalName";
+            this.lblLandscapeInternalName.Size = new System.Drawing.Size(83, 15);
+            this.lblLandscapeInternalName.TabIndex = 0;
+            this.lblLandscapeInternalName.Text = "Internal name:";
+            // 
+            // txtLandscapeInternalName
+            // 
+            this.txtLandscapeInternalName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLandscapeInternalName.Location = new System.Drawing.Point(92, 3);
+            this.txtLandscapeInternalName.Name = "txtLandscapeInternalName";
+            this.txtLandscapeInternalName.ReadOnly = true;
+            this.txtLandscapeInternalName.Size = new System.Drawing.Size(544, 23);
+            this.txtLandscapeInternalName.TabIndex = 1;
+            // 
+            // lblLandscapeDescription
+            // 
+            this.lblLandscapeDescription.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.lblLandscapeDescription.AutoSize = true;
+            this.lblLandscapeDescription.Location = new System.Drawing.Point(16, 116);
+            this.lblLandscapeDescription.Name = "lblLandscapeDescription";
+            this.lblLandscapeDescription.Size = new System.Drawing.Size(70, 15);
+            this.lblLandscapeDescription.TabIndex = 2;
+            this.lblLandscapeDescription.Text = "Description:";
+            // 
+            // txtLandscapeDescription
+            // 
+            this.txtLandscapeDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLandscapeDescription.Location = new System.Drawing.Point(92, 32);
+            this.txtLandscapeDescription.Multiline = true;
+            this.txtLandscapeDescription.Name = "txtLandscapeDescription";
+            this.txtLandscapeDescription.ReadOnly = true;
+            this.txtLandscapeDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtLandscapeDescription.Size = new System.Drawing.Size(544, 183);
+            this.txtLandscapeDescription.TabIndex = 3;
+            // 
+            // lblLandscapeParameters
+            // 
+            this.lblLandscapeParameters.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.lblLandscapeParameters.AutoSize = true;
+            this.lblLandscapeParameters.Location = new System.Drawing.Point(17, 336);
+            this.lblLandscapeParameters.Name = "lblLandscapeParameters";
+            this.lblLandscapeParameters.Size = new System.Drawing.Size(69, 15);
+            this.lblLandscapeParameters.TabIndex = 4;
+            this.lblLandscapeParameters.Text = "Parameters:";
+            // 
+            // txtLandscapeParameters
+            // 
+            this.txtLandscapeParameters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLandscapeParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLandscapeParameters.EnableFolding = false;
+            this.txtLandscapeParameters.IsReadOnly = false;
+            this.txtLandscapeParameters.Location = new System.Drawing.Point(92, 221);
+            this.txtLandscapeParameters.Name = "txtLandscapeParameters";
+            this.txtLandscapeParameters.ShowLineNumbers = false;
+            this.txtLandscapeParameters.ShowVRuler = false;
+            this.txtLandscapeParameters.Size = new System.Drawing.Size(544, 246);
+            this.txtLandscapeParameters.TabIndex = 5;
+            // 
+            // lblEvaluatorCode
+            // 
+            this.lblEvaluatorCode.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.lblEvaluatorCode.AutoSize = true;
+            this.lblEvaluatorCode.Location = new System.Drawing.Point(7, 558);
+            this.lblEvaluatorCode.Name = "lblEvaluatorCode";
+            this.lblEvaluatorCode.Size = new System.Drawing.Size(79, 15);
+            this.lblEvaluatorCode.TabIndex = 4;
+            this.lblEvaluatorCode.Text = "Python Code:";
+            this.lblEvaluatorCode.Visible = false;
+            // 
             // panelResults
             // 
             this.panelResults.Controls.Add(this.splitLimitsGraph);
@@ -606,27 +934,6 @@
             this.panelResults.Size = new System.Drawing.Size(963, 661);
             this.panelResults.TabIndex = 6;
             this.panelResults.Visible = false;
-            // 
-            // panelLog
-            // 
-            this.panelLog.Controls.Add(this.txtLog);
-            this.panelLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelLog.Location = new System.Drawing.Point(0, 31);
-            this.panelLog.Name = "panelLog";
-            this.panelLog.Padding = new System.Windows.Forms.Padding(3);
-            this.panelLog.Size = new System.Drawing.Size(963, 661);
-            this.panelLog.TabIndex = 7;
-            this.panelLog.Visible = false;
-            // 
-            // picDimmer
-            // 
-            this.picDimmer.Location = new System.Drawing.Point(0, 0);
-            this.picDimmer.Name = "picDimmer";
-            this.picDimmer.Size = new System.Drawing.Size(100, 54);
-            this.picDimmer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picDimmer.TabIndex = 8;
-            this.picDimmer.TabStop = false;
-            this.picDimmer.Visible = false;
             // 
             // splitLimitsGraph
             // 
@@ -946,7 +1253,7 @@
             // 
             // tabChart
             // 
-            this.tabChart.Controls.Add(this.chartResults);
+            this.tabChart.Controls.Add(this.tableChart);
             this.tabChart.Location = new System.Drawing.Point(4, 24);
             this.tabChart.Name = "tabChart";
             this.tabChart.Padding = new System.Windows.Forms.Padding(3);
@@ -955,14 +1262,64 @@
             this.tabChart.Text = "Chart (Alt+1)";
             this.tabChart.UseVisualStyleBackColor = true;
             // 
+            // tableChart
+            // 
+            this.tableChart.ColumnCount = 2;
+            this.tableChart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableChart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableChart.Controls.Add(this.lblChartExpression, 0, 0);
+            this.tableChart.Controls.Add(this.txtChartExpression, 1, 0);
+            this.tableChart.Controls.Add(this.chartResults, 0, 1);
+            this.tableChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableChart.Location = new System.Drawing.Point(3, 3);
+            this.tableChart.Name = "tableChart";
+            this.tableChart.RowCount = 2;
+            this.tableChart.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableChart.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableChart.Size = new System.Drawing.Size(625, 458);
+            this.tableChart.TabIndex = 1;
+            // 
+            // lblChartExpression
+            // 
+            this.lblChartExpression.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.lblChartExpression.AutoSize = true;
+            this.lblChartExpression.Location = new System.Drawing.Point(3, 7);
+            this.lblChartExpression.Name = "lblChartExpression";
+            this.lblChartExpression.Size = new System.Drawing.Size(65, 15);
+            this.lblChartExpression.TabIndex = 5;
+            this.lblChartExpression.Text = "Expression:";
+            // 
+            // txtChartExpression
+            // 
+            this.txtChartExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtChartExpression.AutoCompleteCustomSource.AddRange(new string[] {
+            "(i, f.simple)",
+            "(i, f.values[0])",
+            "[(i, global_max.simple), (i, local_max.simple), (i, local_mean.simple), (i, local" +
+                "_min.simple)]",
+            "[(i, global_max.values[0]), (i, local_max.values[0]), (i, local_mean.values[0]), " +
+                "(i, local_min.values[0])]"});
+            this.txtChartExpression.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.txtChartExpression.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.txtChartExpression.Location = new System.Drawing.Point(74, 3);
+            this.txtChartExpression.Name = "txtChartExpression";
+            this.txtChartExpression.Size = new System.Drawing.Size(548, 23);
+            this.txtChartExpression.TabIndex = 6;
+            this.txtChartExpression.Text = "(i, f.simple)";
+            this.toolTips.SetToolTip(this.txtChartExpression, "Examples:\r\n    (i, f.simple)\r\n    [(i, global_max.simple), (i, local_max.simple)," +
+                    " (i, local_mean.simple), (i, local_min.simple)]");
+            this.txtChartExpression.Enter += new System.EventHandler(this.txtExpression_Enter);
+            this.txtChartExpression.Leave += new System.EventHandler(this.txtExpression_Leave);
+            // 
             // chartResults
             // 
             this.chartResults.AutoRange = true;
             this.chartResults.AutoRangeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableChart.SetColumnSpan(this.chartResults, 2);
             this.chartResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chartResults.GridColor = System.Drawing.Color.Gray;
             this.chartResults.HorizontalAxisColor = System.Drawing.Color.Black;
-            this.chartResults.Location = new System.Drawing.Point(3, 3);
+            this.chartResults.Location = new System.Drawing.Point(3, 32);
             viewRectangle1.Bottom = 100000D;
             viewRectangle1.Left = -100000D;
             viewRectangle1.Right = 100000D;
@@ -972,9 +1329,10 @@
             this.chartResults.MustIncludeVerticalZero = true;
             this.chartResults.Name = "chartResults";
             this.chartResults.ShowMouseCoordinates = true;
-            this.chartResults.Size = new System.Drawing.Size(625, 458);
+            this.chartResults.Size = new System.Drawing.Size(619, 423);
             this.chartResults.TabIndex = 0;
             this.chartResults.VerticalAxisColor = System.Drawing.Color.Black;
+            this.chartResults.VerticalFlip = true;
             this.chartResults.View = viewRectangle2;
             // 
             // tab2DPlot
@@ -1022,7 +1380,7 @@
             this.visPopulation.Size = new System.Drawing.Size(619, 425);
             this.visPopulation.TabIndex = 2;
             this.visPopulation.VerticalAxisColor = System.Drawing.Color.Black;
-            this.visPopulation.View = viewRectangle2;
+            this.visPopulation.View = viewRectangle3;
             // 
             // lblPlotExpression
             // 
@@ -1037,11 +1395,20 @@
             // txtPlotExpression
             // 
             this.txtPlotExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPlotExpression.AutoCompleteCustomSource.AddRange(new string[] {
+            "(indiv[0], indiv[1])",
+            "(indiv[0], indiv[1], indiv[2])",
+            "(indiv[0], indiv[1], 1.0 / indiv[2])",
+            "(indiv[0], indiv[1], 1.0)"});
+            this.txtPlotExpression.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.txtPlotExpression.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.txtPlotExpression.Location = new System.Drawing.Point(74, 3);
             this.txtPlotExpression.Name = "txtPlotExpression";
             this.txtPlotExpression.Size = new System.Drawing.Size(548, 23);
             this.txtPlotExpression.TabIndex = 4;
             this.txtPlotExpression.Text = "(indiv[0], indiv[1])";
+            this.toolTips.SetToolTip(this.txtPlotExpression, "Examples:\r\n    (indiv[0], indiv[1])\r\n    (indiv[0], indiv[1], indiv[2])\r\n    (ind" +
+                    "iv[0], indiv[1], 1.0 / indiv[2])");
             this.txtPlotExpression.Enter += new System.EventHandler(this.txtExpression_Enter);
             this.txtPlotExpression.Leave += new System.EventHandler(this.txtExpression_Leave);
             // 
@@ -1086,11 +1453,25 @@
             // txtBestIndividualExpression
             // 
             this.txtBestIndividualExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtBestIndividualExpression.AutoCompleteCustomSource.AddRange(new string[] {
+            "indiv.phenome_string",
+            "indiv.genome_string",
+            "indiv.fitness",
+            "indiv.fitness.values",
+            "indiv.phenome",
+            "indiv.genome",
+            "indiv.birthday",
+            "\'\\n\'.join(\'%-20s:%20s\' % (key, getattr(indiv, key)) for key in (\'birthday\', \'fitn" +
+                "ess\', \'phenome_string\'))"});
+            this.txtBestIndividualExpression.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.txtBestIndividualExpression.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.txtBestIndividualExpression.Location = new System.Drawing.Point(74, 3);
             this.txtBestIndividualExpression.Name = "txtBestIndividualExpression";
             this.txtBestIndividualExpression.Size = new System.Drawing.Size(548, 23);
             this.txtBestIndividualExpression.TabIndex = 1;
             this.txtBestIndividualExpression.Text = "indiv.phenome_string";
+            this.toolTips.SetToolTip(this.txtBestIndividualExpression, "Example:\r\n    indiv.phenome_string\r\n    indiv.fitness\r\n    indiv.fitness.values\r\n" +
+                    "    indiv.birthday");
             this.txtBestIndividualExpression.TextChanged += new System.EventHandler(this.txtBestIndividualExpression_TextChanged);
             this.txtBestIndividualExpression.Enter += new System.EventHandler(this.txtExpression_Enter);
             this.txtBestIndividualExpression.Leave += new System.EventHandler(this.txtExpression_Leave);
@@ -1371,183 +1752,16 @@
             this.chkChartBestFitness.UseVisualStyleBackColor = false;
             this.chkChartBestFitness.CheckedChanged += new System.EventHandler(this.chkChartSeries_CheckedChanged);
             // 
-            // splitSystemErrors
+            // panelLog
             // 
-            this.splitSystemErrors.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitSystemErrors.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitSystemErrors.Location = new System.Drawing.Point(0, 0);
-            this.splitSystemErrors.Name = "splitSystemErrors";
-            this.splitSystemErrors.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitSystemErrors.Panel1
-            // 
-            this.splitSystemErrors.Panel1.Controls.Add(this.tabSourceView);
-            // 
-            // splitSystemErrors.Panel2
-            // 
-            this.splitSystemErrors.Panel2.Controls.Add(this.lstErrors);
-            this.splitSystemErrors.Size = new System.Drawing.Size(963, 661);
-            this.splitSystemErrors.SplitterDistance = 532;
-            this.splitSystemErrors.TabIndex = 0;
-            // 
-            // tabSourceView
-            // 
-            this.tabSourceView.Controls.Add(this.tabSourceESDL);
-            this.tabSourceView.Controls.Add(this.tabSourcePython);
-            this.tabSourceView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabSourceView.Location = new System.Drawing.Point(0, 0);
-            this.tabSourceView.Multiline = true;
-            this.tabSourceView.Name = "tabSourceView";
-            this.tabSourceView.SelectedIndex = 0;
-            this.tabSourceView.Size = new System.Drawing.Size(963, 532);
-            this.tabSourceView.TabIndex = 9;
-            // 
-            // tabSourceESDL
-            // 
-            this.tabSourceESDL.Controls.Add(this.splitSystemVariables);
-            this.tabSourceESDL.Location = new System.Drawing.Point(4, 24);
-            this.tabSourceESDL.Name = "tabSourceESDL";
-            this.tabSourceESDL.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSourceESDL.Size = new System.Drawing.Size(955, 504);
-            this.tabSourceESDL.TabIndex = 0;
-            this.tabSourceESDL.Text = "ESDL (Alt+1)";
-            this.tabSourceESDL.UseVisualStyleBackColor = true;
-            // 
-            // splitSystemVariables
-            // 
-            this.splitSystemVariables.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitSystemVariables.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitSystemVariables.Location = new System.Drawing.Point(3, 3);
-            this.splitSystemVariables.Name = "splitSystemVariables";
-            // 
-            // splitSystemVariables.Panel1
-            // 
-            this.splitSystemVariables.Panel1.Controls.Add(this.txtSystemESDL);
-            // 
-            // splitSystemVariables.Panel2
-            // 
-            this.splitSystemVariables.Panel2.Controls.Add(this.txtSystemVariables);
-            this.splitSystemVariables.Size = new System.Drawing.Size(949, 498);
-            this.splitSystemVariables.SplitterDistance = 652;
-            this.splitSystemVariables.TabIndex = 0;
-            // 
-            // txtSystemESDL
-            // 
-            this.txtSystemESDL.ConvertTabsToSpaces = true;
-            this.txtSystemESDL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystemESDL.EnableFolding = false;
-            this.txtSystemESDL.IsReadOnly = false;
-            this.txtSystemESDL.Location = new System.Drawing.Point(0, 0);
-            this.txtSystemESDL.Name = "txtSystemESDL";
-            this.txtSystemESDL.ShowVRuler = false;
-            this.txtSystemESDL.Size = new System.Drawing.Size(652, 498);
-            this.txtSystemESDL.TabIndex = 0;
-            this.txtSystemESDL.Text = resources.GetString("txtSystemESDL.Text");
-            // 
-            // txtSystemVariables
-            // 
-            this.txtSystemVariables.ConvertTabsToSpaces = true;
-            this.txtSystemVariables.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystemVariables.EnableFolding = false;
-            this.txtSystemVariables.IndentStyle = ICSharpCode.TextEditor.Document.IndentStyle.None;
-            this.txtSystemVariables.IsReadOnly = false;
-            this.txtSystemVariables.Location = new System.Drawing.Point(0, 0);
-            this.txtSystemVariables.Name = "txtSystemVariables";
-            this.txtSystemVariables.ShowLineNumbers = false;
-            this.txtSystemVariables.ShowVRuler = false;
-            this.txtSystemVariables.Size = new System.Drawing.Size(293, 498);
-            this.txtSystemVariables.TabIndex = 0;
-            this.txtSystemVariables.Text = "size: 50";
-            // 
-            // tabSourcePython
-            // 
-            this.tabSourcePython.Controls.Add(this.splitPythonDefinitions);
-            this.tabSourcePython.Location = new System.Drawing.Point(4, 22);
-            this.tabSourcePython.Name = "tabSourcePython";
-            this.tabSourcePython.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSourcePython.Size = new System.Drawing.Size(955, 506);
-            this.tabSourcePython.TabIndex = 1;
-            this.tabSourcePython.Text = "Python (Alt+2)";
-            this.tabSourcePython.UseVisualStyleBackColor = true;
-            // 
-            // splitPythonDefinitions
-            // 
-            this.splitPythonDefinitions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitPythonDefinitions.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitPythonDefinitions.Location = new System.Drawing.Point(3, 3);
-            this.splitPythonDefinitions.Name = "splitPythonDefinitions";
-            // 
-            // splitPythonDefinitions.Panel1
-            // 
-            this.splitPythonDefinitions.Panel1.Controls.Add(this.txtSystemPython);
-            // 
-            // splitPythonDefinitions.Panel2
-            // 
-            this.splitPythonDefinitions.Panel2.Controls.Add(this.lstPythonDefinitions);
-            this.splitPythonDefinitions.Size = new System.Drawing.Size(949, 500);
-            this.splitPythonDefinitions.SplitterDistance = 726;
-            this.splitPythonDefinitions.TabIndex = 2;
-            // 
-            // txtSystemPython
-            // 
-            this.txtSystemPython.ConvertTabsToSpaces = true;
-            this.txtSystemPython.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSystemPython.EnableFolding = false;
-            this.txtSystemPython.IsReadOnly = false;
-            this.txtSystemPython.Location = new System.Drawing.Point(0, 0);
-            this.txtSystemPython.Name = "txtSystemPython";
-            this.txtSystemPython.ShowVRuler = false;
-            this.txtSystemPython.Size = new System.Drawing.Size(726, 500);
-            this.txtSystemPython.TabIndex = 1;
-            // 
-            // lstPythonDefinitions
-            // 
-            this.lstPythonDefinitions.Activation = System.Windows.Forms.ItemActivation.OneClick;
-            this.lstPythonDefinitions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstPythonDefinitions.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3});
-            this.lstPythonDefinitions.LabelWrap = false;
-            this.lstPythonDefinitions.Location = new System.Drawing.Point(0, 0);
-            this.lstPythonDefinitions.MultiSelect = false;
-            this.lstPythonDefinitions.Name = "lstPythonDefinitions";
-            this.lstPythonDefinitions.Size = new System.Drawing.Size(219, 500);
-            this.lstPythonDefinitions.SmallImageList = this.imlPythonDefinitions;
-            this.lstPythonDefinitions.TabIndex = 0;
-            this.lstPythonDefinitions.UseCompatibleStateImageBehavior = false;
-            this.lstPythonDefinitions.View = System.Windows.Forms.View.List;
-            this.lstPythonDefinitions.ItemActivate += new System.EventHandler(this.lstPythonDefinitions_ItemActivate);
-            // 
-            // lstErrors
-            // 
-            this.lstErrors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colLocation,
-            this.colCode,
-            this.colMessage});
-            this.lstErrors.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstErrors.FullRowSelect = true;
-            this.lstErrors.Location = new System.Drawing.Point(0, 0);
-            this.lstErrors.Name = "lstErrors";
-            this.lstErrors.Size = new System.Drawing.Size(963, 125);
-            this.lstErrors.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lstErrors.TabIndex = 1;
-            this.lstErrors.UseCompatibleStateImageBehavior = false;
-            this.lstErrors.View = System.Windows.Forms.View.Details;
-            this.lstErrors.ItemActivate += new System.EventHandler(this.lstErrors_ItemActivate);
-            // 
-            // colLocation
-            // 
-            this.colLocation.Text = "Loc";
-            // 
-            // colCode
-            // 
-            this.colCode.Text = "Code";
-            // 
-            // colMessage
-            // 
-            this.colMessage.Text = "Message";
-            this.colMessage.Width = 400;
+            this.panelLog.Controls.Add(this.txtLog);
+            this.panelLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelLog.Location = new System.Drawing.Point(0, 31);
+            this.panelLog.Name = "panelLog";
+            this.panelLog.Padding = new System.Windows.Forms.Padding(3);
+            this.panelLog.Size = new System.Drawing.Size(963, 661);
+            this.panelLog.TabIndex = 7;
+            this.panelLog.Visible = false;
             // 
             // txtLog
             // 
@@ -1562,150 +1776,15 @@
             this.txtLog.Size = new System.Drawing.Size(957, 655);
             this.txtLog.TabIndex = 0;
             // 
-            // splitLandscape
+            // picDimmer
             // 
-            this.splitLandscape.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitLandscape.Location = new System.Drawing.Point(0, 0);
-            this.splitLandscape.Name = "splitLandscape";
-            // 
-            // splitLandscape.Panel1
-            // 
-            this.splitLandscape.Panel1.Controls.Add(this.lstLandscapes);
-            // 
-            // splitLandscape.Panel2
-            // 
-            this.splitLandscape.Panel2.Controls.Add(this.tableLandscape);
-            this.splitLandscape.Size = new System.Drawing.Size(963, 661);
-            this.splitLandscape.SplitterDistance = 320;
-            this.splitLandscape.TabIndex = 0;
-            // 
-            // lstLandscapes
-            // 
-            this.lstLandscapes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstLandscapes.HideSelection = false;
-            this.lstLandscapes.Location = new System.Drawing.Point(0, 0);
-            this.lstLandscapes.Name = "lstLandscapes";
-            this.lstLandscapes.Size = new System.Drawing.Size(320, 661);
-            this.lstLandscapes.TabIndex = 0;
-            this.lstLandscapes.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstLandscapes_AfterSelect);
-            // 
-            // tableLandscape
-            // 
-            this.tableLandscape.ColumnCount = 2;
-            this.tableLandscape.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLandscape.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLandscape.Controls.Add(this.txtEvaluatorCode, 1, 3);
-            this.tableLandscape.Controls.Add(this.lblLandscapeInternalName, 0, 0);
-            this.tableLandscape.Controls.Add(this.txtLandscapeInternalName, 1, 0);
-            this.tableLandscape.Controls.Add(this.lblLandscapeDescription, 0, 1);
-            this.tableLandscape.Controls.Add(this.txtLandscapeDescription, 1, 1);
-            this.tableLandscape.Controls.Add(this.lblLandscapeParameters, 0, 2);
-            this.tableLandscape.Controls.Add(this.txtLandscapeParameters, 1, 2);
-            this.tableLandscape.Controls.Add(this.lblEvaluatorCode, 0, 3);
-            this.tableLandscape.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLandscape.Location = new System.Drawing.Point(0, 0);
-            this.tableLandscape.Name = "tableLandscape";
-            this.tableLandscape.RowCount = 4;
-            this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.tableLandscape.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLandscape.Size = new System.Drawing.Size(639, 661);
-            this.tableLandscape.TabIndex = 0;
-            // 
-            // txtEvaluatorCode
-            // 
-            this.txtEvaluatorCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtEvaluatorCode.ConvertTabsToSpaces = true;
-            this.txtEvaluatorCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtEvaluatorCode.EnableFolding = false;
-            this.txtEvaluatorCode.IsReadOnly = false;
-            this.txtEvaluatorCode.Location = new System.Drawing.Point(92, 473);
-            this.txtEvaluatorCode.Name = "txtEvaluatorCode";
-            this.txtEvaluatorCode.ShowLineNumbers = false;
-            this.txtEvaluatorCode.ShowVRuler = false;
-            this.txtEvaluatorCode.Size = new System.Drawing.Size(544, 185);
-            this.txtEvaluatorCode.TabIndex = 6;
-            this.txtEvaluatorCode.Text = "fitness = 0.0\r\nfor x in indiv:\r\n    fitness += x**2\r\n\r\nreturn FitnessMinimise(fit" +
-                "ness)";
-            this.txtEvaluatorCode.Visible = false;
-            // 
-            // lblLandscapeInternalName
-            // 
-            this.lblLandscapeInternalName.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.lblLandscapeInternalName.AutoSize = true;
-            this.lblLandscapeInternalName.Location = new System.Drawing.Point(3, 7);
-            this.lblLandscapeInternalName.Name = "lblLandscapeInternalName";
-            this.lblLandscapeInternalName.Size = new System.Drawing.Size(83, 15);
-            this.lblLandscapeInternalName.TabIndex = 0;
-            this.lblLandscapeInternalName.Text = "Internal name:";
-            // 
-            // txtLandscapeInternalName
-            // 
-            this.txtLandscapeInternalName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLandscapeInternalName.Location = new System.Drawing.Point(92, 3);
-            this.txtLandscapeInternalName.Name = "txtLandscapeInternalName";
-            this.txtLandscapeInternalName.ReadOnly = true;
-            this.txtLandscapeInternalName.Size = new System.Drawing.Size(544, 23);
-            this.txtLandscapeInternalName.TabIndex = 1;
-            // 
-            // lblLandscapeDescription
-            // 
-            this.lblLandscapeDescription.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.lblLandscapeDescription.AutoSize = true;
-            this.lblLandscapeDescription.Location = new System.Drawing.Point(16, 116);
-            this.lblLandscapeDescription.Name = "lblLandscapeDescription";
-            this.lblLandscapeDescription.Size = new System.Drawing.Size(70, 15);
-            this.lblLandscapeDescription.TabIndex = 2;
-            this.lblLandscapeDescription.Text = "Description:";
-            // 
-            // txtLandscapeDescription
-            // 
-            this.txtLandscapeDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLandscapeDescription.Location = new System.Drawing.Point(92, 32);
-            this.txtLandscapeDescription.Multiline = true;
-            this.txtLandscapeDescription.Name = "txtLandscapeDescription";
-            this.txtLandscapeDescription.ReadOnly = true;
-            this.txtLandscapeDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLandscapeDescription.Size = new System.Drawing.Size(544, 183);
-            this.txtLandscapeDescription.TabIndex = 3;
-            // 
-            // lblLandscapeParameters
-            // 
-            this.lblLandscapeParameters.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.lblLandscapeParameters.AutoSize = true;
-            this.lblLandscapeParameters.Location = new System.Drawing.Point(17, 336);
-            this.lblLandscapeParameters.Name = "lblLandscapeParameters";
-            this.lblLandscapeParameters.Size = new System.Drawing.Size(69, 15);
-            this.lblLandscapeParameters.TabIndex = 4;
-            this.lblLandscapeParameters.Text = "Parameters:";
-            // 
-            // txtLandscapeParameters
-            // 
-            this.txtLandscapeParameters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtLandscapeParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtLandscapeParameters.EnableFolding = false;
-            this.txtLandscapeParameters.IsReadOnly = false;
-            this.txtLandscapeParameters.Location = new System.Drawing.Point(92, 221);
-            this.txtLandscapeParameters.Name = "txtLandscapeParameters";
-            this.txtLandscapeParameters.ShowLineNumbers = false;
-            this.txtLandscapeParameters.ShowVRuler = false;
-            this.txtLandscapeParameters.Size = new System.Drawing.Size(544, 246);
-            this.txtLandscapeParameters.TabIndex = 5;
-            // 
-            // lblEvaluatorCode
-            // 
-            this.lblEvaluatorCode.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.lblEvaluatorCode.AutoSize = true;
-            this.lblEvaluatorCode.Location = new System.Drawing.Point(7, 558);
-            this.lblEvaluatorCode.Name = "lblEvaluatorCode";
-            this.lblEvaluatorCode.Size = new System.Drawing.Size(79, 15);
-            this.lblEvaluatorCode.TabIndex = 4;
-            this.lblEvaluatorCode.Text = "Python Code:";
-            this.lblEvaluatorCode.Visible = false;
+            this.picDimmer.Location = new System.Drawing.Point(0, 0);
+            this.picDimmer.Name = "picDimmer";
+            this.picDimmer.Size = new System.Drawing.Size(100, 54);
+            this.picDimmer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picDimmer.TabIndex = 8;
+            this.picDimmer.TabStop = false;
+            this.picDimmer.Visible = false;
             // 
             // Editor
             // 
@@ -1733,10 +1812,29 @@
             this.panelMenu.ResumeLayout(false);
             this.panelMenu.PerformLayout();
             this.panelSystem.ResumeLayout(false);
+            this.splitSystemErrors.Panel1.ResumeLayout(false);
+            this.splitSystemErrors.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitSystemErrors)).EndInit();
+            this.splitSystemErrors.ResumeLayout(false);
+            this.tabSourceView.ResumeLayout(false);
+            this.tabSourceESDL.ResumeLayout(false);
+            this.splitSystemVariables.Panel1.ResumeLayout(false);
+            this.splitSystemVariables.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitSystemVariables)).EndInit();
+            this.splitSystemVariables.ResumeLayout(false);
+            this.tabSourcePython.ResumeLayout(false);
+            this.splitPythonDefinitions.Panel1.ResumeLayout(false);
+            this.splitPythonDefinitions.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitPythonDefinitions)).EndInit();
+            this.splitPythonDefinitions.ResumeLayout(false);
             this.panelLandscape.ResumeLayout(false);
+            this.splitLandscape.Panel1.ResumeLayout(false);
+            this.splitLandscape.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitLandscape)).EndInit();
+            this.splitLandscape.ResumeLayout(false);
+            this.tableLandscape.ResumeLayout(false);
+            this.tableLandscape.PerformLayout();
             this.panelResults.ResumeLayout(false);
-            this.panelLog.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picDimmer)).EndInit();
             this.splitLimitsGraph.Panel1.ResumeLayout(false);
             this.splitLimitsGraph.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitLimitsGraph)).EndInit();
@@ -1753,6 +1851,8 @@
             this.splitGraphStats.ResumeLayout(false);
             this.tabResultView.ResumeLayout(false);
             this.tabChart.ResumeLayout(false);
+            this.tableChart.ResumeLayout(false);
+            this.tableChart.PerformLayout();
             this.tab2DPlot.ResumeLayout(false);
             this.table2DPlot.ResumeLayout(false);
             this.table2DPlot.PerformLayout();
@@ -1761,27 +1861,8 @@
             this.tableBestIndividual.PerformLayout();
             this.tableStats.ResumeLayout(false);
             this.tableStats.PerformLayout();
-            this.splitSystemErrors.Panel1.ResumeLayout(false);
-            this.splitSystemErrors.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitSystemErrors)).EndInit();
-            this.splitSystemErrors.ResumeLayout(false);
-            this.tabSourceView.ResumeLayout(false);
-            this.tabSourceESDL.ResumeLayout(false);
-            this.splitSystemVariables.Panel1.ResumeLayout(false);
-            this.splitSystemVariables.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitSystemVariables)).EndInit();
-            this.splitSystemVariables.ResumeLayout(false);
-            this.tabSourcePython.ResumeLayout(false);
-            this.splitPythonDefinitions.Panel1.ResumeLayout(false);
-            this.splitPythonDefinitions.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitPythonDefinitions)).EndInit();
-            this.splitPythonDefinitions.ResumeLayout(false);
-            this.splitLandscape.Panel1.ResumeLayout(false);
-            this.splitLandscape.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitLandscape)).EndInit();
-            this.splitLandscape.ResumeLayout(false);
-            this.tableLandscape.ResumeLayout(false);
-            this.tableLandscape.PerformLayout();
+            this.panelLog.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picDimmer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1907,6 +1988,9 @@
         private System.Windows.Forms.ToolTip toolTips;
         private System.Windows.Forms.ToolStripMenuItem menuControlStep;
         private NativeTreeView lstLandscapes;
+        private System.Windows.Forms.TableLayoutPanel tableChart;
+        private System.Windows.Forms.Label lblChartExpression;
+        private System.Windows.Forms.TextBox txtChartExpression;
     }
 }
 

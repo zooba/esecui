@@ -129,15 +129,14 @@ namespace esecui
         {
             if (!task.IsCanceled)
             {
-                Log("An error occurred while initialising IronPython.\n");
                 var ae = task.Exception as AggregateException;
                 if (ae == null)
                 {
-                    Log(task.Exception.ToString());
+                    Log("Initialisation", task.Exception);
                 }
                 else
                 {
-                    foreach (var ex in ae.InnerExceptions) Log(ex.ToString());
+                    foreach (var ex in ae.InnerExceptions) Log("Initialisation", ex);
                 }
                 chkLog.Checked = true;
             }
@@ -317,6 +316,12 @@ class CustomEvaluator(esec.landscape.Landscape):
         #endregion
 
         #region Log Functions
+
+        public void Log(string source, Exception exception)
+        {
+            Log(string.Format("{0}\n{1}\n================================================================\n",
+                source, exception.ToString()));
+        }
 
         public void Log(string format, params object[] values)
         {
@@ -556,6 +561,8 @@ class CustomEvaluator(esec.landscape.Landscape):
         #region Monitor Callbacks
 
         private dynamic CurrentBestIndividual;
+        private bool IgnoreTxtChartExpression;
+        private bool IgnoreTxtPlotExpression;
 
         public void UpdateStats(int iterations, int evaluations, int births, TimeSpan time,
             dynamic bestIndiv,
@@ -582,41 +589,75 @@ class CustomEvaluator(esec.landscape.Landscape):
             txtStatsCurrentMean.Text = currentMean;
             txtStatsCurrentWorst.Text = currentWorst;
 
-            double min = double.NegativeInfinity; // chartResults.View.Bottom;
-            double max = double.PositiveInfinity; // chartResults.View.Top;
+            if (!IgnoreTxtChartExpression)
+            {
+                var expr = Python.CompileExpression(txtChartExpression.Text);
+                dynamic scope = Python.CreateScope();
+                dynamic empty = esec.fitness.EmptyFitness();
+                Python.Exec("from math import *", scope);
+                scope.global_max = bestFitness ?? empty;
+                scope.local_max = currentBest ?? empty;
+                scope.local_mean = currentMean ?? empty;
+                scope.local_min = currentWorst ?? empty;
+                scope.f = scope.global_max;
+                scope.i = iterations;
 
-            if (bestFitness != null)
-            {
-                double value = (double)bestFitness.simple;
-                value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0), 0);
+                try
+                {
+                    dynamic result = Python.Eval(expr, scope);
+
+                    VisualiserPoint[] points = new VisualiserPoint[4];
+                    if (result != null && result.__len__() == 2)
+                    {
+                        points[0] = new VisualiserPoint((double)result[0], (double)result[1], 0.0);
+                        scope.f = scope.local_max;
+                        result = Python.Eval(expr, scope);
+                        points[1] = new VisualiserPoint((double)result[0], (double)result[1], 0.0);
+                        scope.f = scope.local_mean;
+                        result = Python.Eval(expr, scope);
+                        points[2] = new VisualiserPoint((double)result[0], (double)result[1], 0.0);
+                        scope.f = scope.local_min;
+                        result = Python.Eval(expr, scope);
+                        points[3] = new VisualiserPoint((double)result[0], (double)result[1], 0.0);
+                    }
+                    else if (result.__len__() == 4)
+                    {
+                        for (int i = 0; i < 4; ++i)
+                        {
+                            points[i] = new VisualiserPoint((double)result[i][0], (double)result[i][1], 0.0);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Invalid expression: " + txtChartExpression.Text);
+                    }
+
+                    for (int i = 0; i < 4; ++i) chartResults.Add(points[i], i);
+                }
+                catch (Exception ex)
+                {
+                    Log("Chart expression", ex);
+                    IgnoreTxtChartExpression = true;
+                }
             }
-            if (currentBest != null)
+
+            if (IgnoreTxtChartExpression)
             {
-                double value = (double)currentBest.simple;
-                value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0), 1);
-            }
-            if (currentMean != null)
-            {
-                double value = (double)currentMean.simple;
-                value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0), 2);
-            }
-            if (currentWorst != null)
-            {
-                double value = (double)currentWorst.simple;
-                value = (value < min) ? min : (value > max) ? max : value;
-                chartResults.Add(new VisualiserPoint(iterations, value, 0.0), 3);
+                if (bestFitness != null)
+                    chartResults.Add(new VisualiserPoint((double)iterations, (double)bestFitness.simple, 0.0), 0);
+                if (currentBest != null)
+                    chartResults.Add(new VisualiserPoint((double)iterations, (double)currentBest.simple, 0.0), 1);
+                if (currentMean != null)
+                    chartResults.Add(new VisualiserPoint((double)iterations, (double)currentMean.simple, 0.0), 2);
+                if (currentWorst != null)
+                    chartResults.Add(new VisualiserPoint((double)iterations, (double)currentWorst.simple, 0.0), 3);
             }
         }
-
-        private bool DisableVisualisation;
 
         public void UpdateVisualisation(IEnumerable<dynamic> population, bool firstRun = false)
         {
             if (population == null) return;
-            if (DisableVisualisation) return;
+            if (IgnoreTxtPlotExpression) return;
 
             var expr = Python.CompileExpression(txtPlotExpression.Text);
             var scope = Python.CreateScope();
@@ -640,9 +681,10 @@ class CustomEvaluator(esec.landscape.Landscape):
                             (double)(pair.__len__() < 3 ? 0.0 : pair[2])))
                     .ToList();
             }
-            catch
+            catch (Exception ex)
             {
-                DisableVisualisation = true;
+                Log("Visualisation", ex);
+                IgnoreTxtPlotExpression = true;
                 return;
             }
 
@@ -855,6 +897,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                 state["preamble"] = txtSystemPython.Text;
 
                 // Reset chart
+                IgnoreTxtChartExpression = false;
                 chartResults.ClearAll(true);
                 chartResults.ShowSeries(0, chkChartBestFitness.Checked);
                 chartResults.ShowSeries(1, chkChartCurrentBest.Checked);
@@ -862,7 +905,7 @@ class CustomEvaluator(esec.landscape.Landscape):
                 chartResults.ShowSeries(3, chkChartCurrentWorst.Checked);
 
                 // Reset 2D plot
-                DisableVisualisation = false;
+                IgnoreTxtPlotExpression = false;
                 visPopulation.ClearAll(true);
 
                 // Initialise the experiment tasks
@@ -989,8 +1032,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
             else if (ex is ExperimentInitialisationException)
             {
-                Log("Error creating experiment.\n" + ex.InnerException.ToString());
-                LogBreak();
+                Log("Creating experiment", ex.InnerException);
                 chkLog.Checked = true;
             }
             else if (ex is EvaluatorCompilationException)
@@ -1002,18 +1044,12 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
             else if (ex.Message == "EvaluatorError")
             {
-                Log("Error in evaluator:\n" + ex.ToString());
-                LogBreak();
+                Log("Evaluation", ex);
                 chkLog.Checked = true;
             }
             else
             {
-                Log("Unhandled exception:\n" + ex.ToString());
-                if (ex.InnerException != null)
-                {
-                    Log("Inner exception:\n" + ex.InnerException.ToString());
-                }
-                LogBreak();
+                Log("Unexpected during experiment", ex);
                 chkLog.Checked = true;
             }
         }
@@ -1601,7 +1637,7 @@ class CustomEvaluator(esec.landscape.Landscape):
             }
             catch (Exception ex)
             {
-                Log("Error selecting definition:\n{0}", ex.ToString());
+                Log("Selecting definition", ex);
             }
         }
 

@@ -124,7 +124,7 @@ namespace esecui
             { }
             else
             {
-                Owner.Log("Notify:" + name.ToString() + ":" + value.__str__());
+                Owner.Log("Notification from {0}\n{0}: {1}", sender, name, value);
             }
         }
 

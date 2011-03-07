@@ -96,6 +96,7 @@ namespace esecui
                     if (Locked.HasFlag(LockSet.ConfigurationList)) ToEnable.Add(Owner.lstConfigurations);
                     if (Locked.HasFlag(LockSet.Expressions))
                     {
+                        ToEnable.Add(Owner.txtChartExpression);
                         ToEnable.Add(Owner.txtPlotExpression);
                         ToEnable.Add(Owner.txtBestIndividualExpression);
                     }
@@ -103,6 +104,7 @@ namespace esecui
                     if (Locked.HasFlag(LockSet.RunExperiment))
                     {
                         ToEnable.Add(Owner.btnStart);
+                        ToEnable.Add(Owner.txtChartExpression);
                         ToEnable.Add(Owner.txtPlotExpression);
                         
                         ToDisable = new List<Control>();
