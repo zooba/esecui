@@ -1151,7 +1151,7 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         #endregion
 
-        #region Configuration List/Load/Save
+        #region Configuration List/Load/Save/Export
 
         private Configuration CurrentConfiguration = null;
         private int lstConfigurations_SuppressLoad = 0;
@@ -1498,6 +1498,12 @@ class CustomEvaluator(esec.landscape.Landscape):
             ConfigurationList_Refresh(CurrentConfiguration.Source);
         }
 
+        private void menuExport_Click(object sender, EventArgs e)
+        {
+            UpdateConfig();
+            Export.Show(this, CurrentConfiguration);
+        }
+
         #endregion
 
         #region View Selection
@@ -1661,5 +1667,6 @@ class CustomEvaluator(esec.landscape.Landscape):
         }
 
         #endregion
+
     }
 }

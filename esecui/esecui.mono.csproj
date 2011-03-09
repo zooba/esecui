@@ -128,6 +128,12 @@
     <Compile Include="ErrorItem.cs" />
     <Compile Include="EsecOverrides.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="Export.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Export.Designer.cs">
+      <DependentUpon>Export.cs</DependentUpon>
+    </Compile>
     <Compile Include="Monitor.cs" />
     <Compile Include="NativeTreeView.cs">
       <SubType>Component</SubType>
@@ -141,6 +147,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Export.resx">
+      <DependentUpon>Export.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -350,10 +350,11 @@
             // 
             // menuExport
             // 
-            this.menuExport.Enabled = false;
             this.menuExport.Name = "menuExport";
+            this.menuExport.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
             this.menuExport.Size = new System.Drawing.Size(195, 22);
             this.menuExport.Text = "&Export...";
+            this.menuExport.Click += new System.EventHandler(this.menuExport_Click);
             // 
             // menuCheckSyntax
             // 
