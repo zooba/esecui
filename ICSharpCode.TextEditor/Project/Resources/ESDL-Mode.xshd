@@ -18,7 +18,7 @@
 
     <RuleSets>
         <RuleSet ignorecase="true">
-            <Delimiters>%^*()-+=\/[]"' ,	.</Delimiters>
+            <Delimiters>%^*()-+=\/[]"' ,	</Delimiters>
             <Span name = "LineComment1" bold = "false" italic = "false" color = "Green" stopateol = "true">
                 <Begin>//</Begin>
             </Span>

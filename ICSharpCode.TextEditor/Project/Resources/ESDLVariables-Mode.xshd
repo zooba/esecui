@@ -16,18 +16,18 @@
 
     <RuleSets>
         <RuleSet ignorecase="false">
-            <Delimiters>^*()-+=\/[]{}"' ,:;	.</Delimiters>
+            <Delimiters>^*()-+=\/[]{}"' ,:;	</Delimiters>
 
             <Span name = "LineComment" bold = "false" italic = "false" color = "Green" stopateol = "true">
                 <Begin>#</Begin>
             </Span>
             
             <Span name="StringDouble" bold="false" italic="false" color="Blue" stopateol="true">
-                <Begin>"</Begin>
+                <Begin>"@!""@</Begin>
                 <End>"</End>
             </Span>
             <Span name="StringSingle" bold="false" italic="false" color="Blue" stopateol="true">
-                <Begin>&apos;</Begin>
+                <Begin>&apos;@!&apos;&apos;@</Begin>
                 <End>&apos;</End>
             </Span>
             <Span name="StringBlockDouble" bold="false" italic="false" color="Blue" stopateol="false">
