@@ -834,6 +834,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void StopExperiment()
         {
+            btnPause.Enabled = false;
+            btnStop.Enabled = false;
             CurrentMonitor.Cancel();
         }
 
