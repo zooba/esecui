@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tableButtons = new System.Windows.Forms.TableLayoutPanel();
             this.chkPreview = new System.Windows.Forms.CheckBox();
             this.btnSave = new System.Windows.Forms.Button();
@@ -37,6 +38,7 @@
             this.panelEdit = new System.Windows.Forms.Panel();
             this.tableEdit = new System.Windows.Forms.TableLayoutPanel();
             this.groupParameters = new System.Windows.Forms.GroupBox();
+            this.txtParameterEdit = new System.Windows.Forms.TextBox();
             this.lstParameters = new System.Windows.Forms.ListView();
             this.colIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupCount = new System.Windows.Forms.GroupBox();
@@ -46,11 +48,13 @@
             this.btnCountParameterList = new System.Windows.Forms.RadioButton();
             this.btnCountParameterCombinations = new System.Windows.Forms.RadioButton();
             this.txtCountExact = new System.Windows.Forms.NumericUpDown();
+            this.picWarningParameterList = new System.Windows.Forms.PictureBox();
             this.groupOutput = new System.Windows.Forms.GroupBox();
             this.flowOutput = new System.Windows.Forms.FlowLayoutPanel();
             this.btnOutputPlainText = new System.Windows.Forms.RadioButton();
             this.btnOutputCSV = new System.Windows.Forms.RadioButton();
             this.chkOutputConsole = new System.Windows.Forms.CheckBox();
+            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.tableButtons.SuspendLayout();
             this.panelPreview.SuspendLayout();
             this.panelEdit.SuspendLayout();
@@ -59,6 +63,7 @@
             this.groupCount.SuspendLayout();
             this.tableCount.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtCountExact)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picWarningParameterList)).BeginInit();
             this.groupOutput.SuspendLayout();
             this.flowOutput.SuspendLayout();
             this.SuspendLayout();
@@ -101,6 +106,7 @@
             // 
             this.btnSave.AutoSize = true;
             this.btnSave.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnSave.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnSave.Location = new System.Drawing.Point(3, 3);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(3);
@@ -173,6 +179,7 @@
             // groupParameters
             // 
             this.tableEdit.SetColumnSpan(this.groupParameters, 2);
+            this.groupParameters.Controls.Add(this.txtParameterEdit);
             this.groupParameters.Controls.Add(this.lstParameters);
             this.groupParameters.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupParameters.Location = new System.Drawing.Point(3, 154);
@@ -181,6 +188,18 @@
             this.groupParameters.TabIndex = 2;
             this.groupParameters.TabStop = false;
             this.groupParameters.Text = "Use these parameters";
+            // 
+            // txtParameterEdit
+            // 
+            this.txtParameterEdit.AcceptsReturn = true;
+            this.txtParameterEdit.AcceptsTab = true;
+            this.txtParameterEdit.Location = new System.Drawing.Point(50, 33);
+            this.txtParameterEdit.Name = "txtParameterEdit";
+            this.txtParameterEdit.Size = new System.Drawing.Size(100, 23);
+            this.txtParameterEdit.TabIndex = 2;
+            this.txtParameterEdit.Visible = false;
+            this.txtParameterEdit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtParameterEdit_KeyDown);
+            this.txtParameterEdit.Leave += new System.EventHandler(this.txtParameterEdit_Leave);
             // 
             // lstParameters
             // 
@@ -195,6 +214,7 @@
             this.lstParameters.TabIndex = 0;
             this.lstParameters.UseCompatibleStateImageBehavior = false;
             this.lstParameters.View = System.Windows.Forms.View.Details;
+            this.lstParameters.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lstParameters_MouseClick);
             // 
             // colIndex
             // 
@@ -217,14 +237,16 @@
             // 
             this.tableCount.AutoSize = true;
             this.tableCount.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableCount.ColumnCount = 2;
+            this.tableCount.ColumnCount = 3;
             this.tableCount.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableCount.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableCount.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableCount.Controls.Add(this.btnCountInfinite, 0, 0);
             this.tableCount.Controls.Add(this.btnCountExact, 0, 1);
             this.tableCount.Controls.Add(this.btnCountParameterList, 0, 2);
             this.tableCount.Controls.Add(this.btnCountParameterCombinations, 0, 3);
             this.tableCount.Controls.Add(this.txtCountExact, 1, 1);
+            this.tableCount.Controls.Add(this.picWarningParameterList, 2, 2);
             this.tableCount.Location = new System.Drawing.Point(3, 19);
             this.tableCount.Name = "tableCount";
             this.tableCount.RowCount = 4;
@@ -239,7 +261,7 @@
             // 
             this.btnCountInfinite.AutoSize = true;
             this.btnCountInfinite.Checked = true;
-            this.tableCount.SetColumnSpan(this.btnCountInfinite, 2);
+            this.tableCount.SetColumnSpan(this.btnCountInfinite, 3);
             this.btnCountInfinite.Location = new System.Drawing.Point(3, 3);
             this.btnCountInfinite.Name = "btnCountInfinite";
             this.btnCountInfinite.Size = new System.Drawing.Size(129, 19);
@@ -275,7 +297,7 @@
             // btnCountParameterCombinations
             // 
             this.btnCountParameterCombinations.AutoSize = true;
-            this.tableCount.SetColumnSpan(this.btnCountParameterCombinations, 2);
+            this.tableCount.SetColumnSpan(this.btnCountParameterCombinations, 3);
             this.btnCountParameterCombinations.Location = new System.Drawing.Point(3, 82);
             this.btnCountParameterCombinations.Name = "btnCountParameterCombinations";
             this.btnCountParameterCombinations.Size = new System.Drawing.Size(200, 19);
@@ -287,6 +309,7 @@
             // txtCountExact
             // 
             this.txtCountExact.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableCount.SetColumnSpan(this.txtCountExact, 2);
             this.txtCountExact.Enabled = false;
             this.txtCountExact.Location = new System.Drawing.Point(70, 28);
             this.txtCountExact.Maximum = new decimal(new int[] {
@@ -305,6 +328,21 @@
             0,
             0,
             0});
+            // 
+            // picWarningParameterList
+            // 
+            this.picWarningParameterList.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.picWarningParameterList.BackColor = System.Drawing.Color.Transparent;
+            this.picWarningParameterList.Image = global::esecui.Properties.Resources.warning;
+            this.picWarningParameterList.Location = new System.Drawing.Point(191, 59);
+            this.picWarningParameterList.Margin = new System.Windows.Forms.Padding(0);
+            this.picWarningParameterList.Name = "picWarningParameterList";
+            this.picWarningParameterList.Size = new System.Drawing.Size(15, 15);
+            this.picWarningParameterList.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picWarningParameterList.TabIndex = 5;
+            this.picWarningParameterList.TabStop = false;
+            this.toolTips.SetToolTip(this.picWarningParameterList, "Avoid blank parameter values when using this setting.");
+            this.picWarningParameterList.Visible = false;
             // 
             // groupOutput
             // 
@@ -365,10 +403,8 @@
             // 
             // Export
             // 
-            this.AcceptButton = this.btnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(724, 503);
             this.Controls.Add(this.panelEdit);
             this.Controls.Add(this.panelPreview);
@@ -387,11 +423,13 @@
             this.tableEdit.ResumeLayout(false);
             this.tableEdit.PerformLayout();
             this.groupParameters.ResumeLayout(false);
+            this.groupParameters.PerformLayout();
             this.groupCount.ResumeLayout(false);
             this.groupCount.PerformLayout();
             this.tableCount.ResumeLayout(false);
             this.tableCount.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtCountExact)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picWarningParameterList)).EndInit();
             this.groupOutput.ResumeLayout(false);
             this.groupOutput.PerformLayout();
             this.flowOutput.ResumeLayout(false);
@@ -426,5 +464,8 @@
         private System.Windows.Forms.GroupBox groupParameters;
         private System.Windows.Forms.ListView lstParameters;
         private System.Windows.Forms.ColumnHeader colIndex;
+        private System.Windows.Forms.TextBox txtParameterEdit;
+        private System.Windows.Forms.PictureBox picWarningParameterList;
+        private System.Windows.Forms.ToolTip toolTips;
     }
 }

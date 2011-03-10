@@ -70,6 +70,9 @@ namespace esecui
             txtPreview.Document.ReadOnly = true;
 
             txtCountExact.Tag = 0;
+
+            txtParameterEdit.BringToFront();
+            txtParameterEdit.Visible = false;
         }
 
         #endregion
@@ -81,9 +84,7 @@ namespace esecui
             lstParameters.Items.Clear();
             while (lstParameters.Columns.Count > 1) lstParameters.Columns.RemoveAt(1);
 
-            var lvi = new ListViewItem();
-            lvi.Name = "1";
-            lvi.Text = "1";
+            var lvi = new ListViewItem { Name = "0", Text = "1" };
 
             foreach (var kv in ReadVariables(Configuration.LandscapeParameters))
             {
@@ -97,7 +98,10 @@ namespace esecui
             }
 
             lstParameters.Items.Add(lvi);
-            lstParameters.Items.Add("*");
+
+            lvi = new ListViewItem { Name = lstParameters.Items.Count.ToString(), Text = "*" };
+            while (lvi.SubItems.Count < lstParameters.Columns.Count) lvi.SubItems.Add("");
+            lstParameters.Items.Add(lvi);
         }
 
         private Dictionary<string, List<string>> lstParameters_GetParameters()
@@ -129,6 +133,152 @@ namespace esecui
             return result;
         }
 
+        private ListViewItem.ListViewSubItem lstParameters_EditingSubItem;
+        private ListViewItem lstParameters_EditingSubItemOf;
+        private int lstParameters_EditingSubItemIndex;
+
+        private void lstParameters_EditSubItem(ListViewItem item, int index)
+        {
+            if (item != null && index > 0 && index < item.SubItems.Count)
+            {
+                if (item.Text == "*")
+                {
+                    item.Text = lstParameters.Items.Count.ToString();
+
+                    var lvi = new ListViewItem { Name = lstParameters.Items.Count.ToString(), Text = "*" };
+                    while (lvi.SubItems.Count < lstParameters.Columns.Count) lvi.SubItems.Add("");
+                    lstParameters.Items.Add(lvi);
+                }
+
+                var subItem = item.SubItems[index];
+                var rect = txtParameterEdit.Parent.RectangleToClient(lstParameters.RectangleToScreen(subItem.Bounds));
+                txtParameterEdit.SetBounds(rect.X, rect.Y, rect.Width, rect.Height);
+                txtParameterEdit.Visible = true;
+                txtParameterEdit.Text = subItem.Text;
+                txtParameterEdit.SelectAll();
+                txtParameterEdit.Focus();
+                txtParameterEdit.Select();
+
+                lstParameters_EditingSubItem = subItem;
+                lstParameters_EditingSubItemOf = item;
+                lstParameters_EditingSubItemIndex = index;
+            }
+            else
+            {
+                txtParameterEdit.Visible = false;
+                txtParameterEdit.ResetText();
+
+                lstParameters_EditingSubItem = null;
+                lstParameters_EditingSubItemOf = null;
+                lstParameters_EditingSubItemIndex = -1;
+            }
+        }
+
+        private void lstParameters_StopEditSubItem(bool commit = false)
+        {
+            if (commit && txtParameterEdit.Visible)
+            {
+                lstParameters_EditingSubItem.Text = txtParameterEdit.Text;
+            }
+
+            lstParameters_EditSubItem(null, -1);
+        }
+
+        private void lstParameters_EditNextSubItem()
+        {
+            lstParameters_EditingSubItem.Text = txtParameterEdit.Text;
+            lstParameters_EditSubItem(lstParameters_EditingSubItemOf, lstParameters_EditingSubItemIndex + 1);
+        }
+
+        private void lstParameters_EditPreviousSubItem()
+        {
+            lstParameters_EditingSubItem.Text = txtParameterEdit.Text;
+            lstParameters_EditSubItem(lstParameters_EditingSubItemOf, lstParameters_EditingSubItemIndex - 1);
+        }
+
+        private void lstParameters_EditNextItem()
+        {
+            lstParameters_EditingSubItem.Text = txtParameterEdit.Text;
+            try
+            {
+                lstParameters_EditSubItem(lstParameters.Items[lstParameters_EditingSubItemOf.Index + 1],
+                    lstParameters_EditingSubItemIndex);
+            }
+            catch (ArgumentException)   // for invalid indices
+            { }
+        }
+
+        private void lstParameters_EditPreviousItem()
+        {
+            lstParameters_EditingSubItem.Text = txtParameterEdit.Text;
+            try
+            {
+                lstParameters_EditSubItem(lstParameters.Items[lstParameters_EditingSubItemOf.Index - 1],
+                    lstParameters_EditingSubItemIndex);
+            }
+            catch (ArgumentException)   // for invalid indices
+            { }
+        }
+
+        private void lstParameters_MouseClick(object sender, MouseEventArgs e)
+        {
+            var lvi = lstParameters.GetItemAt(e.X, e.Y);
+            if (lvi == null) return;
+            var lvsi = (lvi != null) ? lvi.SubItems.IndexOf(lvi.GetSubItemAt(e.X, e.Y)) : -1;
+            lstParameters_EditSubItem(lvi, lvsi);
+        }
+
+        private void txtParameterEdit_Leave(object sender, EventArgs e)
+        {
+            lstParameters_StopEditSubItem(true);
+        }
+
+        private void txtParameterEdit_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Escape:
+                    lstParameters_StopEditSubItem();
+                    e.Handled = true;
+                    break;
+                case Keys.Return:
+                    lstParameters_StopEditSubItem(true);
+                    e.Handled = true;
+                    break;
+                case Keys.Tab:
+                    if (e.Shift) lstParameters_EditPreviousSubItem();
+                    else lstParameters_EditNextSubItem();
+                    e.Handled = true;
+                    break;
+                case Keys.Right:
+                    if (txtParameterEdit.SelectionStart == txtParameterEdit.TextLength)
+                    {
+                        lstParameters_EditNextSubItem();
+                        e.Handled = true;
+                    }
+                    break;
+                case Keys.Left:
+                    if (txtParameterEdit.SelectionStart == 0 && txtParameterEdit.SelectionLength == 0)
+                    {
+                        lstParameters_EditPreviousSubItem();
+                        e.Handled = true;
+                    }
+                    break;
+                case Keys.Up:
+                    lstParameters_EditPreviousItem();
+                    e.Handled = true;
+                    break;
+                case Keys.Down:
+                    lstParameters_EditNextItem();
+                    e.Handled = true;
+                    break;
+                default:
+                    break;
+            }
+
+            if (e.Handled) txtCountExact_Update();
+        }
+
         #endregion
 
         #region Save/Close
@@ -156,7 +306,14 @@ namespace esecui
 
         private void Export_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape) btnClose.PerformClick();
+            if (txtParameterEdit.Focused)
+            {
+                return;
+            }
+            else
+            {
+                if (e.KeyCode == Keys.Escape) btnClose.PerformClick();
+            }
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -283,9 +440,42 @@ def batch():
             }
         }
 
+        private IEnumerable<string> ReadDefinitions(string source)
+        {
+            using (var reader = new StringReader(source))
+            {
+                for (var line = reader.ReadLine(); line != null; line = reader.ReadLine())
+                {
+                    if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#") || char.IsWhiteSpace(line[0])) continue;
+
+                    string text = null;
+                    int i = -1;
+                    if (line.StartsWith("def ") || line.StartsWith("class "))
+                    {
+                        text = line;
+                        i = text.IndexOf('(');
+                        if (i > 0) text = text.Substring(0, i).Trim();
+                        i = text.IndexOf(':');
+                        if (i > 0) text = text.Substring(0, i).Trim();
+                        i = text.IndexOf(' ');
+                        if (i > 0) text = text.Substring(i + 1).Trim();
+                    }
+                    else if ((i = line.IndexOf('=')) > 0)
+                    {
+                        text = line.Substring(0, i).Trim();
+                    }
+
+                    if (text != null && text.All(c => char.IsLetterOrDigit(c) || c == '_'))
+                    {
+                        yield return text;
+                    }
+                }
+            }
+        }
+
         #endregion
 
-        #region Code Preview
+        #region Code Generation/Preview
 
         private void UpdatePreview()
         {
@@ -299,6 +489,8 @@ def batch():
             sb.Append(TemplateImports);
             sb.AppendFormat(TemplateDefinition, Configuration.Definition);
 
+            sb.Append(Configuration.Support);
+            sb.Append("\n\n");
 
             var landscapeName = Configuration.Landscape;
             if (landscapeName == "Custom")
@@ -306,9 +498,11 @@ def batch():
                 landscapeName = "CustomLandscape";
                 sb.AppendFormat(TemplateCustomLandscape, landscapeName);
                 IndentBlock(Configuration.CustomEvaluator, "    ", sb);
+                sb.Append("\n\n");
             }
 
             var parameters = lstParameters_GetParameters();
+            var definitions = ReadDefinitions(Configuration.Support);
 
             string landscapeVariables, systemVariables;
             {
@@ -335,6 +529,10 @@ def batch():
                             kv.Key,
                             kv.Value.FirstOrDefault() ?? "None");
                     }
+                }
+                foreach (var v in definitions)
+                {
+                    sbSystem.AppendFormat("        '{0}': {0},\n", v);
                 }
 
                 landscapeVariables = sbLandscape.ToString();
@@ -376,13 +574,17 @@ def batch():
                 foreach (var kv in parameters)
                 {
                     sbArgs.Append("[");
-                    foreach (var value in kv.Value) sbArgs.AppendFormat("{0},", value);
+                    foreach (var value in kv.Value.Where(v => !string.IsNullOrWhiteSpace(v)))
+                    {
+                        sbArgs.Append(value);
+                        sbArgs.Append(",");
+                    }
                     sbArgs.Append("],");
-                    
+
                     sbSettings.AppendFormat("{0}=%s;", kv.Key);
                 }
                 sbSettings.Append("' % i");
-                
+
                 batchArgs = sbArgs.ToString();
                 batchSettings = sbSettings.ToString();
             }
@@ -439,16 +641,25 @@ def batch():
             }
             else if (btnCountParameterList.Checked)
             {
-                txtCountExact.Value = lstParameters.Items.OfType<ListViewItem>().Count(lvi => lvi.Text != "*");
+                txtCountExact.Value = lstParameters.Items
+                    .OfType<ListViewItem>()
+                    .Count(lvi => lvi.SubItems
+                        .OfType<ListViewItem.ListViewSubItem>()
+                        .All(lvsi => !string.IsNullOrWhiteSpace(lvsi.Text)));
+
+                picWarningParameterList.Visible = (txtCountExact.Value < lstParameters.Items.Count - 1);
             }
             else if (btnCountParameterCombinations.Checked)
             {
                 var parameters = lstParameters_GetParameters();
 
-                txtCountExact.Value = parameters.Select(kv => kv.Value.Count).Aggregate(1, (a, n) => a * n);
+                txtCountExact.Value = parameters
+                    .Select(kv => kv.Value.Count(t => !string.IsNullOrWhiteSpace(t)))
+                    .Aggregate(1, (a, n) => a * n);
             }
         }
 
         #endregion
+
     }
 }
