@@ -1384,7 +1384,7 @@ class CustomEvaluator(esec.landscape.Landscape):
         {
             if (!menuStrip.Enabled) return;
 
-            CurrentConfiguration = null;
+            CurrentConfiguration = new Configuration();
             lstConfigurations.SelectedIndex = -1;
 
             Set(txtSystemESDL, string.Empty);
@@ -1502,6 +1502,8 @@ class CustomEvaluator(esec.landscape.Landscape):
 
         private void menuExport_Click(object sender, EventArgs e)
         {
+            if (CurrentConfiguration == null) return;
+            
             UpdateConfig();
             Export.Show(this, CurrentConfiguration);
         }
