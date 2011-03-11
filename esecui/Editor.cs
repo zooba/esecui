@@ -233,7 +233,8 @@ namespace esecui
 
 The evaluator always receives the individual as ""indiv"" and must return
 an integer or floating-point number, or an instance of FitnessMaximise or
-FitnessMinimise, each of which takes a list of values in its initialiser.
+FitnessMinimise, each of which takes a single numeric value in its
+initialiser.
 ";
 
         const string DefaultCustomEvaluator = @"fitness = 0.0
