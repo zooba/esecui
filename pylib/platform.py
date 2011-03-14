@@ -1299,10 +1299,11 @@ _sys_version_parser = re.compile(
     '\[([^\]]+)\]?')
 
 _ironpython_sys_version_parser = re.compile(
-    r'IronPython\s*'
-    '([\d\.]+)'
+    r'([\d\.]+)\s*\('
+    'IronPython\s*[\d\.]+'
+    '(?: (?:Alpha|Beta|RC) ?[\d\.]+)?(?: DEBUG)?'
     '(?: \(([\d\.]+)\))?'
-    ' on (.NET [\d\.]+)')
+    ' on (.NET [\d\.]+)\)')
 
 _pypy_sys_version_parser = re.compile(
     r'([\w.+]+)\s*'
@@ -1341,7 +1342,7 @@ def _sys_version(sys_version=None):
         return result
 
     # Parse it
-    if sys_version[:10] == 'IronPython':
+    if 'IronPython' in sys_version:
         # IronPython
         name = 'IronPython'
         match = _ironpython_sys_version_parser.match(sys_version)
