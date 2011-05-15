@@ -19,6 +19,20 @@ class EvaluatorError(Exception):
     '''
     pass
 
+class ESDLCompilerError(Exception):
+    '''Raised when a system does not compile.
+
+    The `validation_result` member contains all the errors and warnings
+    produced during compilation.
+    '''
+    def __init__(self, validation_result, *args):
+        super(ESDLCompilerError, self).__init__(*args)
+        self.validation_result = validation_result
+        '''An instance of `esdlc.model.validator.Validator` for the
+        system. Errors and warnings may be accessed through the
+        ``errors``, ``warnings`` and ``all`` properties.
+        '''
+
 class ExceptionGroup(Exception):
     '''Raised when a group of exceptions have been caught, allowing all
     errors to be passed to a handler rather than only the first.

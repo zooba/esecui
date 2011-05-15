@@ -439,15 +439,14 @@ class CustomEvaluator(esec.landscape.Landscape):
 
             var variables = Python.ConfigDict(txtSystemVariables);
 
-            var externs = variables.Keys.OfType<string>().ToList();
-            externs.Add("config");
-            externs.Add("notify");
-            externs.Add("rand");
+            variables["config"] = null;
+            variables["notify"] = null;
+            variables["rand"] = null;
 
             var guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
             CompileTask = new Task<dynamic>(Task_CheckSyntax,
-                new object[] { txtSystemPython.Text, GetCustomEvaluator(), txtSystemESDL.Text, externs });
+                new object[] { txtSystemPython.Text, GetCustomEvaluator(), txtSystemESDL.Text, variables });
 
             var errorTask = CompileTask.ContinueWith(Task_CheckSyntax_Error,
                 CancellationToken.None,
@@ -477,12 +476,8 @@ class CustomEvaluator(esec.landscape.Landscape):
             try { Python.Exec((string)state[1], scope); }
             catch (Exception ex) { throw new EvaluatorCompilationException(ex); }
 
-            try
-            {
-                dynamic ast = scope.esdlc.compileESDL((string)state[2], (List<string>)state[3]);
-                return ast;
-            }
-            catch (Exception ex) { throw new ESDLCompilationException(ex); }
+            dynamic ast_validation = scope.esdlc.compileESDL((string)state[2], (IDictionary<object, object>)state[3]);
+            return ast_validation;
         }
 
         private void Task_CheckSyntax_Error(Task<dynamic> task)
@@ -514,14 +509,15 @@ class CustomEvaluator(esec.landscape.Landscape):
         {
             if (task.Result == null) return;
 
-            dynamic ast = task.Result;
-            foreach (var error in ast._errors)
+            dynamic ast_validation = task.Result;
+            dynamic validation = ast_validation[1];
+            foreach (var error in validation.all)
             {
                 lstErrors.Items.Add(ErrorItem.FromEsdlcException(txtSystemESDL, error));
             }
 
             var variables = Python.ConfigDict(txtSystemVariables);
-            foreach (var uninit in ast.warnings)
+            foreach (var uninit in validation.warnings)
             {
                 string code = uninit.code;
                 if (code != "W2002" && code != "W2003" && code != "W2004") continue;
@@ -1000,9 +996,9 @@ class CustomEvaluator(esec.landscape.Landscape):
             {
                 exp = scope.esec.Experiment(config);
             }
-            catch (AggregateException ex)
+            catch (ESDLCompilationException ex)
             {
-                resultException = new ESDLCompilationException(ex);
+                resultException = ex;
             }
             catch (Exception ex)
             {

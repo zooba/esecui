@@ -9,6 +9,7 @@ from esec.fitness import EmptyFitness
 from esec.individual import EmptyIndividual
 from esec.monitors import MonitorBase
 from esec.utils import attrdict, ConfigDict, is_ironpython
+from esec.utils.exceptions import ESDLCompilerError, ExceptionGroup
 
 import sys
 import os, os.path
@@ -424,15 +425,12 @@ class ConsoleMonitor(MonitorBase):  #pylint: disable=R0902
             value = owner._stats.get(self.key)     #pylint: disable=W0212
             if value is not None and self.member:
                 for part in self.member:
-                    if hasattr(value, '__getitem__'):
-                        try:
-                            value = value[part]
-                        except (KeyError, IndexError, TypeError):
-                            value = getattr(value, part, self.default)
-                        except:
-                            value = self.default
-                    else:
+                    try:
+                        value = value[part]
+                    except (KeyError, IndexError, TypeError):
                         value = getattr(value, part, self.default)
+                    except:
+                        value = self.default
                     assert value is not None, 'Statistic %s has no member %s.' % (self.key, '.'.join(self.member))
             if value is None and self.default is not None:
                 value = self.default
@@ -761,6 +759,10 @@ class ConsoleMonitor(MonitorBase):  #pylint: disable=R0902
     def on_exception(self, sender, exception_type, value, trace):
         '''Displays the exception trace and terminates immediately.'''
         try:
+            if exception_type is ESDLCompilerError:
+                print >> self.error_out, '\nCompilation errors:'
+            elif exception_type is ExceptionGroup:
+                print >> self.error_out, '\nErrors:'
             print >> self.error_out, '\n' + trace
         except (ValueError, IOError):
             print "IOError writing to output file. Writing exception to stdout."

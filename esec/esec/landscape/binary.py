@@ -129,7 +129,7 @@ class RoyalRoad(Binary):
         self.size.min = self.size.max = self.size.exact = Q * C
     
     def phenome_string(self, indiv):
-        '''Returns a phenome string with separators between every `C`
+        '''Returns a phenome string with separators between every ``C``
         bits.'''
         C = self.C
         return ' '.join(''.join(str(b) for b in indiv[i:i+C])
@@ -284,15 +284,7 @@ class Multimodal(Binary):
         '''Fitness is the number of genes in common with the nearest
         peak.
         '''
-        tmp = 0.0
-        for j in xrange(self.P):
-            score = 0.0
-            for i in xrange(self.size.exact):
-                if indiv[i] == self._peaks[j][i]:
-                    score += 1
-            if score > tmp:
-                tmp = score
-        return (tmp / self.size.exact) # 0 = no match, 1.0 = exact match.
+        return float(max(sum(i == j for i, j in izip(indiv, p)) for p in self._peaks)) / self.size.exact
     
     def info(self, level):
         '''Return default and add some more peak location info.'''

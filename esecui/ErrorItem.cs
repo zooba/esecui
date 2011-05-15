@@ -105,7 +105,7 @@ namespace esecui
         public static ErrorItem FromEsdlcException(TextEditorControl source, dynamic error)
         {
             return new ErrorItem(source,
-                error.line - 1, error.col - 1, error.line - 1, error.col - 1 + error.length,
+                error.line, error.col, error.line, error.col + error.length,
                 error.message, error.code, error.iswarning);
         }
 

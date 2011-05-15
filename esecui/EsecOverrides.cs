@@ -11,7 +11,7 @@ namespace esecui
         {
             esec.utils.pairs = new Func<object, IEnumerable<object>>(Pairs);
             esec.utils.overlapped_pairs = new Func<object, IEnumerable<object>>(OverlappedPairs);
-            esec.compiler.ExceptionGroup = new Func<string, IEnumerable<dynamic>, object>(ExceptionGroup);
+            esec.system.ESDLCompilerError = new Func<dynamic, string, object>(ESDLCompilerError);
         }
         
         public static IEnumerable<object> Pairs(object source)
@@ -47,9 +47,9 @@ namespace esecui
             }
         }
 
-        public static AggregateException ExceptionGroup(string source, IEnumerable<dynamic> exceptions)
+        public static ESDLCompilationException ESDLCompilerError(dynamic validationResult, string message)
         {
-            return new AggregateException(source, exceptions.Select(ex => (Exception)ex.clsException));
+            return new ESDLCompilationException(message, validationResult);
         }
 
     }
