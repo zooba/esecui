@@ -80,7 +80,7 @@ class Validator(object):
             
             if name_node is None:
                 errors.append(error.ExpectedGroupError(node.fulltokens))
-            elif size_node is not None and size_node.rightmost.category not in set(('expr', 'name', 'number')):
+            elif size_node is not None and not self._validate_op(size_node):
                 errors.append(error.InvalidGroupError(size_node.fulltokens))
                 seen_any = True
             elif size_node is not None and allow_size == False:
@@ -93,7 +93,7 @@ class Validator(object):
                     errors.append(error.InvalidGroupError(name_node.rightmost.fulltokens))
                 seen_any = True
             elif name_node.category not in set(('name', 'dot')):
-                errors.append(error.InvalidGroupError(name_node.tokens, name_node.text))
+                errors.append(error.InvalidGroupError(name_node.fulltokens))
                 seen_any = True
             else:
                 if repeats_error is not None and any(i.text == name_node.text for _, i in expr.data):
@@ -101,7 +101,9 @@ class Validator(object):
                 if size_node is not None:
                     if size_node.category == 'expr':
                         if len(size_node.expr) != 1 or size_node.expr[0].category == 'comma':
-                            errors.append(error.InvalidGroupSizeError(node.tokens, name_node.text))
+                            errors.append(error.InvalidGroupSizeError(size_node.fulltokens, name_node.text))
+                    elif not self._validate_op(size_node):
+                        errors.append(error.InvalidGroupSizeError(size_node.fulltokens, name_node.text))
                 expr.data.append((size_node, name_node))
 
             if seen_unsized and name_node:
