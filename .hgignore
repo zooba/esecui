@@ -7,3 +7,6 @@ glob:*.suo
 glob:*.user
 glob:*.sdf
 glob:pylib.complete\*
+syntax: glob
+dist\*
+screens\*
