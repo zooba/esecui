@@ -23,9 +23,11 @@ namespace esecui
 
     class ESDLCompilationException : Exception
     {
-        public ESDLCompilationException(Exception innerException)
-            : base("Error compiling ESDL code", innerException)
-        { }
+        public ESDLCompilationException(object validationResult, string message = null)
+            : base(message ?? "Error compiling ESDL code")
+        {
+            Data["ValidationResult"] = validationResult;
+        }
     }
 
     class ExperimentInitialisationException : Exception
