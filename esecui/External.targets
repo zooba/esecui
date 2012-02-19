@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <esecSource Include="..\esec\**\*.py"><Visible>false</Visible></esecSource>
+    <pylibSource Include="..\pylib\**\*.py"><Visible>false</Visible></pylibSource>
+  </ItemGroup>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(esecSource)" DestinationFiles="@(esecSource->'$(OutDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(pylibSource)" DestinationFiles="@(pylibSource->'$(OutDir)lib\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

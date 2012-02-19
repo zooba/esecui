@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!-- syntaxdefinition for ESDL by Steve Dower -->
+
+<SyntaxDefinition name="ESDL" extensions=".esdl">
+
+    <Environment>
+        <Custom name="TypeReference" bold="false" italic="false" color="#04ABAB" />
+        <Custom name="UnknownEntity" bold="false" italic="false" color="#AB0404" />
+    </Environment>
+
+    <Properties>
+        <Property name="LineComment" value="//"/>
+        <Property name="LineComment" value=";"/>
+        <Property name="LineComment" value="#"/>
+    </Properties>
+
+    <Digits name="Digits" bold="false" italic="false" color="DarkBlue"/>
+
+    <RuleSets>
+        <RuleSet ignorecase="true">
+            <Delimiters>%^*()-+=\/[]"' ,	</Delimiters>
+            <Span name = "LineComment1" bold = "false" italic = "false" color = "Green" stopateol = "true">
+                <Begin>//</Begin>
+            </Span>
+            <Span name = "LineComment2" bold = "false" italic = "false" color = "Green" stopateol = "true">
+                <Begin>;</Begin>
+            </Span>
+            <Span name = "LineComment3" bold = "false" italic = "false" color = "Green" stopateol = "true">
+                <Begin>#</Begin>
+            </Span>
+
+            <Span name="PreprocessorDirectives" bold="false" italic="false" color="Green" stopateol="true">
+                <Begin>`</Begin>
+            </Span>
+
+            <Span name="StringDouble" bold="false" italic="false" color="Blue" stopateol="true">
+                <Begin>"</Begin>
+                <End>"</End>
+            </Span>
+            <Span name="StringSingle" bold="false" italic="false" color="Blue" stopateol="true">
+                <Begin>&apos;</Begin>
+                <End>&apos;</End>
+            </Span>
+
+            <MarkPrevious bold="true" italic="false" color="MidnightBlue">=</MarkPrevious>
+
+            <KeyWords name="KnownValues" bold="true" italic="false" color="DarkCyan">
+                <Key word="true" />
+                <Key word="false" />
+                <Key word="null" />
+                <Key word="none" />
+            </KeyWords>
+
+            <KeyWords name="Keywords" bold="true" italic="false" color="Blue">
+                <Key word="from" />
+                <Key word="select" />
+                <Key word="join" />
+                <Key word="into" />
+                <Key word="using" />
+                <Key word="eval" />
+                <Key word="evaluate" />
+                <Key word="yield" />
+                <Key word="begin" />
+                <Key word="end" />
+                <Key word="repeat" />
+            </KeyWords>
+
+        </RuleSet>
+
+    </RuleSets>
+</SyntaxDefinition>
+

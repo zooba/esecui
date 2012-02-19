@@ -1,0 +1,11 @@
+<SyntaxModes version="1.0">
+    <Mode file       = "ESDL-Mode.xshd"
+          name       = "ESDL"
+          extensions = ".esdl"/>	
+    <Mode file       = "ESDLVariables-Mode.xshd"
+          name       = "ESDLVariables"
+          extensions = ""/>
+    <Mode file       = "Python-Mode.xshd"
+          name       = "Python"
+          extensions = ".py"/>
+</SyntaxModes>
